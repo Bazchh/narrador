@@ -1077,7 +1077,7 @@
             "O dono da mesa escolhe o módulo e a versão; a última publicada é a sugerida.",
             "O dono da mesa dá nome à campanha e define classificação de conteúdo, tom e preferências (caso de uso C10).",
             "O dono da mesa vincula um personagem existente ou cria um na hora pelos casos de uso B01 ou B02.",
-            "A plataforma cria a campanha viva vazia: ponteiro para a versão do módulo, personagem, configuração, relógio zerado e nenhum fato.",
+            "A plataforma cria a campanha viva vazia: ponteiro para a versão do módulo, personagem, configuração, relógio zerado, semente de rolagens gerada e gravada (caso de uso E01) e nenhum fato.",
             "A plataforma registra o primeiro fato, \"campanha criada\", com data e versão do módulo."
           ],
           "alternativos": [
@@ -1747,7 +1747,7 @@
           "ator": "Dono da mesa",
           "fase": 1,
           "prioridade": "Importante",
-          "objetivo": "Definir até onde a narração pode ir e como o mestre fala, e ter isso obedecido.",
+          "objetivo": "Definir até onde a narração pode ir, como o mestre fala e quais opções de regra e de custo valem na mesa, e ter isso obedecido.",
           "fluxo": [
             {
               "t": "Abre a configuração da mesa",
@@ -1778,7 +1778,7 @@
           "apoio": [],
           "principal": [
             "O dono da mesa escolhe a classificação de conteúdo: livre, 14, 16 ou adulto, com a descrição do que cada nível permite, conforme a decisão DC-11 do Mapa.",
-            "O dono da mesa escolhe o tom (sério, leve, sombrio, humor) e as preferências: dado físico permitido ou não, nível de detalhe das descrições, ritmo.",
+            "O dono da mesa escolhe o tom (sério, leve, sombrio, humor) e as preferências: dado físico permitido ou não, nível de detalhe das descrições, ritmo, progressão por experiência ou por marco, regras opcionais do SRD habilitadas, e limite de custo por sessão.",
             "A plataforma grava a configuração na campanha viva, com data.",
             "A plataforma aplica a configuração ao mestre a partir da próxima narração.",
             "A mudança fica registrada como fato de mesa, para que o histórico mostre sob qual configuração cada cena foi narrada."
