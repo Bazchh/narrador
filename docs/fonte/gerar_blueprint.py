@@ -80,8 +80,9 @@ CSS = """
   .escolhas .alt b { color:var(--muted); font-weight:700; }
   .prop { display:inline-block; font-family:Consolas, monospace; font-size:7.5pt; padding:1px 7px; border-radius:10px; border:1px solid var(--amber); color:var(--amber); background:#fff6e0; vertical-align:middle; margin-left:6px; }
   ul.clean { margin:4px 0 0 16px; padding:0; font-size:9.3pt; } ul.clean li { margin:2px 0; }
-  pre.cod { background:#0f1b33; color:#e6ecf5; border-radius:8px; padding:10px 12px; font-family:Consolas, "Cascadia Mono", monospace; font-size:8.2pt; line-height:1.4; white-space:pre-wrap; margin:6px 0 10px; break-inside:avoid; }
-  .cod-k { font-family:Consolas, monospace; font-size:7.5pt; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin:8px 0 2px; }
+  pre.cod { background:#0f1b33; color:#e6ecf5; border-radius:8px; padding:10px 12px; font-family:Consolas, "Cascadia Mono", monospace; font-size:8.2pt; line-height:1.4; white-space:pre-wrap; margin:6px 0 10px; break-inside:auto; }
+  pre.cod.curto { break-inside:avoid; }
+  .cod-k { font-family:Consolas, monospace; font-size:7.5pt; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin:8px 0 2px; break-after:avoid; }
 """
 
 # ---------- contagens ----------
@@ -105,7 +106,8 @@ def bloco(b):
         tit = f'<h3 style="margin:10px 0 2px">{e(b["titulo"])}</h3>' if b.get("titulo") else ""
         return tit + '<ul class="clean">' + "".join(f"<li>{e(i)}</li>" for i in b["itens"]) + "</ul>"
     if t == "codigo":
-        return (f'<div class="cod-k">{e(b["titulo"])}</div>' if b.get("titulo") else "") + f'<pre class="cod">{e(b["texto"])}</pre>'
+        curto = " curto" if b["texto"].count(chr(10)) < 40 else ""
+        return (f'<div class="cod-k">{e(b["titulo"])}</div>' if b.get("titulo") else "") + f'<pre class="cod{curto}">{e(b["texto"])}</pre>'
     if t == "escopo_diagrama":
         acima = "".join(f'<div class="cx"><b>{e(c["t"])}</b><span>{e(c["s"])}</span></div>' for c in b["acima"])
         return (f'<div class="diag"><div class="escopo"><div class="rot">Sem isto não existe</div><div class="fila">{acima}</div>'
@@ -129,7 +131,108 @@ def bloco(b):
         rows = "".join(f'<tr><td>{e(l["escolha"])}</td><td>{e(l["proposta"])}</td><td>{e(l["porque"])}<span class="alt"><b>Alternativa considerada:</b> {e(l["alternativa"])}</span></td></tr>' for l in b["linhas"])
         return (f'<h3 style="margin:14px 0 4px">{e(b["titulo"])}<span class="prop">proposta</span></h3><p style="font-size:9pt;color:var(--muted);margin-bottom:6px">{e(b["nota"])}</p>'
                 f'<table class="escolhas"><thead><tr><th>Escolha</th><th>O que propomos</th><th>Por quê</th></tr></thead><tbody>{rows}</tbody></table>')
+    if t == "provas":
+        rows = "".join(f'<tr><td>{e(p["tentativa"])}</td><td class="mono" style="font-size:8.2pt;color:var(--ink)">{e(p["resposta"])}</td></tr>' for p in b["linhas"])
+        return (f'<h3 style="margin:12px 0 4px">{e(b["titulo"])}</h3>'
+                f'<table><thead><tr><th>O que tentamos fazer</th><th>O que o banco respondeu</th></tr></thead><tbody>{rows}</tbody></table>')
+    if t == "ferramentas":
+        rows = "".join(f'<tr><td class="code">{e(l["nome"])}</td><td>{e(l["quem"])}</td><td>{e(l["faz"])}</td><td>{e(l["devolve"])}</td><td class="code" style="font-size:7.8pt">{e(l["casos"])}</td></tr>' for l in b["linhas"])
+        return (f'<h3 style="margin:12px 0 4px">{e(b["titulo"])}</h3>' + (f'<p style="font-size:9pt;color:var(--muted)">{e(b["nota"])}</p>' if b.get("nota") else "")
+                + f'<table><thead><tr><th>Ferramenta</th><th>Quem chama</th><th>O que faz</th><th>O que devolve</th><th>Casos</th></tr></thead><tbody>{rows}</tbody></table>')
+    if t == "sequencia":
+        return f'<div class="diag">{sequencia_svg(b)}<div class="cap-txt"><b>{e(b["titulo"])}.</b> {e(b["legenda"])}</div></div>'
+    if t == "estados":
+        return f'<div class="diag">{estados_svg(b)}<div class="cap-txt"><b>{e(b["titulo"])}.</b> {e(b["legenda"])}</div></div>'
+    if t == "transicoes":
+        rows = "".join(f'<tr><td class="code">{e(l[0])}</td><td class="code">{e(l[1])}</td><td class="code" style="color:var(--green)">{e(l[2])}</td><td>{e(l[3])}</td></tr>' for l in b["linhas"])
+        return (f'<h3 style="margin:12px 0 4px">{e(b["titulo"])}</h3>' + (f'<p style="font-size:9pt;color:var(--muted)">{e(b["nota"])}</p>' if b.get("nota") else "")
+                + f'<table><thead><tr><th>Estado atual</th><th>Evento</th><th>Novo estado</th><th>O que acontece junto</th></tr></thead><tbody>{rows}</tbody></table>')
+    if t == "grade":
+        cols = b.get("colunas", 2)
+        cards = "".join(f'<div class="box"><h3>{e(i["t"])}</h3><p>{e(i["s"])}</p></div>' for i in b["itens"])
+        return (f'<h3 style="margin:12px 0 2px">{e(b["titulo"])}</h3>' if b.get("titulo") else "") + f'<div style="display:grid;grid-template-columns:repeat({cols},1fr);gap:8px">{cards}</div>'
     raise ValueError("bloco desconhecido: " + t)
+
+
+def sequencia_svg(seq):
+    cols = seq["colunas"]
+    W = 680
+    cw = W / len(cols)
+    H = 40 + len(seq["passos"]) * 28 + 16
+    out = [f'<svg viewBox="0 0 {W} {H}" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">']
+    xs = [cw * i + cw / 2 for i in range(len(cols))]
+    for i, c in enumerate(cols):
+        out.append(f'<rect x="{xs[i] - cw/2 + 6}" y="4" width="{cw - 12}" height="22" rx="4" fill="#e9edf4" stroke="#9aa4b5"/>')
+        out.append(f'<text x="{xs[i]}" y="19" text-anchor="middle" font-size="8" font-weight="700" fill="#0f1b33">{e(c)}</text>')
+        out.append(f'<line x1="{xs[i]}" y1="26" x2="{xs[i]}" y2="{H - 6}" stroke="#b9c2d0" stroke-dasharray="3 3"/>')
+    for k, p in enumerate(seq["passos"]):
+        y = 46 + k * 28
+        if p.get("nota"):
+            x = xs[p["de"]]
+            out.append(f'<rect x="{x - 90}" y="{y - 9}" width="180" height="16" rx="3" fill="#fff6e0" stroke="#c77d0a"/>')
+            out.append(f'<text x="{x}" y="{y + 3}" text-anchor="middle" font-size="7" fill="#333">{e(p["t"])}</text>')
+            continue
+        x1, x2 = xs[p["de"]], xs[p["para"]]
+        dash = ' stroke-dasharray="4 3"' if p.get("tracejado") else ""
+        if x1 == x2:
+            out.append(f'<path d="M{x1},{y - 6} h26 v12 h-26" fill="none" stroke="#1f4fd1" stroke-width="1.2"/>')
+            out.append(f'<text x="{x1 + 30}" y="{y + 3}" font-size="7" fill="#333">{e(p["t"])}</text>')
+        else:
+            out.append(f'<line x1="{x1}" y1="{y}" x2="{x2}" y2="{y}" stroke="#1f4fd1" stroke-width="1.2"{dash}/>')
+            tip = x2 - 6 if x2 > x1 else x2 + 6
+            out.append(f'<path d="M{x2},{y} L{tip},{y - 3} L{tip},{y + 3} Z" fill="#1f4fd1"/>')
+            out.append(f'<text x="{(x1 + x2) / 2}" y="{y - 4}" text-anchor="middle" font-size="7" fill="#333">{e(p["t"])}</text>')
+    out.append('</svg>')
+    return "".join(out)
+
+
+def estados_svg(b):
+    # estados em linhas (grade), setas rotuladas entre eles
+    estados = b["estados"]            # [{id, nome, sub, cor}]
+    cores = {"azul": ("#eaf0ff", "#1f4fd1"), "verde": ("#e8f7ee", "#1f9d55"), "laranja": ("#fff4e5", "#e08a1e"), "vermelho": ("#fdecec", "#c53030"), "cinza": ("#f3f5f9", "#6b7588")}
+    por_linha = b.get("por_linha", 4)
+    W = 680
+    bw, bh = 118, 40
+    gx = (W - 20) / por_linha
+    pos = {}
+    for i, s in enumerate(estados):
+        r, c = divmod(i, por_linha)
+        pos[s["id"]] = (10 + c * gx + gx / 2, 36 + r * 90)
+    H = 36 + ((len(estados) - 1) // por_linha + 1) * 90
+    out = [f'<svg viewBox="0 0 {W} {H}" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">',
+           '<defs><marker id="ar" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1f4fd1"/></marker></defs>']
+    rotulos = []
+    def rotulo(x, y, txt):
+        w = len(txt) * 3.9 + 6
+        rotulos.append(f'<rect x="{x - w/2}" y="{y - 7}" width="{w}" height="10" rx="2" fill="#fff" fill-opacity="0.92"/>'
+                       f'<text x="{x}" y="{y + 1}" text-anchor="middle" font-size="6.6" fill="#1f4fd1">{e(txt)}</text>')
+    k_cross = 0
+    for t in b["setas"]:                # [de, para, rotulo, estilo]
+        (x1, y1), (x2, y2) = pos[t[0]], pos[t[1]]
+        dash = ' stroke-dasharray="4 3"' if (len(t) > 3 and t[3] == "tracejada") else ""
+        if abs(y1 - y2) < 1 and abs(x1 - x2) < 1:   # laço no mesmo estado
+            out.append(f'<path d="M{x1 + 20},{y1 - bh/2} C{x1 + 40},{y1 - bh/2 - 26} {x1 - 40},{y1 - bh/2 - 26} {x1 - 20},{y1 - bh/2}" fill="none" stroke="#1f4fd1" stroke-width="1.2" marker-end="url(#ar)"{dash}/>')
+            rotulo(x1, y1 - bh/2 - 24, t[2])
+        elif abs(y1 - y2) < 1:          # mesma linha
+            sx, ex = (x1 + bw / 2, x2 - bw / 2) if x2 > x1 else (x1 - bw / 2, x2 + bw / 2)
+            dy = -3 if x2 > x1 else 3
+            out.append(f'<line x1="{sx}" y1="{y1 + dy}" x2="{ex}" y2="{y2 + dy}" stroke="#1f4fd1" stroke-width="1.2" marker-end="url(#ar)"{dash}/>')
+            rotulo((sx + ex) / 2, y1 + (dy - 8 if dy < 0 else dy + 9), t[2])
+        else:
+            sy, ey = (y1 + bh / 2, y2 - bh / 2) if y2 > y1 else (y1 - bh / 2, y2 + bh / 2)
+            my = (sy + ey) / 2 + (k_cross % 3 - 1) * 9
+            k_cross += 1
+            out.append(f'<path d="M{x1},{sy} L{x1},{my} L{x2},{my} L{x2},{ey}" fill="none" stroke="#1f4fd1" stroke-width="1.2" marker-end="url(#ar)"{dash}/>')
+            rotulo((x1 + x2) / 2 if abs(x1 - x2) > 60 else x1 + 70, my - 1, t[2])
+    for s in estados:
+        x, y = pos[s["id"]]
+        fill, stroke = cores.get(s.get("cor", "cinza"), cores["cinza"])
+        out.append(f'<rect x="{x - bw/2}" y="{y - bh/2}" width="{bw}" height="{bh}" rx="6" fill="{fill}" stroke="{stroke}" stroke-width="1.3"/>')
+        out.append(f'<text x="{x}" y="{y - 2}" text-anchor="middle" font-size="8.5" font-weight="700" fill="#0f1b33">{e(s["nome"])}</text>')
+        out.append(f'<text x="{x}" y="{y + 10}" text-anchor="middle" font-size="6.6" fill="#5b6577">{e(s.get("sub",""))}</text>')
+    out.extend(rotulos)
+    out.append('</svg>')
+    return "".join(out)
 
 
 def capa():

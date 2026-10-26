@@ -1,0 +1,74 @@
+{
+  "sqlite": "3.50.4",
+  "python": "3.13.14",
+  "campanha": {
+    "tabelas": 10,
+    "gatilhos": 10
+  },
+  "aventura": {
+    "tabelas": 7,
+    "gatilhos": 5
+  },
+  "provas": [
+    {
+      "tentativa": "Alterar um registro do diário (update diario set dados = ...)",
+      "resposta": "IntegrityError: diario_somente_insercao"
+    },
+    {
+      "tentativa": "Apagar um registro do diário (delete from diario)",
+      "resposta": "IntegrityError: diario_somente_insercao"
+    },
+    {
+      "tentativa": "Gravar uma segunda rolagem com o mesmo contador da campanha",
+      "resposta": "IntegrityError: UNIQUE constraint failed: rolagem.campanha_id, rolagem.contador"
+    },
+    {
+      "tentativa": "Gravar uma rolagem informada em dado físico (contador nulo)",
+      "resposta": "ok"
+    },
+    {
+      "tentativa": "Marcar um desvio como revisado (update desvio set revisado = 1)",
+      "resposta": "ok"
+    },
+    {
+      "tentativa": "Reescrever o motivo de um desvio já registrado",
+      "resposta": "IntegrityError: desvio_so_marca_de_revisao"
+    },
+    {
+      "tentativa": "Criar campanha sem semente de rolagens",
+      "resposta": "IntegrityError: NOT NULL constraint failed: campanha.semente"
+    },
+    {
+      "tentativa": "Veredito de teste com dificuldade 45, fora da escala do SRD",
+      "resposta": "IntegrityError: CHECK constraint failed: dificuldade is null or dificuldade between 5 and 30"
+    },
+    {
+      "tentativa": "Aplicar a semente: a aventura original mínima, versão 1 publicada",
+      "resposta": "ok: 10 itens canônicos e 5 ligações gravados"
+    },
+    {
+      "tentativa": "Alterar um item de uma versão publicada do módulo",
+      "resposta": "IntegrityError: versao_publicada_imutavel"
+    },
+    {
+      "tentativa": "Acrescentar uma cena a uma versão publicada",
+      "resposta": "IntegrityError: versao_publicada_imutavel"
+    },
+    {
+      "tentativa": "Gravar um segredo sem condição de descoberta",
+      "resposta": "IntegrityError: CHECK constraint failed: segredo = 0 or condicao_descoberta is not null"
+    },
+    {
+      "tentativa": "Acrescentar uma cena ao rascunho da versão 2, ainda não publicada",
+      "resposta": "ok"
+    },
+    {
+      "tentativa": "Mapear uma criatura sem SRD, sem ficha própria e sem marca de pendente",
+      "resposta": "IntegrityError: CHECK constraint failed: pendente = 1 or srd_id is not null or ficha_propria is not null"
+    },
+    {
+      "tentativa": "Percorrer o caminho crítico da semente a partir da primeira cena",
+      "resposta": "ok: cena-taverna -> cena-porao -> cena-tunel"
+    }
+  ]
+}
