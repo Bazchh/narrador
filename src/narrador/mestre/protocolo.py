@@ -92,12 +92,15 @@ class VereditoProposto(Estrita):
 class DarVeredito(Estrita):
     tentativa: str
     veredito: VereditoProposto
+    motivo_divergencia: str | None = Field(
+        default=None, description="o que mudou na cena, se o veredito diverge de um anterior"
+    )
 
 
 class ResponderPergunta(Estrita):
     pergunta: str
     resposta: str
-    veredito_provavel: VereditoProposto | None = None
+    veredito_provavel: VereditoProposto
 
 
 class FatoNovo(Estrita):
