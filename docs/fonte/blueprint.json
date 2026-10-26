@@ -3,7 +3,7 @@
   "titulo": "Blueprint Técnico",
   "kicker": "Documento de implementação · outubro de 2026",
   "rodape": "Blueprint técnico · Narrador",
-  "entrega": "Entrega 3: capítulos 1 a 8. Os três fluxos de ponta a ponta e o roteiro em cards, com critério de aceite e dependências. Ambientes, testes, definição de pronto e fechamento entram na entrega 4.",
+  "entrega": "Versão completa: capítulos 1 a 9 e fechamento. Aprovada por entregas pelo cliente; esta versão incorpora a decisão DC-14 (custo zero na fase 1), o ajuste da bancada e a opção do decisor tipado.",
   "intro": "Este documento entrega tudo que é preciso para colocar a fase 1 do Narrador em pé: o escopo real, a arquitetura, o modelo de dados, o protocolo entre mestre e motor, o adaptador do serviço de linguagem e o roteiro em cards, na ordem em que devem ser executados. Complementa o Mapa do Projeto e os Casos de Uso.",
   "para_quem": "Para a pessoa que vai criar o repositório e precisa saber exatamente o que construir primeiro. Cada capítulo responde a uma pergunta prática: qual é o escopo real, como o dado é modelado, como o mestre fala com o motor, como falamos com o serviço de linguagem e qual card pegar em seguida. Nada aqui é sugestão de arquitetura para discutir depois: é o que vamos construir, salvo o que está marcado como proposta.",
   "regra": "Todo dado é do motor. Todo fato, veredito e desvio deixa rastro consultável. O serviço de linguagem nunca grava estado: ele lê um recorte, propõe e narra, e o motor decide. Se um card contrariar isso, o card está errado.",
@@ -277,7 +277,7 @@
             {
               "escolha": "Serviço de linguagem",
               "proposta": "Adaptador por interface, com uma implementação por provedor usando o SDK oficial dele, e um provedor falso para testes",
-              "porque": "O provedor é escolhido pela bancada do card correspondente, por custo, latência, qualidade em português e comportamento nas cenas da decisão DC-11. Nada no código fora do adaptador sabe qual é.",
+              "porque": "O provedor é escolhido pela bancada do card correspondente, por custo, latência, qualidade em português e comportamento nas cenas da decisão DC-11. Nada no código fora do adaptador sabe qual é. Pela decisão DC-14, na fase 1 só entram na bancada provedores com plano gratuito e o modelo local.",
               "alternativa": "Chamadas HTTP diretas: menos dependência, mais código de protocolo a manter a cada mudança do provedor."
             },
             {
@@ -1284,7 +1284,7 @@
         {
           "tipo": "codigo",
           "titulo": "A interface, no pacote mestre",
-          "texto": "from typing import Protocol, Callable\n\nclass ServicoDeLinguagem(Protocol):\n    def rodar_turno(self, contexto: Contexto, ferramentas: list[Ferramenta],\n                    executar: Callable[[Chamada], Resultado]) -> Turno:\n        \"\"\"Entrega o contexto e as ferramentas ao serviço; executa cada chamada\n        pelo motor (executar) e devolve os resultados; termina quando o serviço\n        produz a narração final ou quando uma falha é classificada.\"\"\"\n\n    def extrair_itens(self, trecho: Trecho, esquema: Esquema) -> ItensExtraidos:\n        \"\"\"Estruturação da aventura (A02): só roda com autorização registrada (DC-12);\n        a saída é validada pelo esquema antes de virar rascunho.\"\"\"\n\n    def resumir(self, fatos: list[Fato], conhecimento: Conhecimento) -> Resumo:\n        \"\"\"Resumo de sessão (G02): só a partir dos fatos e do que o personagem sabe;\n        conferido por G03 antes de ser gravado.\"\"\"\n\n@dataclass(frozen=True)\nclass Turno:\n    narracao: Narracao | None          # saída da ferramenta narrar, já aprovada por G03\n    chamadas: tuple[Chamada, ...]      # tudo o que o mestre pediu, na ordem\n    falha: Falha | None                # indisponivel | formato | recusa | limite_de_saida\n    uso: Uso                           # tokens de entrada e saída, cache, latência, custo estimado\n\n# Implementações: uma por provedor, usando o SDK oficial dele; e ServicoFalso, roteirizado,\n# determinístico, usado em todo teste. Nenhum teste chama a rede: a trava do pacote de testes garante."
+          "texto": "from typing import Protocol, Callable\n\nclass ServicoDeLinguagem(Protocol):\n    def rodar_turno(self, contexto: Contexto, ferramentas: list[Ferramenta],\n                    executar: Callable[[Chamada], Resultado]) -> Turno:\n        \"\"\"Entrega o contexto e as ferramentas ao serviço; executa cada chamada\n        pelo motor (executar) e devolve os resultados; termina quando o serviço\n        produz a narração final ou quando uma falha é classificada.\"\"\"\n\n    def extrair_itens(self, trecho: Trecho, esquema: Esquema) -> ItensExtraidos:\n        \"\"\"Estruturação da aventura (A02): só roda com autorização registrada (DC-12);\n        a saída é validada pelo esquema antes de virar rascunho.\"\"\"\n\n    def resumir(self, fatos: list[Fato], conhecimento: Conhecimento) -> Resumo:\n        \"\"\"Resumo de sessão (G02): só a partir dos fatos e do que o personagem sabe;\n        conferido por G03 antes de ser gravado.\"\"\"\n\n    def decidir(self, estado: Estado, pergunta: PerguntaTipada) -> Decisao:\n        \"\"\"Escolha, nota ou probabilidade sobre um estado (classificar entrada, tipo de\n        veredito, intenção da criatura, vazamento). Na fase 1, o próprio mestre atende;\n        reservado para um decisor tipado dedicado (ver opção avaliada).\"\"\"\n\n@dataclass(frozen=True)\nclass Turno:\n    narracao: Narracao | None          # saída da ferramenta narrar, já aprovada por G03\n    chamadas: tuple[Chamada, ...]      # tudo o que o mestre pediu, na ordem\n    falha: Falha | None                # indisponivel | formato | recusa | limite_de_saida\n    uso: Uso                           # tokens de entrada e saída, cache, latência, custo estimado\n\n# Implementações: uma por provedor, usando o SDK oficial dele; e ServicoFalso, roteirizado,\n# determinístico, usado em todo teste. Nenhum teste chama a rede: a trava do pacote de testes garante."
         },
         {
           "tipo": "sequencia",
@@ -1473,6 +1473,18 @@
           "cor": "azul",
           "titulo": "O provedor falso é a peça que economiza mais trabalho",
           "texto": "Ele é roteirizado por cena: dado um contexto, devolve as chamadas e a narração que o roteiro manda, sem rede e sem custo. Com ele, o esqueleto ambulante, o combate, a retomada e a auditoria são testados inteiros na integração contínua, e a bancada com provedores reais vira uma comparação controlada, não uma investigação. O roteiro de cada teste é a especificação do que o mestre deveria ter feito; quando o provedor real fizer diferente, o teste diz exatamente onde. As três operações do adaptador passam por ele: o turno da mesa, a extração de itens da aventura (A02) e o resumo de sessão (G02)."
+        },
+        {
+          "tipo": "callout",
+          "cor": "amarelo",
+          "titulo": "Custo zero na fase 1 (decisão DC-14)",
+          "texto": "O cliente não gasta com provedor na fase 1. A bancada compara só candidatos com plano gratuito e o modelo local na máquina do cliente (16 GB de memória, sem placa dedicada: modelos pequenos, só em processador). Consequências: o provedor falso roda tudo até a bancada, para não gastar cota em desenvolvimento; a bancada mede 'turnos de mesa por dia' em cada candidato, porque com cota diária isso decide se uma sessão inteira é jogável; e provedor gratuito que use o conteúdo enviado para melhorar o próprio serviço não recebe texto de aventura de terceiros, por força da regra RN-09 e da decisão DC-12: a estruturação (A02) fica no caminho manual até existir provedor que não retenha."
+        },
+        {
+          "tipo": "callout",
+          "cor": "azul",
+          "titulo": "Opção avaliada, não adotada na fase 1: um decisor tipado ao lado do mestre",
+          "texto": "Existe uma classe de serviço que não gera texto: recebe um estado e perguntas tipadas e devolve escolha entre opções fixas, nota numa escala ou probabilidade de uma afirmação, com confiança. Várias decisões deste protocolo têm essa forma: pergunta ou ação, tipo de veredito e dificuldade, intenção da criatura entre as ações da ficha, texto revela segredo ou não. Um decisor assim poderia tomá-las mais rápido e mais barato, com probabilidade registrada no diário, o que daria número à consistência de vereditos (G04). Não entra na fase 1: não há plano gratuito, o acesso é antecipado, a qualidade publicada é do fornecedor e nada foi medido em português nem em decisões de mesa. O encaixe já fica reservado: a interface do adaptador ganha uma operação decidir(estado, pergunta tipada), atendida na fase 1 pelo próprio mestre; trocar por um decisor dedicado na fase 2 não toca no motor nem nos casos de uso, e o estado enviado segue a decisão DC-12 quando contém texto da aventura."
         }
       ]
     },
@@ -2020,18 +2032,18 @@
                 },
                 {
                   "id": "N-13",
-                  "nome": "Bancada de provedores e adaptador real",
-                  "porque": "Escolher o provedor com número, não com preferência, e ligar o esqueleto a ele.",
+                  "nome": "Bancada de provedores gratuitos e adaptador real",
+                  "porque": "Escolher o provedor com número, não com preferência, entre os que custam zero (DC-14), e ligar o esqueleto a ele.",
                   "entra": [
+                    "Candidatos: só provedores com plano gratuito e o modelo local na máquina do cliente; limites confirmados na página de cada um no dia da bancada, não em blog.",
                     "Bateria de cenas fixa: narração, pergunta, veredito, combate, cena sombria e cena adulta da decisão DC-11, em português.",
-                    "Medição por candidato das seis perguntas do capítulo 6: custo por cena, turnos até o limite, taxa de recusa, latência, efeito do cache, esquemas estritos.",
-                    "Uma implementação do adaptador por candidato, com o SDK oficial; classificação de falha completa.",
-                    "Relatório da bancada no repositório; o provedor escolhido vira configuração, não código."
+                    "Medição por candidato das seis perguntas do capítulo 6 mais uma: turnos de mesa que cabem na cota diária, contando as chamadas por turno.",
+                    "Uma implementação do adaptador por candidato, com o SDK oficial; classificação de falha completa; relatório da bancada no repositório; o provedor escolhido vira configuração, não código."
                   ],
                   "aceite": {
-                    "dado": "a bateria de cenas e dois ou mais candidatos",
+                    "dado": "a bateria de cenas e dois ou mais candidatos gratuitos",
                     "quando": "a bancada roda",
-                    "entao": "o relatório traz as seis medições por candidato e o esqueleto roda a sessão de aceite inteira com o provedor escolhido."
+                    "entao": "o relatório traz as sete medições por candidato, inclusive turnos por dia na conta do cliente, e o esqueleto roda a sessão de aceite inteira com o provedor escolhido sem custo."
                   },
                   "depois": [
                     "N-12"
@@ -2548,12 +2560,205 @@
           "nota": "Cada card vira um item no quadro, com o identificador no título. O critério de aceite é copiado como está: ele é a definição de terminado daquele card e deve ser executado por outra pessoa, não pelo autor. Trabalho novo entra como card novo, com código próprio, em vez de crescer dentro de um existente."
         }
       ]
+    },
+    {
+      "numero": 9,
+      "titulo": "Ambientes, testes e definição de pronto",
+      "kicker": "Capítulo 9",
+      "lead": "Dois ambientes, seis níveis de teste e uma lista que vale para todo card. Nada aqui é opcional: é o que evita que a primeira sessão jogada de verdade seja também o primeiro teste de verdade.",
+      "blocos": [
+        {
+          "tipo": "tabela",
+          "titulo": "Os dois ambientes da fase 1",
+          "colunas": [
+            "Ambiente",
+            "Onde roda",
+            "Serviço de linguagem",
+            "Com o que conversa"
+          ],
+          "linhas": [
+            [
+              "desenvolvimento",
+              "Máquina de quem desenvolve e integração contínua",
+              "Provedor falso, roteirizado; nenhum teste chama a rede",
+              "Semente da aventura original, SRD do esqueleto e depois completo, campanhas descartáveis."
+            ],
+            [
+              "aceite",
+              "Máquina do cliente",
+              "Provedor gratuito escolhido pela bancada, ou modelo local",
+              "Aventura de abertura importada pelo fluxo real, campanha jogada de verdade, registro de defeitos."
+            ]
+          ]
+        },
+        {
+          "tipo": "callout",
+          "cor": "azul",
+          "titulo": "Não há produção na fase 1",
+          "texto": "Só o cliente usa o produto, na própria máquina, com os próprios dados. Não há servidor, conta, telemetria nem atualização automática. O 'deploy' é instalar a versão etiquetada; a volta é instalar a anterior, e a campanha viva, que é só inserção, sobrevive às duas. Produção, no sentido de outras pessoas usando, é assunto da fase 2 e depende da validação de mercado (N-35)."
+        },
+        {
+          "tipo": "tabela",
+          "titulo": "Os seis níveis de teste",
+          "colunas": [
+            "Nível",
+            "Onde",
+            "O que cobre",
+            "Meta"
+          ],
+          "linhas": [
+            [
+              "Unitário",
+              "pacote motor",
+              "Rolagens, testes, derivados, combate, condições, máquinas de estado, validação de pedido. Sem banco, sem rede, sem relógio. Testes de propriedade para faixas e transições.",
+              "Toda transição das três tabelas coberta, inclusive as inválidas; toda fórmula do SRD usada com exemplo do próprio documento."
+            ],
+            [
+              "Banco",
+              "pacotes campanha e modulo",
+              "Migrações num SQLite limpo, as quinze provas do capítulo 3, semente, retomada de arquivo cortado.",
+              "As quinze provas respondem como no capítulo 3 a cada execução; nenhum gatilho sem teste."
+            ],
+            [
+              "Protocolo",
+              "pacote mestre, com o provedor falso",
+              "As quinze ferramentas: esquema estrito, envelope de erro, registro com turno, turno encerrado, segredos marcados.",
+              "Toda ferramenta com um teste de sucesso e um de cada código de erro que ela pode devolver."
+            ],
+            [
+              "Roteiro de sessão",
+              "processo narrador, com o provedor falso",
+              "Sessões inteiras roteirizadas: esqueleto, combate, queda e retomada, veredito divergente, vazamento de segredo, caminho crítico fechado.",
+              "O roteiro de aceite do card N-12 e um roteiro por caso de uso de C, D e F rodando na integração contínua."
+            ],
+            [
+              "Bancada",
+              "card N-13, manual, com cota gratuita",
+              "Os provedores reais contra a bateria de cenas; as sete medições.",
+              "Relatório por candidato no repositório; repetido a cada troca de provedor ou de versão do mestre."
+            ],
+            [
+              "Aceite",
+              "máquina do cliente",
+              "O cliente joga a aventura de abertura do início ao fim.",
+              "Cada travada no registro de defeitos com causa; a campanha chega ao objetivo do módulo."
+            ]
+          ]
+        },
+        {
+          "tipo": "callout",
+          "cor": "verde",
+          "titulo": "Definição de pronto, válida para todo card",
+          "texto": "O código passou no lint, nos tipos e em todos os testes da integração contínua. O critério de aceite do card foi executado por outra pessoa, não pelo autor; na fase 1, pelo cliente. Todo caminho de exceção do caso de uso ligado ao card tem teste. Nenhuma rolagem, cálculo ou resultado de regra sai do serviço de linguagem: o teste do protocolo prova. Tudo que muda a campanha viva deixa registro no diário com o caso de uso de origem. Migração versionada, aplicável num arquivo já em uso sem perder registro. Nenhum segredo, chave ou texto de aventura de terceiros no repositório. O que o card aprendeu que contradiz um documento vira revisão numerada do documento, não comentário no código."
+        },
+        {
+          "tipo": "callout",
+          "cor": "amarelo",
+          "titulo": "O provedor falso é a peça que economiza mais cota",
+          "texto": "Com custo zero, a cota diária é o recurso escasso. O provedor falso roteirizado faz todos os níveis de teste acima da bancada rodarem sem gastar uma requisição, e o cliente só consome cota jogando. O roteiro de cada teste é a especificação do que o mestre deveria ter feito; quando o provedor real fizer diferente, o teste diz exatamente onde, e a diferença entra na bancada como cena nova."
+        }
+      ]
+    },
+    {
+      "numero": 10,
+      "titulo": "O que fazer primeiro",
+      "kicker": "Fechamento",
+      "lead": "A sequência inicial, sem ambiguidade. O que cada passo deixa pronto é o único critério de avanço.",
+      "blocos": [
+        {
+          "tipo": "grade",
+          "colunas": 2,
+          "itens": [
+            {
+              "t": "Passo 1 · Chão pronto",
+              "s": "Cards N-01 e N-02. No fim, qualquer pessoa clona, roda um comando e tem lint, tipos, testes, os dois esquemas provados e a semente publicada."
+            },
+            {
+              "t": "Passo 2 · Dado e regra antes de mestre",
+              "s": "Cards N-03 a N-06. Rolagens reproduzíveis, SRD do esqueleto, recorte da cena e ficha com derivados. Nenhuma chamada a serviço de linguagem ainda."
+            },
+            {
+              "t": "Passo 3 · O mestre falso",
+              "s": "Cards N-07 a N-11. Protocolo, veredito, combate, narração verificada e sessão retomável, tudo com o provedor falso e na integração contínua."
+            },
+            {
+              "t": "Passo 4 · Jogar, depois medir",
+              "s": "Card N-12: o cliente joga O Porão da Taverna com o provedor falso. Só então o card N-13: a bancada entre provedores gratuitos, e o esqueleto ligado ao escolhido."
+            }
+          ]
+        },
+        {
+          "tipo": "callout",
+          "cor": "azul",
+          "titulo": "O que este documento assume e precisa ser confirmado",
+          "texto": "A conta gratuita do cliente em cada provedor candidato tem cota suficiente para uma sessão de mesa; o número só se conhece na bancada. O PDF oficial do SRD 5.2.1 continua disponível para carga e o acelerador aberto continua conferível contra ele. A aventura de abertura escolhida tem camada de texto e cabe no fluxo de importação; se não tiver, a semente faz o papel até existir outra. O modelo local roda na máquina do cliente com qualidade suficiente para a comparação, não necessariamente para a mesa."
+        },
+        {
+          "tipo": "tabela",
+          "titulo": "Lacunas do Mapa tocadas por este documento",
+          "primeira_mono": true,
+          "colunas": [
+            "Lacuna",
+            "Estado",
+            "Onde"
+          ],
+          "linhas": [
+            [
+              "LC-01",
+              "Fechada por card",
+              "N-04 para o esqueleto; N-14 para o SRD completo, com conferência contra o PDF como critério de aceite."
+            ],
+            [
+              "LC-02",
+              "Aberta até o aceite",
+              "N-34 usa a aventura de abertura que existir; a semente cobre o esqueleto."
+            ],
+            [
+              "LC-03",
+              "Opção, não dependência",
+              "Sem card; entra se uma aventura de terceiros em licença aberta for embutida."
+            ],
+            [
+              "LC-04",
+              "Aberta",
+              "Nome definitivo; nenhum card depende dele."
+            ],
+            [
+              "LC-05",
+              "Fechada",
+              "Semiautomático com conferência: N-23 a N-25."
+            ],
+            [
+              "LC-06",
+              "Fechada por medição",
+              "Fidelidade e adaptação medidas por G03 e G04 nos roteiros de sessão e nas sessões de aceite (N-34)."
+            ],
+            [
+              "LC-07",
+              "Fechada por medição",
+              "Custo por sessão em N-13 e N-32, com limite configurável."
+            ],
+            [
+              "LC-08",
+              "Fechada por card",
+              "N-35, antes de qualquer trabalho da fase 2."
+            ]
+          ]
+        },
+        {
+          "tipo": "callout",
+          "cor": "verde",
+          "titulo": "Quando consideramos a fase 1 entregue",
+          "texto": "Quando o cliente jogar a aventura de abertura importada do início ao fim, no terminal, sem travar, com um provedor de custo zero, e cada veredito, rolagem e desvio da campanha estiver no diário para ele auditar. Esse é o único critério que importa: não é o código pronto, é a mesa funcionando. A validação de mercado (N-35) vem depois disso e decide a fase 2."
+        },
+        {
+          "tipo": "callout",
+          "cor": "escuro",
+          "titulo": "Como usar este documento no dia a dia",
+          "texto": "Os capítulos 2 a 6 são a referência; o capítulo 8 é o backlog; o capítulo 9 é a régua. Quando um card ensinar algo que contradiz um capítulo, o capítulo ganha revisão numerada e datada, como o Mapa e os Casos de Uso. Trabalho novo entra como card novo, com código próprio e caso de uso de origem. Assim o escopo continua visível, e a pergunta 'o que falta' sempre tem resposta no próprio documento."
+        }
+      ]
     }
   ],
-  "proximas": [
-    {
-      "n": "Entrega 4",
-      "t": "Capítulo 9 e fechamento: ambientes, níveis de teste, definição de pronto, o que fazer primeiro, o que este documento assume e as lacunas do Mapa tocadas."
-    }
-  ]
+  "proximas": []
 }

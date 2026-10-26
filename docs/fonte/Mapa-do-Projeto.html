@@ -93,13 +93,13 @@
   <div class="kicker">Mapa do projeto · outubro de 2026</div>
   <h1>Narrador</h1>
   <p class="lead">Um mestre de jogo por inteligência artificial para Dungeons &amp; Dragons 5e, nas regras de 2024, que conduz campanhas prontas com liberdade de adaptação e, mais adiante, cria as próprias. Este documento é a referência de visão, escopo, decisões e roteiro. Os dois documentos seguintes, Casos de Uso e Blueprint Técnico, derivam dele.</p>
-  <div class="note" style="max-width:150mm;margin-bottom:6px"><b>Nome provisório.</b> "Narrador" é o nome de trabalho do produto e da pasta do projeto, escolhido para destravar o início. Trocar o nome é uma decisão do cliente e não altera nada neste documento além do título. <b>Revisão 1, 26 de outubro de 2026:</b> acrescentadas a regra RN-11 e a decisão DC-11, a pedido do cliente. <b>Revisão 2, 26 de outubro de 2026:</b> lacuna LC-08 (validação de mercado) e nota de concorrência, após pesquisa aprovada pelo cliente. <b>Revisão 3, 26 de outubro de 2026:</b> decisão DC-12, aprovada junto com a entrega 1 dos Casos de Uso. <b>Revisão 4, 26 de outubro de 2026:</b> decisão DC-13, combate por zonas na primeira versão, aprovada junto com a entrega 4.</div>
+  <div class="note" style="max-width:150mm;margin-bottom:6px"><b>Nome provisório.</b> "Narrador" é o nome de trabalho do produto e da pasta do projeto, escolhido para destravar o início. Trocar o nome é uma decisão do cliente e não altera nada neste documento além do título. <b>Revisão 1, 26 de outubro de 2026:</b> acrescentadas a regra RN-11 e a decisão DC-11, a pedido do cliente. <b>Revisão 2, 26 de outubro de 2026:</b> lacuna LC-08 (validação de mercado) e nota de concorrência, após pesquisa aprovada pelo cliente. <b>Revisão 3, 26 de outubro de 2026:</b> decisão DC-12, aprovada junto com a entrega 1 dos Casos de Uso. <b>Revisão 4, 26 de outubro de 2026:</b> decisão DC-13, combate por zonas na primeira versão, aprovada junto com a entrega 4. <b>Revisão 5, 26 de outubro de 2026:</b> decisão DC-14, custo zero na fase 1, a pedido do cliente.</div>
 
   <div class="stats">
     <div class="stat"><div class="big">9</div><div class="lbl">módulos funcionais</div></div>
     <div class="stat"><div class="big">3</div><div class="lbl">fases de entrega</div></div>
     <div class="stat"><div class="big">11</div><div class="lbl">regras de negócio</div></div>
-    <div class="stat"><div class="big">13</div><div class="lbl">decisões fechadas</div></div>
+    <div class="stat"><div class="big">14</div><div class="lbl">decisões fechadas</div></div>
   </div>
 
   <div class="grid3">
@@ -284,7 +284,7 @@
 <!-- ============ DECISÕES ============ -->
 <section class="page">
   <div class="kicker">Decisões fechadas</div>
-  <h2>Treze decisões registradas com o cliente</h2>
+  <h2>Catorze decisões registradas com o cliente</h2>
   <p class="lead">Fechadas em 26 de outubro de 2026. Qualquer mudança entra como revisão deste documento, com data, e propaga para os casos de uso e para o blueprint.</p>
 
   <table style="font-size:8.7pt">
@@ -303,6 +303,7 @@
       <tr><td class="code">DC-11</td><td>Classificação de conteúdo</td><td>Máxima "adulto": temas sem restrição dentro da lei; intimidade entre adultos acontece e a narração corta, nunca descreve em detalhe; nível configurável por mesa</td><td>Ficção adulta por tema, não por explicitude; cabe nas políticas dos provedores e não restringe a escolha do narrador. Recusa do narrador é exceção tratada, nunca cena perdida.</td></tr>
       <tr><td class="code">DC-12</td><td>Envio da aventura ao serviço de linguagem</td><td>Só com autorização explícita do dono da mesa, registrada a cada importação; sem autorização, estruturação manual assistida, sem nada sair da máquina</td><td>O arquivo é obra de terceiro e propriedade do dono da mesa; a mesma regra que o cliente aplica aos próprios arquivos. Detalhado no caso de uso A02.</td></tr>
       <tr><td class="code">DC-13</td><td>Posição no combate</td><td>Primeira versão por zonas (perto, médio, longe), sem grade tática; grade fica para a fase 2</td><td>Na primeira versão só o cliente joga; a grade pesa no motor e na interface de texto sem provar nada da arquitetura.</td></tr>
+      <tr><td class="code">DC-14</td><td>Custo do serviço de linguagem</td><td>Zero na fase 1: a bancada só compara provedores com plano gratuito e o modelo local; o provedor falso roda todo o desenvolvimento</td><td>Restrição do cliente. Provedor gratuito que retenha conteúdo não recebe texto de aventura de terceiros (RN-09, DC-12); a bancada mede turnos de mesa por dia de cota.</td></tr>
     </tbody>
   </table>
 
