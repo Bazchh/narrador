@@ -55,10 +55,13 @@ class Instantaneo:
 # ---------------------------------------------------------------- trava de processo
 
 
+_WINDOWS = sys.platform == "win32"  # em variável: o verificador de tipos não deve podar o outro ramo
+
+
 def _processo_vivo(pid: int) -> bool:
     if pid == os.getpid():
         return True
-    if sys.platform == "win32":
+    if _WINDOWS:
         import ctypes
 
         handle = ctypes.windll.kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
@@ -66,7 +69,7 @@ def _processo_vivo(pid: int) -> bool:
             return False
         ctypes.windll.kernel32.CloseHandle(handle)
         return True
-    return _vivo_posix(pid)  # type: ignore[unreachable]
+    return _vivo_posix(pid)
 
 
 def _vivo_posix(pid: int) -> bool:  # pragma: no cover - só roda fora do Windows
