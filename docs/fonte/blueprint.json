@@ -1,0 +1,80 @@
+{
+  "produto": "Narrador",
+  "titulo": "Blueprint Técnico",
+  "kicker": "Documento de implementação · outubro de 2026",
+  "rodape": "Blueprint técnico · Narrador",
+  "entrega": "Entrega 1: capa, escopo real e arquitetura, com a tabela de escolhas de tecnologia como proposta a ser batida pelo cliente. Dados, máquinas de estado, protocolo, adaptador, fluxos, cards e testes entram nas próximas entregas.",
+  "intro": "Este documento entrega tudo que é preciso para colocar a fase 1 do Narrador em pé: o escopo real, a arquitetura, o modelo de dados, o protocolo entre mestre e motor, o adaptador do serviço de linguagem e o roteiro em cards, na ordem em que devem ser executados. Complementa o Mapa do Projeto e os Casos de Uso.",
+  "para_quem": "Para a pessoa que vai criar o repositório e precisa saber exatamente o que construir primeiro. Cada capítulo responde a uma pergunta prática: qual é o escopo real, como o dado é modelado, como o mestre fala com o motor, como falamos com o serviço de linguagem e qual card pegar em seguida. Nada aqui é sugestão de arquitetura para discutir depois: é o que vamos construir, salvo o que está marcado como proposta.",
+  "regra": "Todo dado é do motor. Todo fato, veredito e desvio deixa rastro consultável. O serviço de linguagem nunca grava estado: ele lê um recorte, propõe e narra, e o motor decide. Se um card contrariar isso, o card está errado.",
+  "capitulos": [
+    {
+      "numero": 1, "titulo": "O escopo real da primeira entrega", "kicker": "Capítulo 1",
+      "lead": "A fase 1 tem 49 casos de uso e todos entram, mas não todos de uma vez. O primeiro código entregue é o esqueleto ambulante: a fatia mais fina de ponta a ponta, jogável, que prova a arquitetura antes de qualquer funcionalidade ganhar corpo.",
+      "blocos": [
+        {"tipo": "escopo_diagrama",
+         "acima": [
+           {"t": "Módulos A e B · 12 casos", "s": "aventura em módulo canônico; personagem válido pelo SRD"},
+           {"t": "Módulos E e F · 13 casos", "s": "motor de regras; campanha viva e memória"},
+           {"t": "Módulo G · 7 casos", "s": "salvamento, resumo, verificação, custo"}],
+         "abaixo": {"t": "Módulos C e D · 18 casos", "s": "a mesa que o jogador vê: narração, veredito, combate"},
+         "legenda": "O que a mesa arrasta junto. Colocar só a narração e o combate no ar resultaria numa mesa que inventa regra, esquece o que aconteceu e perde a sessão na primeira queda. Os módulos A, B, E, F e G sustentam C e D e entram juntos."},
+        {"tipo": "callout", "cor": "azul", "titulo": "O esqueleto ambulante, a primeira coisa jogável",
+         "texto": "Um personagem pré-gerado (B02), uma aventura original mínima já no formato canônico, consultada pelo mestre (A05), uma cena narrada (C03), uma tentativa com veredito e rolagem (C05, E01, E02), um encontro com iniciativa, turnos, ataque e fim (D01, D02, D03, D04, D08), tudo gravado na campanha viva (F01, G01) e retomável (C02, C09). No terminal, em português. Nada de importar PDF, criar personagem ou subir de nível ainda: isso vem card a card depois que a espinha dorsal estiver provada e jogada pelo cliente."},
+        {"tipo": "tabela", "titulo": "Os 49 casos de uso da fase 1, por módulo",
+         "colunas": ["Módulo", "Casos", "Por que entra agora"],
+         "linhas": [
+           ["A · Campanha e módulo", "A01 a A07", "Sem módulo canônico não há gabarito; é a tese do produto."],
+           ["B · Personagem", "B01 a B05", "Sem ficha válida o motor não tem com o que calcular."],
+           ["C · Mesa e narração", "C01 a C10", "É o que o jogador vê; inclui o veredito da regra RN-11."],
+           ["D · Combate", "D01 a D08", "A parte mais exigente do motor, por zonas na fase 1 (DC-13)."],
+           ["E · Regras e dados", "E01 a E06", "O motor determinístico e o SRD como dado; nada roda sem ele."],
+           ["F · Campanha viva", "F01 a F06", "Fatos, desvios, caminho alternativo, retomada, revisão."],
+           ["G · Processos automáticos", "G01 a G07", "Salvamento a cada fato, consistência, recusa do serviço, atribuição, custo."]]},
+        {"tipo": "callout", "cor": "amarelo", "titulo": "O que fica de fora, de propósito",
+         "texto": "Grupo (H01 a H03), campanha livre (I01 a I03) e memória de campanha longa (F07) são das fases 2 e 3. Interface web, grade tática de combate (decisão DC-13), voz e mapa também. Tudo isso está desenhado nos Casos de Uso e no Mapa, e o modelo de dados deste documento já foi pensado para recebê-los sem migração destrutiva: a campanha viva tem lugar para mais de um jogador, e o módulo canônico gerado é o mesmo objeto do importado."}
+      ]
+    },
+    {
+      "numero": 2, "titulo": "A arquitetura que vamos construir", "kicker": "Capítulo 2",
+      "lead": "Um processo só na fase 1, cinco pacotes com fronteiras claras e um lugar onde o dado mora. Quem vem de fora entra por uma porta, e nenhuma delas conversa com o dado sem passar pelo motor, onde vivem as regras.",
+      "blocos": [
+        {"tipo": "camadas",
+         "linhas": [
+           {"rotulo": "Quem usa", "caixas": [{"t": "Jogador", "s": "joga no terminal, em português"}, {"t": "Dono da mesa", "s": "importa, confere, revisa"}, {"t": "Serviço de linguagem", "s": "o mestre: lê o recorte, propõe, narra", "cor": "laranja"}]},
+           {"rotulo": "Portas de entrada", "caixas": [{"t": "Terminal (CLI)", "s": "sessão, comandos e telas de texto"}, {"t": "Terminal (CLI)", "s": "importação, conferência, revisão"}, {"t": "Protocolo de ferramentas", "s": "a única forma de o mestre agir"}]},
+           {"rotulo": "Onde mora a regra", "caixas": [{"t": "Motor", "s": "SRD, dados, testes, combate, validação"}, {"t": "Módulo canônico", "s": "estruturação, conferência, versões"}, {"t": "Mestre", "s": "contexto por cena, verificação, adaptador"}]},
+           {"rotulo": "Onde fica o dado", "caixas": [{"t": "Campanha viva", "s": "fatos, desvios, diário de rolagens; só inserção"}, {"t": "Pasta de aventuras", "s": "arquivo do dono, texto extraído, canônico"}, {"t": "SRD 5.2 embutido", "s": "dado consultável, com atribuição"}]},
+           {"rotulo": "Fora de casa", "caixas": [{"t": "Disco local do dono da mesa", "s": "nada sai sem a regra RN-09", "cor": "verde"}, {"t": "Serviço de linguagem", "s": "só recortes, só com autorização (DC-12)", "cor": "verde"}, {"t": "Nenhum outro", "s": "sem nuvem, sem conta, sem telemetria na fase 1", "cor": "cinza"}]}],
+         "legenda": "As cinco camadas do sistema. O serviço de linguagem aparece na primeira camada porque, para nós, ele é um usuário como qualquer outro: recebe um recorte, pede coisas pelo protocolo e recebe respostas. A diferença é que ele nunca grava estado."},
+        {"tipo": "pacotes", "titulo": "Um processo, cinco pacotes",
+         "itens": [
+           {"rotulo": "Processo", "nome": "narrador", "desc": "O programa de terminal. Abre a campanha, roda a sessão, mostra telas de texto. Único processo da fase 1; a web da fase 2 é outro processo sobre os mesmos pacotes."},
+           {"rotulo": "Pacote", "nome": "motor", "desc": "Regras puras: dados com semente, testes, ficha e derivados, combate por zonas, condições, validação de pedido. Sem rede, sem disco, sem relógio de parede. É onde moram os testes que não podem falhar."},
+           {"rotulo": "Pacote", "nome": "srd", "desc": "O SRD 5.2 em formato estruturado, carregado do PDF oficial com o acelerador conferido, busca por nome (inglês, português, nomes de 2014) e o texto de atribuição."},
+           {"rotulo": "Pacote", "nome": "modulo", "desc": "Importação do arquivo, extração de texto, estruturação com ou sem serviço, conferência, mapeamento para o SRD, versões imutáveis do módulo canônico."},
+           {"rotulo": "Pacote", "nome": "campanha", "desc": "Campanha viva: diário só de inserção de fatos, desvios, vereditos e rolagens; instantâneos; retomada; o que o personagem sabe."},
+           {"rotulo": "Pacote", "nome": "mestre", "desc": "Montagem do contexto por cena, protocolo de ferramentas, verificação de consistência e vazamento, adaptador do serviço de linguagem, classificação de falhas, medição de custo."}]},
+        {"tipo": "callout", "cor": "azul", "titulo": "Por que separar o motor do mestre",
+         "texto": "O mestre é probabilístico e externo: pode errar, recusar, cair. O motor é determinístico e local: dado o mesmo estado e a mesma semente, produz o mesmo resultado, sempre. Juntar os dois significaria não poder testar regra sem serviço de linguagem, nem auditar rolagem sem reler narração. Separando, o motor roda inteiro nos testes sem rede, e o mestre pode ser trocado por configuração sem tocar numa regra."},
+        {"tipo": "escolhas", "titulo": "As escolhas de tecnologia, como proposta",
+         "nota": "Proposta para o cliente bater o martelo. O critério, em ordem: o que o Mapa já comprometeu, o que os casos de uso exigem, o que já existe nesta máquina, e o que o cliente já domina em outros projetos. Nenhuma linha abaixo nomeia provedor nem modelo de linguagem: isso é decidido por medição, no card da bancada.",
+         "linhas": [
+           {"escolha": "Linguagem", "proposta": "Python 3.13", "porque": "O Mapa comprometeu o motor testado isolado com pytest. A extração de PDF, a validação de dados e a chamada ao serviço já têm biblioteca instalada nesta máquina. O cliente já mantém uma API em Python.", "alternativa": "TypeScript com Node 22, como no outro projeto do cliente: mesma ferramenta para a web da fase 2 e o mesmo fluxo de integração contínua que ele já opera."},
+           {"escolha": "Validação e tipos", "proposta": "pydantic 2 com tipagem estrita conferida por mypy", "porque": "Ficha, módulo canônico, fatos e mensagens do protocolo são dados com forma fixa; validar na borda e tipar por dentro evita a classe inteira de erro de regra por campo errado.", "alternativa": "dataclasses da biblioteca padrão com validação à mão: menos dependência, mais código de conferência escrito e testado por nós."},
+           {"escolha": "Dado da campanha viva", "proposta": "SQLite, um arquivo por campanha, diário só de inserção garantido por gatilho", "porque": "Local por regra (RN-09), atômico e retomável por regra (RN-10), consultável para auditoria (E06, F06) sem carregar tudo em memória. A prova dos gatilhos entra na entrega 2.", "alternativa": "Arquivos de texto em linhas (uma linha por fato): mais simples de inspecionar à mão, sem consulta estruturada e com atomicidade a cargo nosso."},
+           {"escolha": "SRD estruturado", "proposta": "PDF oficial 5.2.1 (CC-BY-4.0) como fonte de verdade; o conjunto de dados aberto da comunidade para 2024 como acelerador, conferido registro a registro contra o PDF", "porque": "O acelerador tem lacunas conhecidas (magias sem texto, itens faltando) e a licença dos arquivos derivados não é declarada; a conferência contra o PDF fecha a lacuna LC-01 com prova.", "alternativa": "Conversões em Markdown da comunidade: mais fáceis de ler, com divergências relatadas em criaturas e itens."},
+           {"escolha": "Extração de texto de PDF", "proposta": "PyMuPDF", "porque": "Já instalado, rápido, preserva a página de origem por bloco, que o caso de uso A01 exige.", "alternativa": "pypdf: puro Python, mais lento, também instalado."},
+           {"escolha": "Serviço de linguagem", "proposta": "Adaptador por interface, com uma implementação por provedor usando o SDK oficial dele, e um provedor falso para testes", "porque": "O provedor é escolhido pela bancada do card correspondente, por custo, latência, qualidade em português e comportamento nas cenas da decisão DC-11. Nada no código fora do adaptador sabe qual é.", "alternativa": "Chamadas HTTP diretas: menos dependência, mais código de protocolo a manter a cada mudança do provedor."},
+           {"escolha": "Terminal", "proposta": "Biblioteca de terminal rica para cor e painéis, sobre entrada de texto simples", "porque": "A fase 1 é texto; a leitura da mesa melhora com cor e blocos, sem exigir interface gráfica.", "alternativa": "Só a biblioteca padrão: zero dependência, telas mais pobres."},
+           {"escolha": "Testes", "proposta": "pytest, com testes de propriedade para o motor", "porque": "Comprometido no Mapa. Testes de propriedade cobrem faixas de dado, limites de regra e transições inválidas melhor do que exemplos escritos à mão.", "alternativa": "Só exemplos com pytest: suficiente no início, pior para o motor."},
+           {"escolha": "Qualidade e integração contínua", "proposta": "ruff para lint e formato, mypy para tipos, repositório privado com integração contínua a cada push", "porque": "Mesmo esquema de entrega dos outros projetos do cliente: a integração verde é o registro de entrega de cada card.", "alternativa": "Sem integração contínua: cada card provado à mão, sem histórico."}]}
+      ]
+    }
+  ],
+  "proximas": [
+    {"n": "Entrega 2", "t": "Capítulos 3 a 6: o dado (módulo canônico, campanha viva, diário), com o esquema executado e as provas; as máquinas de estado da sessão, do combate e da tentativa; o protocolo de ferramentas entre mestre e motor; o adaptador do serviço de linguagem."},
+    {"n": "Entrega 3", "t": "Capítulos 7 e 8: três fluxos de ponta a ponta e o roteiro em cards, com critério de aceite por card e dependências, sem estimativa de tempo."},
+    {"n": "Entrega 4", "t": "Capítulo 9 e fechamento: ambientes, níveis de teste, definição de pronto, o que fazer primeiro, o que este documento assume e as lacunas do Mapa tocadas."}
+  ]
+}
