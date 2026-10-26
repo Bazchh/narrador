@@ -30,12 +30,12 @@ narrador = "narrador.cli:principal"
 where = ["src"]
 
 [tool.setuptools.package-data]
-narrador = ["py.typed", "**/*.sql"]
+narrador = ["py.typed", "**/*.sql", "**/*.json"]
 
 [tool.ruff]
 line-length = 110
 target-version = "py313"
-src = ["src", "tests"]
+src = ["src", "tests", "ferramentas"]
 extend-exclude = ["docs/fonte"]  # geradores dos documentos, fora do produto
 
 [tool.ruff.lint]

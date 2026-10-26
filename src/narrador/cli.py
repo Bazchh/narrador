@@ -23,7 +23,16 @@ def montar_parser() -> argparse.ArgumentParser:
     semente.add_argument(
         "pasta", type=Path, help="pasta de aventuras; o arquivo porao-da-taverna.sqlite é criado nela"
     )
+    sub.add_parser("sobre", help="versão, licença do SRD e a atribuição exigida")
     return parser
+
+
+def _comando_sobre() -> int:
+    from narrador.srd.atribuicao import texto_sobre
+    from narrador.srd.modelo import VERSAO_SRD
+
+    print(texto_sobre(__version__, VERSAO_SRD))
+    return 0
 
 
 def _comando_semente(pasta: Path) -> int:
@@ -48,6 +57,8 @@ def principal(argv: Sequence[str] | None = None) -> int:
         return 0
     if args.comando == "semente":
         return _comando_semente(args.pasta)
+    if args.comando == "sobre":
+        return _comando_sobre()
     montar_parser().print_help()
     return 0
 
