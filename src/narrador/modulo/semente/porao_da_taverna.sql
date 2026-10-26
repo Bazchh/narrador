@@ -31,6 +31,8 @@ insert into ligacao (aventura_id, versao, de_item, para_item, tipo, caminho_crit
  ('av-porao', 1, 'cena-taverna', 'cena-porao', 'leva_a', 1),
  ('av-porao', 1, 'cena-porao',   'cena-tunel', 'leva_a', 1),
  ('av-porao', 1, 'loc-taverna',  'cena-taverna', 'contem', 0),
+ ('av-porao', 1, 'cena-taverna', 'np-taverneiro', 'contem', 0),
+ ('av-porao', 1, 'cena-taverna', 'gancho-barulho', 'contem', 0),
  ('av-porao', 1, 'np-taverneiro','seg-anel', 'sabe_de', 0),
  ('av-porao', 1, 'cena-tunel',   'it-anel', 'contem', 0);
 

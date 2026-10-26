@@ -184,7 +184,7 @@ def test_prova_09_semente_publicada_como_versao_1(av: sqlite3.Connection) -> Non
     publicada = av.execute(
         "select publicada_em from modulo_versao where aventura_id='av-porao' and versao=1"
     ).fetchone()
-    assert itens == (10,) and ligacoes == (5,)
+    assert itens == (10,) and ligacoes == (7,)
     assert publicada is not None and publicada[0] is not None
 
 
