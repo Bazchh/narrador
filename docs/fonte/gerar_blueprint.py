@@ -82,6 +82,27 @@ CSS = """
   ul.clean { margin:4px 0 0 16px; padding:0; font-size:9.3pt; } ul.clean li { margin:2px 0; }
   pre.cod { background:#0f1b33; color:#e6ecf5; border-radius:8px; padding:10px 12px; font-family:Consolas, "Cascadia Mono", monospace; font-size:8.2pt; line-height:1.4; white-space:pre-wrap; margin:6px 0 10px; break-inside:auto; }
   pre.cod.curto { break-inside:avoid; }
+  .etapa { border:1px solid var(--line); border-radius:10px; margin:14px 0 10px; overflow:hidden; break-before:page; break-inside:auto; }
+  .etapa-h, .etapa-r { break-after:avoid; }
+  .etapa-h { color:#fff; padding:8px 12px; display:flex; align-items:center; gap:10px; }
+  .etapa-h .k { font-family:Consolas, monospace; font-size:7.5pt; letter-spacing:0.12em; text-transform:uppercase; opacity:0.85; }
+  .etapa-h b { font-size:13pt; flex:1; }
+  .etapa-h .n { font-family:Consolas, monospace; font-size:8pt; opacity:0.9; }
+  .etapa-r { background:var(--bg-soft); padding:7px 12px; font-size:9.2pt; border-bottom:1px solid var(--line); }
+  .card-n { padding:9px 12px 10px; border-bottom:1px solid var(--line); break-inside:avoid; }
+  .card-n:last-child { border-bottom:none; }
+  .card-h { display:flex; align-items:center; gap:8px; margin-bottom:4px; flex-wrap:wrap; }
+  .card-h .cid { color:#fff; font-family:Consolas, monospace; font-size:8.5pt; padding:2px 7px; border-radius:3px; }
+  .card-h h3 { font-size:11.5pt; margin:0; flex:1; min-width:55%; }
+  .pills { display:flex; gap:4px; flex-wrap:wrap; }
+  .pill-c { font-family:Consolas, monospace; font-size:7.2pt; padding:1px 6px; border-radius:10px; border:1px solid var(--line); color:var(--muted); background:#fff; white-space:nowrap; }
+  .pill-c.uc { color:var(--green); border-color:var(--green); background:#e8f7ee; }
+  .card-b { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .card-b p { font-size:9pt; margin:0 0 2px; }
+  .card-b ul.clean { font-size:8.8pt; margin-top:2px; }
+  .card-b .lbl { font-family:Consolas, monospace; font-size:7.2pt; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin:4px 0 2px; }
+  .aceite { background:#e8f7ee; border:1px solid #bfe3cc; border-radius:8px; padding:8px 10px; align-self:start; }
+  .aceite p { font-size:9pt; }
   .cod-k { font-family:Consolas, monospace; font-size:7.5pt; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin:8px 0 2px; break-after:avoid; }
 """
 
@@ -89,7 +110,7 @@ CSS = """
 n_caps = len(D["capitulos"])
 n_escolhas = sum(len(b["linhas"]) for c in D["capitulos"] for b in c["blocos"] if b["tipo"] == "escolhas")
 n_pacotes = sum(sum(1 for i in b["itens"] if i["rotulo"] == "Pacote") for c in D["capitulos"] for b in c["blocos"] if b["tipo"] == "pacotes")
-n_cards = sum(len(b.get("cards", [])) for c in D["capitulos"] for b in c["blocos"] if b["tipo"] == "cards")
+n_cards = sum(len(et["cards"]) for c in D["capitulos"] for b in c["blocos"] if b["tipo"] == "cards" for et in b["etapas"])
 n_ferramentas = sum(len(b.get("linhas", [])) for c in D["capitulos"] for b in c["blocos"] if b["tipo"] == "ferramentas")
 
 
@@ -151,7 +172,74 @@ def bloco(b):
         cols = b.get("colunas", 2)
         cards = "".join(f'<div class="box"><h3>{e(i["t"])}</h3><p>{e(i["s"])}</p></div>' for i in b["itens"])
         return (f'<h3 style="margin:12px 0 2px">{e(b["titulo"])}</h3>' if b.get("titulo") else "") + f'<div style="display:grid;grid-template-columns:repeat({cols},1fr);gap:8px">{cards}</div>'
+    if t == "cards":
+        return cards_html(b)
     raise ValueError("bloco desconhecido: " + t)
+
+
+CORES_ETAPA = {"cinza": "#6b7588", "azul": "#1f4fd1", "verde": "#1f9d55", "laranja": "#e08a1e", "roxo": "#6f42c1", "marinho": "#0f1b33"}
+
+
+def grafo_svg(etapas):
+    cols = len(etapas)
+    maxn = max(len(e["cards"]) for e in etapas)
+    W = 700
+    cw = W / cols
+    bw, bh, gy = 74, 26, 36
+    H = 40 + maxn * gy
+    pos = {}
+    for i, e in enumerate(etapas):
+        for j, c in enumerate(e["cards"]):
+            pos[c["id"]] = (cw * i + cw / 2, 44 + j * gy)
+    out = [f'<svg viewBox="0 0 {W} {H}" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">',
+           '<defs><marker id="ag" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#9aa4b5"/></marker></defs>']
+    for i, e in enumerate(etapas):
+        cor = CORES_ETAPA.get(e["cor"], "#6b7588")
+        out.append(f'<rect x="{cw*i + 8}" y="6" width="{cw - 16}" height="20" rx="4" fill="{cor}"/>')
+        out.append(f'<text x="{cw*i + cw/2}" y="20" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">{e["id"]} · {e_(e["nome"])}</text>')
+    for e in etapas:
+        for c in e["cards"]:
+            x2, y2 = pos[c["id"]]
+            for d in c["depois"]:
+                x1, y1 = pos[d]
+                if abs(x1 - x2) < 1:
+                    out.append(f'<line x1="{x1}" y1="{y1 + bh/2}" x2="{x2}" y2="{y2 - bh/2}" stroke="#9aa4b5" stroke-width="0.9" marker-end="url(#ag)"/>')
+                else:
+                    out.append(f'<path d="M{x1 + bw/2},{y1} C{(x1 + x2)/2},{y1} {(x1 + x2)/2},{y2} {x2 - bw/2},{y2}" fill="none" stroke="#9aa4b5" stroke-width="0.9" marker-end="url(#ag)"/>')
+    for e in etapas:
+        cor = CORES_ETAPA.get(e["cor"], "#6b7588")
+        for c in e["cards"]:
+            x, y = pos[c["id"]]
+            out.append(f'<rect x="{x - bw/2}" y="{y - bh/2}" width="{bw}" height="{bh}" rx="4" fill="#fff" stroke="{cor}" stroke-width="1.2"/>')
+            out.append(f'<text x="{x}" y="{y + 3.5}" text-anchor="middle" font-size="8.5" font-family="Consolas, monospace" fill="#0f1b33">{c["id"]}</text>')
+    out.append('</svg>')
+    return "".join(out)
+
+
+def e_(s):
+    return e(s)
+
+
+def cards_html(b):
+    etapas = b["etapas"]
+    h = []
+    # visão geral
+    rows = "".join(f'<tr><td><span style="display:inline-block;background:{CORES_ETAPA.get(et["cor"],"#6b7588")};color:#fff;font-family:Consolas,monospace;font-size:7.5pt;padding:1px 6px;border-radius:3px">{et["id"]}</span></td><td><b>{e(et["nome"])}</b></td><td>{e(et["resumo"])}</td><td class="code">{len(et["cards"])} cards</td></tr>' for et in etapas)
+    h.append(f'<table><thead><tr><th>Etapa</th><th></th><th>O que muda no fim dela</th><th>Cards</th></tr></thead><tbody>{rows}</tbody></table>')
+    h.append(f'<div class="callout azul"><div class="k">Como usar estes cards</div>{e(b["nota"])}</div>')
+    h.append(f'<div class="diag" style="margin-top:12px">{grafo_svg(etapas)}<div class="cap-txt"><b>Quem depende de quem.</b> As setas mostram o que precisa estar pronto antes. Cards na mesma coluna sem seta entre si podem ser feitos em paralelo. As etapas S0 e S1 são sequenciais de verdade; a partir de S2, os cards de mesa e os de importação podem andar lado a lado.</div></div>')
+    for et in etapas:
+        cor = CORES_ETAPA.get(et["cor"], "#6b7588")
+        h.append(f'<div class="etapa" style="border-color:{cor}"><div class="etapa-h" style="background:{cor}"><span class="k">Etapa {et["id"]}</span><b>{e(et["nome"])}</b><span class="n">{len(et["cards"])} cards</span></div><div class="etapa-r">{e(et["resumo"])}</div>')
+        for c in et["cards"]:
+            entra = "".join(f"<li>{e(i)}</li>" for i in c["entra"])
+            dep = f'<span class="pill-c">depois de {e(", ".join(c["depois"]))}</span>' if c["depois"] else '<span class="pill-c">sem dependência</span>'
+            casos = f'<span class="pill-c uc">{e(c["casos"])}</span>' if c["casos"] else ""
+            h.append(f'''<div class="card-n"><div class="card-h"><span class="cid" style="background:{cor}">{c["id"]}</span><h3>{e(c["nome"])}</h3><span class="pills">{dep}{casos}</span></div>
+<div class="card-b"><div><div class="lbl">Por que este card existe</div><p>{e(c["porque"])}</p><div class="lbl">O que entra no repositório</div><ul class="clean">{entra}</ul></div>
+<div class="aceite"><div class="lbl" style="color:var(--green)">Critério de aceite</div><p><b>Dado</b> {e(c["aceite"]["dado"])}, <b>quando</b> {e(c["aceite"]["quando"])}, <b>então</b> {e(c["aceite"]["entao"])}</p></div></div></div>''')
+        h.append('</div>')
+    return "".join(h)
 
 
 def sequencia_svg(seq):
