@@ -3,7 +3,7 @@
   "titulo": "Blueprint Técnico",
   "kicker": "Documento de implementação · outubro de 2026",
   "rodape": "Blueprint técnico · Narrador",
-  "entrega": "Entrega 2: capítulos 1 a 6. O esquema de dados executado com provas, as três máquinas de estado, o protocolo entre mestre e motor e o adaptador do serviço de linguagem. Fluxos, cards, testes e fechamento entram nas entregas 3 e 4.",
+  "entrega": "Entrega 3: capítulos 1 a 8. Os três fluxos de ponta a ponta e o roteiro em cards, com critério de aceite e dependências. Ambientes, testes, definição de pronto e fechamento entram na entrega 4.",
   "intro": "Este documento entrega tudo que é preciso para colocar a fase 1 do Narrador em pé: o escopo real, a arquitetura, o modelo de dados, o protocolo entre mestre e motor, o adaptador do serviço de linguagem e o roteiro em cards, na ordem em que devem ser executados. Complementa o Mapa do Projeto e os Casos de Uso.",
   "para_quem": "Para a pessoa que vai criar o repositório e precisa saber exatamente o que construir primeiro. Cada capítulo responde a uma pergunta prática: qual é o escopo real, como o dado é modelado, como o mestre fala com o motor, como falamos com o serviço de linguagem e qual card pegar em seguida. Nada aqui é sugestão de arquitetura para discutir depois: é o que vamos construir, salvo o que está marcado como proposta.",
   "regra": "Todo dado é do motor. Todo fato, veredito e desvio deixa rastro consultável. O serviço de linguagem nunca grava estado: ele lê um recorte, propõe e narra, e o motor decide. Se um card contrariar isso, o card está errado.",
@@ -1475,13 +1475,1082 @@
           "texto": "Ele é roteirizado por cena: dado um contexto, devolve as chamadas e a narração que o roteiro manda, sem rede e sem custo. Com ele, o esqueleto ambulante, o combate, a retomada e a auditoria são testados inteiros na integração contínua, e a bancada com provedores reais vira uma comparação controlada, não uma investigação. O roteiro de cada teste é a especificação do que o mestre deveria ter feito; quando o provedor real fizer diferente, o teste diz exatamente onde. As três operações do adaptador passam por ele: o turno da mesa, a extração de itens da aventura (A02) e o resumo de sessão (G02)."
         }
       ]
+    },
+    {
+      "numero": 7,
+      "titulo": "Três fluxos de ponta a ponta",
+      "kicker": "Capítulo 7",
+      "lead": "Os diagramas abaixo amarram tudo que veio até aqui: a entrada do jogador, a máquina de estados, a ferramenta do protocolo, o registro no diário e o adaptador, na ordem real em que acontecem.",
+      "blocos": [
+        {
+          "tipo": "sequencia",
+          "titulo": "Fluxo 1: da frase do jogador à narração",
+          "colunas": [
+            "Jogador",
+            "Terminal",
+            "Mestre (serviço)",
+            "Motor",
+            "Campanha viva"
+          ],
+          "passos": [
+            {
+              "de": 0,
+              "para": 1,
+              "t": "\"eu tento escalar o muro\""
+            },
+            {
+              "de": 1,
+              "para": 3,
+              "t": "classificar entrada: ação (C05)"
+            },
+            {
+              "de": 3,
+              "para": 1,
+              "t": "tentativa: declarada",
+              "tracejado": true
+            },
+            {
+              "de": 1,
+              "para": 2,
+              "t": "rodar_turno(contexto da cena, ferramentas)"
+            },
+            {
+              "de": 2,
+              "para": 3,
+              "t": "dar_veredito(teste, atletismo, 15)"
+            },
+            {
+              "de": 3,
+              "para": 3,
+              "t": "valida; compara com vereditos anteriores (G04)"
+            },
+            {
+              "de": 3,
+              "para": 4,
+              "t": "grava veredito e rolagem (contador 207, d20 = 14)"
+            },
+            {
+              "de": 3,
+              "para": 2,
+              "t": "17 contra 15: sucesso por 2",
+              "tracejado": true
+            },
+            {
+              "de": 2,
+              "para": 3,
+              "t": "narrar(texto, fatos)"
+            },
+            {
+              "de": 3,
+              "para": 3,
+              "t": "verificação G03: segredos e fatos"
+            },
+            {
+              "de": 3,
+              "para": 4,
+              "t": "grava fatos e consulta"
+            },
+            {
+              "de": 3,
+              "para": 2,
+              "t": "aprovado",
+              "tracejado": true
+            },
+            {
+              "de": 2,
+              "para": 1,
+              "t": "Turno(narração, chamadas, uso)",
+              "tracejado": true
+            },
+            {
+              "de": 1,
+              "para": 0,
+              "t": "narração + \"Atletismo 17 contra 15: sucesso\"",
+              "tracejado": true
+            }
+          ],
+          "legenda": "O ponto delicado está no meio: o dado é rolado e gravado antes de o mestre narrar. Se o serviço cair depois disso, a retomada parte do veredito gravado e nada é rolado duas vezes."
+        },
+        {
+          "tipo": "sequencia",
+          "titulo": "Fluxo 2: da aventura em arquivo ao módulo canônico publicado",
+          "colunas": [
+            "Dono da mesa",
+            "Terminal",
+            "Pacote módulo",
+            "Mestre (serviço)",
+            "Pasta de aventuras"
+          ],
+          "passos": [
+            {
+              "de": 0,
+              "para": 1,
+              "t": "importar porao.pdf"
+            },
+            {
+              "de": 1,
+              "para": 2,
+              "t": "copiar, impressão digital, extrair texto por página (A01)"
+            },
+            {
+              "de": 2,
+              "para": 4,
+              "t": "aventura + texto_pagina"
+            },
+            {
+              "de": 1,
+              "para": 0,
+              "t": "amostra do texto; trechos que seriam enviados",
+              "tracejado": true
+            },
+            {
+              "de": 0,
+              "para": 1,
+              "t": "autoriza o envio (DC-12)"
+            },
+            {
+              "de": 2,
+              "para": 4,
+              "t": "autorizacao_envio (concedida, N trechos)"
+            },
+            {
+              "de": 2,
+              "para": 3,
+              "t": "extrair_itens(trecho 1 de N, esquema)"
+            },
+            {
+              "de": 3,
+              "para": 2,
+              "t": "cenas, personagens, segredos com página",
+              "tracejado": true
+            },
+            {
+              "de": 2,
+              "para": 2,
+              "t": "une repetidos, monta grafo, marca incertos (A02)"
+            },
+            {
+              "de": 2,
+              "para": 4,
+              "t": "modulo_versao 1 em rascunho + itens + ligações"
+            },
+            {
+              "de": 1,
+              "para": 0,
+              "t": "conferência, incertos primeiro (A03)",
+              "tracejado": true
+            },
+            {
+              "de": 0,
+              "para": 1,
+              "t": "aceita, corrige, marca segredos e caminho crítico"
+            },
+            {
+              "de": 2,
+              "para": 2,
+              "t": "valida grafo; criaturas mapeadas ou pendentes (A04)"
+            },
+            {
+              "de": 2,
+              "para": 4,
+              "t": "publicada_em gravado: versão 1 imutável"
+            }
+          ],
+          "legenda": "Nada do texto sai da máquina antes do registro da autorização, e sai trecho a trecho. Sem autorização, o mesmo fluxo corre sem a coluna do serviço: o dono da mesa cria os itens à mão com apoio local."
+        },
+        {
+          "tipo": "sequencia",
+          "titulo": "Fluxo 3: o serviço cai no meio do combate",
+          "colunas": [
+            "Jogador",
+            "Terminal",
+            "Adaptador",
+            "Motor",
+            "Campanha viva"
+          ],
+          "passos": [
+            {
+              "de": 0,
+              "para": 1,
+              "t": "\"ataco o rato com a espada\""
+            },
+            {
+              "de": 1,
+              "para": 3,
+              "t": "turno_pj: declaração válida (D02)"
+            },
+            {
+              "de": 3,
+              "para": 4,
+              "t": "ataque: d20 = 18 acerta; dano 7; rato a 0 (D04, D07)"
+            },
+            {
+              "de": 1,
+              "para": 2,
+              "t": "rodar_turno: narrar o golpe"
+            },
+            {
+              "de": 2,
+              "para": 2,
+              "t": "tempo esgotado; repete com espera; limite atingido"
+            },
+            {
+              "de": 2,
+              "para": 1,
+              "t": "falha: indisponivel",
+              "tracejado": true
+            },
+            {
+              "de": 1,
+              "para": 4,
+              "t": "sessão: em_combate → pausada; ocorrência registrada (G05)"
+            },
+            {
+              "de": 1,
+              "para": 0,
+              "t": "\"O mestre está fora do ar. Tudo foi salvo. Tentar de novo ou encerrar?\"",
+              "tracejado": true
+            },
+            {
+              "de": 0,
+              "para": 1,
+              "t": "fecha o programa"
+            },
+            {
+              "de": 0,
+              "para": 1,
+              "t": "abre a campanha mais tarde (C02)"
+            },
+            {
+              "de": 1,
+              "para": 4,
+              "t": "sessão não encerrada; último registro: ataque resolvido, narração pendente"
+            },
+            {
+              "de": 3,
+              "para": 3,
+              "t": "reconstrói rodada, ordem, condições (F05)"
+            },
+            {
+              "de": 1,
+              "para": 2,
+              "t": "rodar_turno: narrar o golpe já resolvido"
+            },
+            {
+              "de": 2,
+              "para": 1,
+              "t": "narração aprovada",
+              "tracejado": true
+            },
+            {
+              "de": 1,
+              "para": 0,
+              "t": "\"Você estava no meio do combate: a espada atravessa o rato...\"",
+              "tracejado": true
+            }
+          ],
+          "legenda": "O ataque foi resolvido e gravado antes da queda; a retomada não rola nada de novo, só narra o que já aconteceu. É a regra RN-10 em ação: no máximo uma narração se perde, nunca um resultado."
+        }
+      ]
+    },
+    {
+      "numero": 8,
+      "titulo": "O roteiro em 36 cards",
+      "kicker": "Capítulo 8",
+      "lead": "Daqui para frente o documento vira backlog. Cada card tem um identificador permanente, um motivo de existir, a lista do que entra no repositório e um critério de aceite escrito como teste. A ordem é de execução, não de importância, e não há estimativa de tempo: o portão de cada etapa é prova, não data.",
+      "blocos": [
+        {
+          "tipo": "cards",
+          "etapas": [
+            {
+              "id": "S0",
+              "nome": "Fundação",
+              "cor": "cinza",
+              "resumo": "Ninguém escreve regra ainda. O objetivo é ter repositório, esquema, diário de rolagens e o pedaço do SRD que o esqueleto precisa, para que todo card seguinte comece com o chão pronto.",
+              "cards": [
+                {
+                  "id": "N-01",
+                  "nome": "Repositório, pacotes e integração contínua",
+                  "porque": "Deixar o projeto clonável e rodando em um comando, com os cinco pacotes já no lugar.",
+                  "entra": [
+                    "Projeto Python 3.13 com pyproject, pacotes motor, srd, modulo, campanha, mestre e o processo narrador.",
+                    "ruff e mypy estritos com a mesma configuração em todos os pacotes; pytest com a trava que proíbe rede em teste.",
+                    "Arquivo de exemplo de configuração sem segredo; nenhuma chave versionada.",
+                    "Integração contínua rodando lint, tipos e testes a cada push; repositório privado."
+                  ],
+                  "aceite": {
+                    "dado": "um clone limpo",
+                    "quando": "o dev cria o ambiente e roda o comando de teste",
+                    "entao": "lint, tipos e testes passam e o processo narrador responde com a versão."
+                  },
+                  "depois": [],
+                  "casos": ""
+                },
+                {
+                  "id": "N-02",
+                  "nome": "Esquema, migrações e provas no CI",
+                  "porque": "Ter os dois arquivos SQLite do capítulo 3 versionados, aplicáveis e provados em toda execução.",
+                  "entra": [
+                    "Migração 0001 da campanha viva e da pasta de aventuras, exatamente como no capítulo 3.",
+                    "Rotina de criação de campanha e de aventura a partir das migrações.",
+                    "O roteiro das quinze provas rodando como teste.",
+                    "Semente da aventura original mínima aplicável em um comando."
+                  ],
+                  "aceite": {
+                    "dado": "um banco vazio",
+                    "quando": "a migração roda",
+                    "entao": "as dezessete tabelas existem, as quinze provas respondem como no capítulo 3 e a semente está publicada como versão 1."
+                  },
+                  "depois": [
+                    "N-01"
+                  ],
+                  "casos": "G01"
+                },
+                {
+                  "id": "N-03",
+                  "nome": "Diário e gerador de rolagens",
+                  "porque": "Todo número aleatório do produto sai daqui, com semente, contador e registro, antes de existir qualquer regra.",
+                  "entra": [
+                    "Gerador determinístico por semente e contador; rolagem de expressões (1d20+3, 2d6) com vantagem e desvantagem.",
+                    "Gravação no diário e na tabela de rolagens no mesmo commit; rolagem informada sem contador.",
+                    "Reprodução de uma rolagem ou intervalo a partir do registro, com comparação dado a dado.",
+                    "Testes de propriedade: faixas, distribuição por face, reprodutibilidade."
+                  ],
+                  "aceite": {
+                    "dado": "uma campanha com semente e cem rolagens gravadas",
+                    "quando": "a reprodução roda",
+                    "entao": "cem rolagens refeitas são iguais às gravadas, e uma rolagem com contador repetido é recusada pelo banco."
+                  },
+                  "depois": [
+                    "N-02"
+                  ],
+                  "casos": "E01 E06"
+                },
+                {
+                  "id": "N-04",
+                  "nome": "SRD: carregador e as fichas do esqueleto",
+                  "porque": "Dar ao motor o dado de regra que o esqueleto precisa, no formato estruturado definitivo, sem esperar o SRD inteiro.",
+                  "entra": [
+                    "Formato estruturado do SRD no pacote srd: criatura, magia, item, condição, perícia, classe, espécie, com identificador, nome em inglês, nome em português e página do PDF.",
+                    "Carregador do PDF oficial 5.2.1 por página; acelerador aberto conferido registro a registro para o subconjunto do esqueleto.",
+                    "Subconjunto: rato gigante, guerreiro nível 1, humano, armas simples e marciais, armadura leve e média, as dezoito perícias, as condições de combate.",
+                    "Texto de atribuição CC-BY-4.0 embutido e exibido pela tela 'sobre'."
+                  ],
+                  "aceite": {
+                    "dado": "o subconjunto carregado",
+                    "quando": "o motor pede o rato gigante por nome em português",
+                    "entao": "recebe a ficha com classe de armadura, pontos de vida, ataque e a página do PDF, e a atribuição aparece na tela 'sobre'."
+                  },
+                  "depois": [
+                    "N-01"
+                  ],
+                  "casos": "E03 G06"
+                }
+              ]
+            },
+            {
+              "id": "S1",
+              "nome": "O esqueleto ambulante",
+              "cor": "azul",
+              "resumo": "A fatia mais fina de ponta a ponta. No fim desta etapa o cliente joga O Porão da Taverna no terminal, com um personagem pronto, um encontro e retomada, primeiro com o provedor falso e depois com o provedor escolhido pela bancada.",
+              "cards": [
+                {
+                  "id": "N-05",
+                  "nome": "Módulo canônico: consulta e recorte da cena",
+                  "porque": "O mestre precisa receber exatamente o que o módulo diz sobre a cena, com os segredos separados.",
+                  "entra": [
+                    "Leitura do módulo canônico publicado da semente: cenas, ligações, personagens, criaturas mapeadas, segredos com condição.",
+                    "Recorte da cena por identificador com o estado da campanha viva por cima do canônico.",
+                    "Segredos não descobertos separados e marcados 'não narrar'.",
+                    "Vizinhos devolvidos quando o identificador não existe."
+                  ],
+                  "aceite": {
+                    "dado": "a semente publicada",
+                    "quando": "o motor pede o recorte da cena do porão",
+                    "entao": "recebe descrição, encontro com dois ratos, a ligação para o túnel, e o segredo do anel vem separado e marcado."
+                  },
+                  "depois": [
+                    "N-02"
+                  ],
+                  "casos": "A05"
+                },
+                {
+                  "id": "N-06",
+                  "nome": "Personagem pré-gerado e valores derivados",
+                  "porque": "Sem ficha válida o motor não tem com o que calcular.",
+                  "entra": [
+                    "Modelo da ficha validado por pydantic; um guerreiro humano de nível 1 pré-gerado só com conteúdo do SRD.",
+                    "Cálculo dos derivados pelas fórmulas do SRD: modificadores, proficiência, pontos de vida, classe de armadura, iniciativa, salvaguardas, ataques, com a composição gravada.",
+                    "Ficha versionada na campanha viva; consulta da ficha com a origem de cada número.",
+                    "Revalidação contra a versão do SRD carregada."
+                  ],
+                  "aceite": {
+                    "dado": "o pré-gerado com cota de malha e escudo",
+                    "quando": "a ficha é consultada",
+                    "entao": "a classe de armadura é 18 e a composição mostra 16 da armadura mais 2 do escudo."
+                  },
+                  "depois": [
+                    "N-04",
+                    "N-02"
+                  ],
+                  "casos": "B02 B03 E05"
+                },
+                {
+                  "id": "N-07",
+                  "nome": "Protocolo de ferramentas e provedor falso",
+                  "porque": "Fixar o contrato do capítulo 5 e ter um mestre determinístico antes de qualquer provedor real.",
+                  "entra": [
+                    "Esquemas estritos de entrada e saída das quinze ferramentas; envelope de erro com os treze códigos.",
+                    "Registro de toda chamada como 'consulta' no diário, com turno; recusa de turno encerrado.",
+                    "Interface ServicoDeLinguagem e o provedor falso roteirizado por cena.",
+                    "Testes: campo desconhecido recusado, erro volta como resultado marcado, chamada de turno encerrado recusada."
+                  ],
+                  "aceite": {
+                    "dado": "o provedor falso com um roteiro de duas chamadas",
+                    "quando": "o turno roda",
+                    "entao": "as duas chamadas são executadas na ordem, registradas no diário com o turno, e a terceira, de turno encerrado, é recusada e registrada."
+                  },
+                  "depois": [
+                    "N-03",
+                    "N-05",
+                    "N-06"
+                  ],
+                  "casos": "C05 E04"
+                },
+                {
+                  "id": "N-08",
+                  "nome": "Veredito, teste e pergunta",
+                  "porque": "A regra RN-11 em código: pergunta não é ação; toda tentativa tem veredito validado e rolado pelo motor.",
+                  "entra": [
+                    "Classificação da entrada: pergunta ou ação; esclarecimento quando ambígua.",
+                    "dar_veredito com validação de perícia, dificuldade na escala e condições; resolução do teste com modificadores e vantagem; registro do veredito e da rolagem.",
+                    "responder_pergunta sem rolar nem gravar fato.",
+                    "Comparação com vereditos anteriores de situação semelhante; divergência sem motivo recusada."
+                  ],
+                  "aceite": {
+                    "dado": "um veredito de teste de Atletismo 15 gravado na sessão 1",
+                    "quando": "o mestre dá Atletismo 25 para a mesma situação na sessão 2 sem motivo",
+                    "entao": "o motor devolve veredito_divergente com o anterior, e uma pergunta 'e se eu escalar?' não gera rolagem nem fato."
+                  },
+                  "depois": [
+                    "N-07"
+                  ],
+                  "casos": "C04 C05 E02 G04"
+                },
+                {
+                  "id": "N-09",
+                  "nome": "Combate por zonas: iniciativa, turnos, ataque e fim",
+                  "porque": "A parte mais exigente do motor, no mínimo necessário para o encontro da semente.",
+                  "entra": [
+                    "Máquina de estados do combate do capítulo 4, com a tabela inteira testada.",
+                    "Montagem do encontro com zonas, surpresa e iniciativa; turno do personagem com economia de ação; turno da criatura pela intenção do mestre, com ação padrão na falha.",
+                    "Ataque e dano: d20, crítico, resistências, pontos de vida temporários; zero pontos de vida e morte de criatura.",
+                    "Fim do combate: detecção, experiência pela tabela do SRD, tesouro do módulo."
+                  ],
+                  "aceite": {
+                    "dado": "o personagem e dois ratos gigantes no porão",
+                    "quando": "o jogador ataca e os ratos agem com o provedor falso",
+                    "entao": "o combate termina com os ratos a zero, a experiência calculada, cada rolagem no diário e a máquina de estados sem transição inválida."
+                  },
+                  "depois": [
+                    "N-08"
+                  ],
+                  "casos": "D01 D02 D03 D04 D07 D08"
+                },
+                {
+                  "id": "N-10",
+                  "nome": "Narração com verificação de segredo e fato",
+                  "porque": "Nada do mestre chega à tela sem passar pela conferência.",
+                  "entra": [
+                    "Ferramenta narrar com texto e fatos novos; registro dos fatos com conhecimento do personagem.",
+                    "Verificação mecânica de segredos (nomes e referências ocultas no texto) e de contradição com fatos ativos.",
+                    "Devolução ao mestre com a lista de violações; na segunda falha, texto literal do módulo com aviso.",
+                    "Registro de cada verificação e das ocorrências para a revisão."
+                  ],
+                  "aceite": {
+                    "dado": "o segredo do anel não descoberto",
+                    "quando": "o provedor falso narra mencionando o túnel atrás dos barris",
+                    "entao": "a narração é devolvida com segredo_bloqueado, a ocorrência é registrada e a segunda tentativa, limpa, chega à tela."
+                  },
+                  "depois": [
+                    "N-07"
+                  ],
+                  "casos": "C03 F01 G03"
+                },
+                {
+                  "id": "N-11",
+                  "nome": "Sessão: abrir, encerrar, retomar",
+                  "porque": "A máquina de estados da sessão e a garantia de que nada se perde.",
+                  "entra": [
+                    "Criação de campanha sobre a semente, com semente de rolagens e configuração.",
+                    "Abertura com contexto, encerramento com pendências, salvamento a cada fato com escrita atômica e trava de processo.",
+                    "Retomada de sessão não encerrada: ação pendente identificada, combate reconstruído, nada rolado de novo.",
+                    "Tabela de transições da sessão testada inteira, inclusive os pares ausentes."
+                  ],
+                  "aceite": {
+                    "dado": "uma sessão em combate com um ataque resolvido e narração pendente",
+                    "quando": "o processo é morto e a campanha reaberta",
+                    "entao": "a sessão retoma em combate na mesma rodada, a narração pendente é gerada e o diário não tem rolagem repetida."
+                  },
+                  "depois": [
+                    "N-09",
+                    "N-10"
+                  ],
+                  "casos": "C01 C02 C09 F05 G01"
+                },
+                {
+                  "id": "N-12",
+                  "nome": "O terminal: a primeira sessão jogável",
+                  "porque": "Tudo acima vira uma mesa que uma pessoa joga.",
+                  "entra": [
+                    "Interface de terminal em português: abertura, narração, entrada livre, ficha, ordem de combate, telas de pausa e encerramento.",
+                    "Mensagens de recusa do motor em linguagem de jogador; linha de custo e tempo ao encerrar.",
+                    "Comando único para criar a campanha da semente e jogar.",
+                    "Roteiro de sessão de aceite com o provedor falso cobrindo cena, pergunta, tentativa, combate, queda e retomada."
+                  ],
+                  "aceite": {
+                    "dado": "a semente e o provedor falso",
+                    "quando": "o roteiro de aceite roda no terminal",
+                    "entao": "a sessão vai da taverna ao túnel sem travar, com o anel recuperado, e o diário mostra cada veredito e rolagem."
+                  },
+                  "depois": [
+                    "N-11"
+                  ],
+                  "casos": "C02 C09 B03"
+                },
+                {
+                  "id": "N-13",
+                  "nome": "Bancada de provedores e adaptador real",
+                  "porque": "Escolher o provedor com número, não com preferência, e ligar o esqueleto a ele.",
+                  "entra": [
+                    "Bateria de cenas fixa: narração, pergunta, veredito, combate, cena sombria e cena adulta da decisão DC-11, em português.",
+                    "Medição por candidato das seis perguntas do capítulo 6: custo por cena, turnos até o limite, taxa de recusa, latência, efeito do cache, esquemas estritos.",
+                    "Uma implementação do adaptador por candidato, com o SDK oficial; classificação de falha completa.",
+                    "Relatório da bancada no repositório; o provedor escolhido vira configuração, não código."
+                  ],
+                  "aceite": {
+                    "dado": "a bateria de cenas e dois ou mais candidatos",
+                    "quando": "a bancada roda",
+                    "entao": "o relatório traz as seis medições por candidato e o esqueleto roda a sessão de aceite inteira com o provedor escolhido."
+                  },
+                  "depois": [
+                    "N-12"
+                  ],
+                  "casos": "G05 G07"
+                }
+              ]
+            },
+            {
+              "id": "S2",
+              "nome": "A mesa completa",
+              "cor": "verde",
+              "resumo": "Com o esqueleto jogado pelo cliente, cada card acrescenta um pedaço da mesa sobre a espinha provada: personagem do zero, diálogo, exploração, magia, campanha viva completa.",
+              "cards": [
+                {
+                  "id": "N-14",
+                  "nome": "SRD completo, conferido contra o PDF",
+                  "porque": "Fechar a lacuna LC-01 com prova: todo o documento aberto consultável pelo motor.",
+                  "entra": [
+                    "Carga de todas as criaturas, magias, itens, condições, classes, espécies e regras do SRD 5.2.1.",
+                    "Conferência registro a registro contra o PDF: contagens por tipo batem com o índice do documento e cada registro aponta a página.",
+                    "Tabela de nomes de 2014 para 2024 e nomes em português.",
+                    "Relatório de conferência versionado; lacunas do acelerador listadas e corrigidas pelo PDF."
+                  ],
+                  "aceite": {
+                    "dado": "o SRD carregado",
+                    "quando": "a conferência roda",
+                    "entao": "as contagens de criaturas, magias e itens batem com o índice do PDF e nenhum registro está sem página."
+                  },
+                  "depois": [
+                    "N-04"
+                  ],
+                  "casos": "E03"
+                },
+                {
+                  "id": "N-15",
+                  "nome": "Criar personagem e subir de nível",
+                  "porque": "O jogador monta o próprio personagem pelo SRD, validado passo a passo.",
+                  "entra": [
+                    "Criação guiada: espécie, classe, antecedente, atributos por padrão, compra ou rolagem; escolhas de nível 1 validadas.",
+                    "Caminho curto para novato; atributos informados com marca.",
+                    "Subida de nível fora de combate com as escolhas do nível, pontos de vida rolados ou fixos, nova versão da ficha.",
+                    "Rascunho por etapa para interrupção."
+                  ],
+                  "aceite": {
+                    "dado": "um mago de nível 1 em criação",
+                    "quando": "o jogador escolhe uma magia de clérigo",
+                    "entao": "a escolha é recusada com a regra e a etapa volta; ao concluir, a ficha é válida e os derivados batem com o SRD."
+                  },
+                  "depois": [
+                    "N-14",
+                    "N-06"
+                  ],
+                  "casos": "B01 B04"
+                },
+                {
+                  "id": "N-16",
+                  "nome": "Inventário, equipamento e ficha completa",
+                  "porque": "Itens com efeito correto nos derivados; item sem regra marcado para o dono da mesa.",
+                  "entra": [
+                    "Posse, equipar, largar, consumir; moedas e capacidade de carga.",
+                    "Efeito em armadura, ataques e proficiência; sintonização de itens mágicos.",
+                    "Item do módulo pelo mapeamento; item desconhecido sem efeito e marcado.",
+                    "Ficha completa no terminal com seções e origem dos números."
+                  ],
+                  "aceite": {
+                    "dado": "o personagem pega o anel de prata e veste uma armadura pesada sem proficiência",
+                    "quando": "a ficha é recalculada",
+                    "entao": "o anel entra como item do módulo, a armadura aplica a penalidade do SRD e a composição mostra os dois."
+                  },
+                  "depois": [
+                    "N-15"
+                  ],
+                  "casos": "B05 B03"
+                },
+                {
+                  "id": "N-17",
+                  "nome": "Diálogo com personagem do mestre",
+                  "porque": "Personagens coerentes com quem são, o que sabem e o que já disseram.",
+                  "entra": [
+                    "consultar_personagem_mestre com ficha, estado, histórico e segredos marcados.",
+                    "Persuadir, enganar e intimidar como ação com veredito.",
+                    "Verificação de segredo e de coerência com falas anteriores; mentira intencional registrada como tal.",
+                    "Personagem inventado pelo mestre entra como desvio com ficha mínima."
+                  ],
+                  "aceite": {
+                    "dado": "o taverneiro, que sabe do anel mas guarda segredo",
+                    "quando": "o jogador pergunta sobre o barulho e depois intimida",
+                    "entao": "a primeira resposta não revela o anel; a intimidação vira teste; no sucesso o segredo muda para conhecido e a fala fica registrada."
+                  },
+                  "depois": [
+                    "N-13",
+                    "N-10"
+                  ],
+                  "casos": "C06 F04"
+                },
+                {
+                  "id": "N-18",
+                  "nome": "Exploração, viagem e descanso",
+                  "porque": "Mover-se e descansar pelas regras, com o relógio da campanha andando.",
+                  "entra": [
+                    "Grafo de locais e cenas; tempo, ritmo, luz e recursos pela regra de viagem do SRD.",
+                    "Encontros previstos ou sorteados pela tabela do módulo.",
+                    "Descanso curto e longo com recuperação, interrupção e limite diário.",
+                    "Destino fora do módulo como desvio registrado ligado ao grafo."
+                  ],
+                  "aceite": {
+                    "dado": "o personagem no porão com pontos de vida pela metade",
+                    "quando": "declara descanso longo e depois outro em seguida",
+                    "entao": "o primeiro recupera pela regra e avança o relógio; o segundo é recusado com o limite diário."
+                  },
+                  "depois": [
+                    "N-13"
+                  ],
+                  "casos": "C07 C08"
+                },
+                {
+                  "id": "N-19",
+                  "nome": "Magias e condições",
+                  "porque": "Espaços, componentes, concentração, salvaguardas e as condições do SRD com fim rastreável.",
+                  "entra": [
+                    "Conjuração com validação completa; ataque de magia, salvaguarda e efeito automático; escalonamento; truques e rituais.",
+                    "Concentração com quebra por dano; magia de reação no turno de outro.",
+                    "Condições com origem, duração e fim; efeitos aplicados em cada rolagem; exaustão.",
+                    "Condição de ficha própria sem equivalente fica sem efeito até o mapeamento."
+                  ],
+                  "aceite": {
+                    "dado": "um conjurador com um espaço de nível 1 e concentração ativa",
+                    "quando": "conjura outra magia de concentração e depois sofre dano",
+                    "entao": "a primeira concentração cai ao conjurar, a salvaguarda de constituição é rolada no dano e o espaço gasto aparece na ficha."
+                  },
+                  "depois": [
+                    "N-15",
+                    "N-09"
+                  ],
+                  "casos": "D05 D06"
+                },
+                {
+                  "id": "N-20",
+                  "nome": "Zero pontos de vida, salvaguardas e morte",
+                  "porque": "A regra mais sensível da mesa, exatamente como o SRD, e definitiva.",
+                  "entra": [
+                    "Dano massivo; inconsciência; salvaguardas contra a morte com 20 e 1 naturais; dano a zero; estabilização e cura.",
+                    "Nocaute declarado em corpo a corpo; personagem do mestre importante por história como desvio.",
+                    "Morte como fato definitivo; campanha solo encerrada; novo personagem.",
+                    "Nenhum caminho de retcon."
+                  ],
+                  "aceite": {
+                    "dado": "o personagem a zero com duas falhas",
+                    "quando": "rola 1 natural",
+                    "entao": "a terceira e quarta falhas contam, a morte é gravada como fato e qualquer tentativa de alterar o fato é recusada pelo banco."
+                  },
+                  "depois": [
+                    "N-19"
+                  ],
+                  "casos": "D07"
+                },
+                {
+                  "id": "N-21",
+                  "nome": "Fatos, desvios e caminho alternativo",
+                  "porque": "A campanha viva completa: o que torna a adaptação auditável e a campanha impossível de travar.",
+                  "entra": [
+                    "Extração de fatos da narração com tipo, referência e conhecimento; encadeamento de estados.",
+                    "Detecção de desvio contra o recorte canônico; motivo pedido ao mestre; 'sem motivo informado' elevado.",
+                    "Verificação do caminho crítico a cada fato; proposta validada contra fatos, conquistas e segredos; ligação ao grafo.",
+                    "Bloqueio de desvio que reverte conquista."
+                  ],
+                  "aceite": {
+                    "dado": "o taverneiro morto por uma escolha do jogador antes de revelar o túnel",
+                    "quando": "o fato é gravado",
+                    "entao": "o motor detecta o caminho crítico fechado, o mestre propõe uma pista nas marcas de ferramenta, e a proposta entra como desvio com motivo RN-03 ligada ao grafo."
+                  },
+                  "depois": [
+                    "N-17",
+                    "N-18"
+                  ],
+                  "casos": "F01 F02 F03"
+                },
+                {
+                  "id": "N-22",
+                  "nome": "Configuração da mesa e regras de mesa",
+                  "porque": "A decisão DC-11 em prática e as instruções do dono da mesa aplicadas ao mestre.",
+                  "entra": [
+                    "Classificação de conteúdo, tom, dado físico, progressão por experiência ou marco, regras opcionais, limite de custo.",
+                    "Regras de mesa ativas entrando no bloco 2 do contexto.",
+                    "Mudança registrada como fato de mesa, aplicada a partir da próxima cena.",
+                    "Aviso na hora quando a classificação excede o que o provedor configurado aceita."
+                  ],
+                  "aceite": {
+                    "dado": "uma mesa configurada como 'adulto' com um provedor que recusa esse nível",
+                    "quando": "a configuração é salva",
+                    "entao": "o aviso aparece antes da sessão com a alternativa, e a regra de mesa 'o ferreiro não sabe do mapa' aparece no contexto da próxima cena."
+                  },
+                  "depois": [
+                    "N-13"
+                  ],
+                  "casos": "C10 F06"
+                }
+              ]
+            },
+            {
+              "id": "S3",
+              "nome": "A aventura do dono da mesa",
+              "cor": "laranja",
+              "resumo": "A tese do produto: importar uma aventura que o dono da mesa já tem e transformá-la em módulo canônico conferido, sem o arquivo sair da máquina sem autorização.",
+              "cards": [
+                {
+                  "id": "N-23",
+                  "nome": "Importar o arquivo da aventura",
+                  "porque": "Trazer o PDF ou o texto para a pasta local, com página de origem e impressão digital.",
+                  "entra": [
+                    "Cópia para a pasta de aventuras; impressão digital; extração de texto por página com PyMuPDF; Markdown e texto puro por seção.",
+                    "Medida de texto legível e amostra para o dono da mesa; PDF escaneado recusado com oferta de reconhecimento local.",
+                    "Registro da importação com edição informada e declaração de uso pessoal.",
+                    "Arquivo já importado reconhecido pela impressão digital."
+                  ],
+                  "aceite": {
+                    "dado": "um PDF com camada de texto e um escaneado",
+                    "quando": "os dois são importados",
+                    "entao": "o primeiro fica com o texto por página gravado e o segundo é recusado sem deixar cópia."
+                  },
+                  "depois": [
+                    "N-02"
+                  ],
+                  "casos": "A01"
+                },
+                {
+                  "id": "N-24",
+                  "nome": "Estruturar com autorização, ou à mão",
+                  "porque": "O texto vira rascunho canônico, e só sai da máquina com autorização registrada.",
+                  "entra": [
+                    "Tela de autorização mostrando os trechos; registro de concedida ou negada por importação.",
+                    "Divisão por capítulo com páginas; extrair_itens por trecho com esquema estrito; união de repetidos; grafo com caminho crítico proposto; incertos marcados.",
+                    "Retomada por trecho quando o serviço falha; trecho fora do formato marcado para mão.",
+                    "Estruturação manual assistida sem serviço: recortes locais por títulos, listas e tabelas."
+                  ],
+                  "aceite": {
+                    "dado": "uma aventura importada e a autorização negada",
+                    "quando": "a estruturação roda",
+                    "entao": "nenhuma chamada ao serviço acontece, o rascunho é montado à mão com os recortes locais e a autorização negada está registrada."
+                  },
+                  "depois": [
+                    "N-23",
+                    "N-13"
+                  ],
+                  "casos": "A02"
+                },
+                {
+                  "id": "N-25",
+                  "nome": "Conferir e publicar",
+                  "porque": "O dono da mesa garante que o módulo diz o que a aventura diz, antes de qualquer mesa usar.",
+                  "entra": [
+                    "Conferência item a item com o trecho da página ao lado, incertos primeiro; aceitar, corrigir, remover, criar.",
+                    "Marcação de segredos com condição e confirmação do caminho crítico.",
+                    "Validação: caminho ligado, segredos com dono, criaturas mapeadas ou pendentes; publicação da versão imutável.",
+                    "Progresso salvo item a item."
+                  ],
+                  "aceite": {
+                    "dado": "um rascunho com uma cena do caminho crítico sem ligação",
+                    "quando": "o dono da mesa tenta publicar",
+                    "entao": "a publicação é bloqueada apontando a cena; ligada, a versão 1 é publicada e o banco recusa qualquer alteração nela."
+                  },
+                  "depois": [
+                    "N-24"
+                  ],
+                  "casos": "A03"
+                },
+                {
+                  "id": "N-26",
+                  "nome": "Mapear criaturas e itens para o SRD",
+                  "porque": "Cada criatura e item com ficha que o motor use, sem embutir o que não é do SRD.",
+                  "entra": [
+                    "Busca exata, aproximada e por nome de 2014; proposta por criatura.",
+                    "Ficha própria a partir de uma base do SRD ou do zero, guardada no módulo do dono.",
+                    "Pendente, ambíguo e fora da escala tratados como no caso de uso.",
+                    "Combate bloqueado com criatura pendente, com aviso ao dono da mesa."
+                  ],
+                  "aceite": {
+                    "dado": "uma aventura com 'ogro' e com uma criatura inventada",
+                    "quando": "o mapeamento roda",
+                    "entao": "o ogro é proposto pelo SRD, a inventada fica pendente, e a mesa não entra em combate com ela até a ficha própria existir."
+                  },
+                  "depois": [
+                    "N-25",
+                    "N-14"
+                  ],
+                  "casos": "A04"
+                },
+                {
+                  "id": "N-27",
+                  "nome": "Nova versão e remoção da aventura",
+                  "porque": "Corrigir sem quebrar campanhas; apagar sem deixar rastro de conteúdo.",
+                  "entra": [
+                    "Rascunho da versão seguinte; conferência só do que mudou; publicação mantendo a anterior.",
+                    "Migração de campanhas por decisão do dono da mesa, com fatos prevalecendo e diferenças como desvios.",
+                    "Remoção da aventura: lista do que será apagado, confirmação pelo título, campanhas dependentes arquivadas em só leitura.",
+                    "Registro da remoção sem conteúdo."
+                  ],
+                  "aceite": {
+                    "dado": "uma campanha em andamento sobre a versão 1 e a aventura removida",
+                    "quando": "a remoção é confirmada",
+                    "entao": "o arquivo da aventura some, a campanha abre em só leitura com seus resumos e fatos, e o registro da remoção não contém texto da aventura."
+                  },
+                  "depois": [
+                    "N-25"
+                  ],
+                  "casos": "A06 A07"
+                }
+              ]
+            },
+            {
+              "id": "S4",
+              "nome": "Operar a mesa",
+              "cor": "roxo",
+              "resumo": "O que o dono da mesa usa entre sessões: resumo, revisão, auditoria, custo, e o que a plataforma faz sozinha quando o serviço falha.",
+              "cards": [
+                {
+                  "id": "N-28",
+                  "nome": "Resumo de sessão e memória de abertura",
+                  "porque": "A próxima sessão começa sabendo o que aconteceu, sem segredos.",
+                  "entra": [
+                    "resumir a partir dos fatos e do conhecimento do personagem; conferido por G03; versão corrigível pelo jogador.",
+                    "Resumo pendente gerado na abertura seguinte; resumo mecânico na segunda falha.",
+                    "Instantâneo consolidado para abertura rápida.",
+                    "Bloco 3 do contexto montado dos resumos."
+                  ],
+                  "aceite": {
+                    "dado": "uma sessão encerrada com o segredo do anel ainda oculto",
+                    "quando": "o resumo é gerado",
+                    "entao": "o resumo não menciona o anel, é gravado ligado à sessão e aparece na abertura seguinte."
+                  },
+                  "depois": [
+                    "N-13"
+                  ],
+                  "casos": "G02 G01"
+                },
+                {
+                  "id": "N-29",
+                  "nome": "Revisão de desvios e vereditos",
+                  "porque": "O dono da mesa aprova ou corrige o mestre, para o futuro, sem tocar no passado.",
+                  "entra": [
+                    "Lista por sessão: desvios com motivo, vereditos com consistência, recusas ao mestre, ocorrências, rolagens informadas.",
+                    "Marca aprovado ou ruim; instruções que viram regras de mesa; recusa de instrução que viola regra de negócio ou classificação.",
+                    "Indicador de divergência de vereditos sem motivo.",
+                    "Nenhuma alteração do passado; retcon oferecido como instrução ou campanha nova."
+                  ],
+                  "aceite": {
+                    "dado": "uma sessão com um desvio sem motivo e um veredito divergente",
+                    "quando": "o dono da mesa revisa",
+                    "entao": "os dois aparecem elevados, a marca 'ruim' é gravada uma vez só, e a instrução dada aparece na próxima abertura como regra de mesa."
+                  },
+                  "depois": [
+                    "N-21"
+                  ],
+                  "casos": "F06 G04"
+                },
+                {
+                  "id": "N-30",
+                  "nome": "Auditoria de rolagens e vereditos",
+                  "porque": "Provar que a mesa foi justa, refazendo e comparando.",
+                  "entra": [
+                    "Diário de rolagens por sessão com motivo e origem; reprodução por intervalo; relatório exportável em texto.",
+                    "Veredito que originou cada rolagem no relatório; rolagens informadas identificadas.",
+                    "Divergência entre registrado e reproduzido bloqueia novas sessões e registra incidente.",
+                    "Diário incompleto mostrado com a lacuna."
+                  ],
+                  "aceite": {
+                    "dado": "uma campanha com três sessões",
+                    "quando": "o dono da mesa reproduz todas as rolagens",
+                    "entao": "o relatório mostra igual em todas, e uma campanha com um registro adulterado à mão é bloqueada com incidente."
+                  },
+                  "depois": [
+                    "N-03"
+                  ],
+                  "casos": "E06"
+                },
+                {
+                  "id": "N-31",
+                  "nome": "Recusa e falha do serviço, completo",
+                  "porque": "Nenhuma cena perdida: classificação, repetição, degradação e registro.",
+                  "entra": [
+                    "Classificação de indisponível, formato, recusa, limite de saída e turno tardio com as respostas do capítulo 6.",
+                    "Sessão pausada com tudo salvo; retomada quando o serviço volta.",
+                    "Alternativa mecânica por caso de uso: texto literal do módulo, ação padrão da criatura, resumo mecânico.",
+                    "Recusas de conteúdo alimentando a bancada; aviso de classificação incompatível."
+                  ],
+                  "aceite": {
+                    "dado": "o provedor falso configurado para recusar uma cena e cair na seguinte",
+                    "quando": "a sessão roda",
+                    "entao": "a cena recusada recebe o texto literal do módulo com aviso, a queda pausa a sessão com tudo salvo, e as duas ocorrências estão classificadas no diário."
+                  },
+                  "depois": [
+                    "N-13",
+                    "N-11"
+                  ],
+                  "casos": "G05"
+                },
+                {
+                  "id": "N-32",
+                  "nome": "Custo e latência por sessão",
+                  "porque": "Saber quanto custa e quanto demora, por caso de uso, com limite.",
+                  "entra": [
+                    "Registro por chamada: caso de uso, tempo, tamanhos, custo estimado, resultado; agregação por sessão.",
+                    "Linha ao encerrar; histórico para o dono da mesa; exportação para o registro de defeitos.",
+                    "Limite de custo por sessão com aviso a oitenta por cento e pausa a cem.",
+                    "Tabela de preços com data; modelo local em unidades de uso."
+                  ],
+                  "aceite": {
+                    "dado": "um limite de custo configurado",
+                    "quando": "a sessão atinge oitenta e depois cem por cento",
+                    "entao": "o aviso aparece aos oitenta, a pausa acontece aos cem com decisão do jogador, e a linha de custo ao encerrar bate com a soma das chamadas."
+                  },
+                  "depois": [
+                    "N-13"
+                  ],
+                  "casos": "G07"
+                },
+                {
+                  "id": "N-33",
+                  "nome": "Atribuição, tela 'sobre' e exportações",
+                  "porque": "Cumprir a licença em toda superfície, como critério de aceite.",
+                  "entra": [
+                    "Atribuição completa na tela 'sobre' e no rodapé de relatórios, resumos e fichas exportados; curta nas exibições de sessão.",
+                    "Versão do SRD exibida igual à carregada.",
+                    "Teste que bloqueia a publicação de versão do produto sem a atribuição.",
+                    "Conteúdo do módulo do usuário sem atribuição do SRD."
+                  ],
+                  "aceite": {
+                    "dado": "uma montagem com a atribuição removida",
+                    "quando": "o teste de publicação roda",
+                    "entao": "a montagem é bloqueada; com a atribuição, a tela 'sobre' e o relatório de auditoria a exibem com a versão do SRD."
+                  },
+                  "depois": [
+                    "N-04",
+                    "N-30"
+                  ],
+                  "casos": "G06"
+                }
+              ]
+            },
+            {
+              "id": "S5",
+              "nome": "Fechar a fase 1",
+              "cor": "verde",
+              "resumo": "Jogar a aventura de abertura importada do início ao fim, registrar os defeitos, medir o mercado antes de qualquer trabalho da fase 2.",
+              "cards": [
+                {
+                  "id": "N-34",
+                  "nome": "Sessões de aceite com a aventura de abertura",
+                  "porque": "O único critério que importa: o cliente joga o módulo importado do início ao fim sem travar.",
+                  "entra": [
+                    "Importação, estruturação e publicação da aventura de abertura (DC-09) pelo fluxo real.",
+                    "Sessões jogadas pelo cliente com o provedor escolhido; cada travada vira item do registro de defeitos com causa.",
+                    "Medição por sessão: custo, latência, recusas, devoluções por consistência, divergências de veredito.",
+                    "Correções entram como cards novos, nunca como alteração silenciosa."
+                  ],
+                  "aceite": {
+                    "dado": "a aventura de abertura publicada",
+                    "quando": "o cliente joga as sessões até o fim do módulo",
+                    "entao": "a campanha chega ao objetivo do módulo, cada travada está no registro de defeitos com causa, e os indicadores das sessões estão no repositório."
+                  },
+                  "depois": [
+                    "N-27",
+                    "N-29",
+                    "N-31",
+                    "N-32",
+                    "N-33"
+                  ],
+                  "casos": "LC-02 LC-06 LC-07"
+                },
+                {
+                  "id": "N-35",
+                  "nome": "Validação de mercado",
+                  "porque": "A lacuna LC-08: produto certo para uma pessoa pode ser errado para o mercado.",
+                  "entra": [
+                    "Teste de bancada do mesmo módulo curto nos dois concorrentes mais próximos, com roteiro fixo de dez situações, resultado no repositório.",
+                    "Página de espera em português com a promessa do produto, divulgada em comunidades brasileiras, com meta numérica de inscritos e perguntas de qualificação.",
+                    "Entrevistas curtas com inscritos, registradas sem nome.",
+                    "Decisão registrada no Mapa: seguir para a fase 2, ajustar o produto, ou parar."
+                  ],
+                  "aceite": {
+                    "dado": "as três medições feitas",
+                    "quando": "o resultado é comparado com a meta",
+                    "entao": "a decisão sobre a fase 2 está registrada no Mapa com os números que a sustentam."
+                  },
+                  "depois": [
+                    "N-34"
+                  ],
+                  "casos": "LC-08"
+                },
+                {
+                  "id": "N-36",
+                  "nome": "Fechamento da fase 1",
+                  "porque": "Lacunas republicadas, revisão do processo, documentos atualizados.",
+                  "entra": [
+                    "Lista de lacunas do Mapa republicada com o que fechou e o que abriu.",
+                    "Revisão pós-fase: o que funcionou, o que falhou, o que muda no processo.",
+                    "Mapa, Casos de Uso e Blueprint revisados com o que a fase 1 ensinou, como revisões numeradas.",
+                    "Registro de defeitos consolidado por causa."
+                  ],
+                  "aceite": {
+                    "dado": "a fase 1 jogada e medida",
+                    "quando": "o fechamento roda",
+                    "entao": "os três documentos têm revisão nova datada, a lista de lacunas está republicada e a revisão pós-fase está no repositório."
+                  },
+                  "depois": [
+                    "N-35"
+                  ],
+                  "casos": ""
+                }
+              ]
+            }
+          ],
+          "nota": "Cada card vira um item no quadro, com o identificador no título. O critério de aceite é copiado como está: ele é a definição de terminado daquele card e deve ser executado por outra pessoa, não pelo autor. Trabalho novo entra como card novo, com código próprio, em vez de crescer dentro de um existente."
+        }
+      ]
     }
   ],
   "proximas": [
-    {
-      "n": "Entrega 3",
-      "t": "Capítulos 7 e 8: três fluxos de ponta a ponta e o roteiro em cards, com critério de aceite por card e dependências, sem estimativa de tempo."
-    },
     {
       "n": "Entrega 4",
       "t": "Capítulo 9 e fechamento: ambientes, níveis de teste, definição de pronto, o que fazer primeiro, o que este documento assume e as lacunas do Mapa tocadas."
