@@ -93,13 +93,13 @@
   <div class="kicker">Mapa do projeto · outubro de 2026</div>
   <h1>Narrador</h1>
   <p class="lead">Um mestre de jogo por inteligência artificial para Dungeons &amp; Dragons 5e, nas regras de 2024, que conduz campanhas prontas com liberdade de adaptação e, mais adiante, cria as próprias. Este documento é a referência de visão, escopo, decisões e roteiro. Os dois documentos seguintes, Casos de Uso e Blueprint Técnico, derivam dele.</p>
-  <div class="note" style="max-width:150mm;margin-bottom:6px"><b>Nome provisório.</b> "Narrador" é o nome de trabalho do produto e da pasta do projeto, escolhido para destravar o início. Trocar o nome é uma decisão do cliente e não altera nada neste documento além do título. <b>Revisão 1, 26 de outubro de 2026:</b> acrescentadas a regra RN-11 e a decisão DC-11, a pedido do cliente. <b>Revisão 2, 26 de outubro de 2026:</b> lacuna LC-08 (validação de mercado) e nota de concorrência, após pesquisa aprovada pelo cliente.</div>
+  <div class="note" style="max-width:150mm;margin-bottom:6px"><b>Nome provisório.</b> "Narrador" é o nome de trabalho do produto e da pasta do projeto, escolhido para destravar o início. Trocar o nome é uma decisão do cliente e não altera nada neste documento além do título. <b>Revisão 1, 26 de outubro de 2026:</b> acrescentadas a regra RN-11 e a decisão DC-11, a pedido do cliente. <b>Revisão 2, 26 de outubro de 2026:</b> lacuna LC-08 (validação de mercado) e nota de concorrência, após pesquisa aprovada pelo cliente. <b>Revisão 3, 26 de outubro de 2026:</b> decisão DC-12, aprovada junto com a entrega 1 dos Casos de Uso.</div>
 
   <div class="stats">
     <div class="stat"><div class="big">9</div><div class="lbl">módulos funcionais</div></div>
     <div class="stat"><div class="big">3</div><div class="lbl">fases de entrega</div></div>
     <div class="stat"><div class="big">11</div><div class="lbl">regras de negócio</div></div>
-    <div class="stat"><div class="big">11</div><div class="lbl">decisões fechadas</div></div>
+    <div class="stat"><div class="big">12</div><div class="lbl">decisões fechadas</div></div>
   </div>
 
   <div class="grid3">
@@ -284,10 +284,10 @@
 <!-- ============ DECISÕES ============ -->
 <section class="page">
   <div class="kicker">Decisões fechadas</div>
-  <h2>Onze decisões registradas com o cliente</h2>
+  <h2>Doze decisões registradas com o cliente</h2>
   <p class="lead">Fechadas em 26 de outubro de 2026. Qualquer mudança entra como revisão deste documento, com data, e propaga para os casos de uso e para o blueprint.</p>
 
-  <table>
+  <table style="font-size:8.7pt">
     <thead><tr><th>Código</th><th>Decisão</th><th>Escolha</th><th>Por quê</th></tr></thead>
     <tbody>
       <tr><td class="code">DC-01</td><td>Papel da inteligência artificial</td><td>Mestre inteiro</td><td>É o produto pedido; assistente de mestre humano é outro escopo.</td></tr>
@@ -301,10 +301,11 @@
       <tr><td class="code">DC-09</td><td>Módulo de abertura</td><td>Aventura curta 5e gratuita importada, mais aventura original mínima para testes</td><td>Gabarito real nas sessões; conteúdo sem restrição na integração contínua.</td></tr>
       <tr><td class="code">DC-10</td><td>Nome, pasta e repositório</td><td>"Narrador" (provisório); pasta Projetos-SSD\narrador; repositório privado, branch e merge, nunca commit direto na principal</td><td>Mesmo esquema de trabalho dos outros projetos do cliente.</td></tr>
       <tr><td class="code">DC-11</td><td>Classificação de conteúdo</td><td>Máxima "adulto": temas sem restrição dentro da lei; intimidade entre adultos acontece e a narração corta, nunca descreve em detalhe; nível configurável por mesa</td><td>Ficção adulta por tema, não por explicitude; cabe nas políticas dos provedores e não restringe a escolha do narrador. Recusa do narrador é exceção tratada, nunca cena perdida.</td></tr>
+      <tr><td class="code">DC-12</td><td>Envio da aventura ao serviço de linguagem</td><td>Só com autorização explícita do dono da mesa, registrada a cada importação; sem autorização, estruturação manual assistida, sem nada sair da máquina</td><td>O arquivo é obra de terceiro e propriedade do dono da mesa; a mesma regra que o cliente aplica aos próprios arquivos. Detalhado no caso de uso A02.</td></tr>
     </tbody>
   </table>
 
-  <div class="kicker" style="margin-top:16px">Fica para o blueprint técnico</div>
+  <div class="kicker" style="margin-top:10px">Fica para o blueprint técnico</div>
   <ul class="clean" style="font-size:9.4pt">
     <li>Linguagem, estrutura do repositório e ferramentas de teste, decididas a partir da interface de terminal.</li>
     <li>Qual serviço de linguagem e qual modelo, decididos com medição de custo, latência e qualidade de narração em português, nunca por preferência.</li>
