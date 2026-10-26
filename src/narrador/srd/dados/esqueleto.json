@@ -1,0 +1,1112 @@
+{
+  "versao": "5.2.1",
+  "pdf_sha256": "8974902d109d6e63672d7c490bde9ccf052410503d9cfa768237154fbc5e3d87",
+  "paginas_pdf": 364,
+  "criaturas": [
+    {
+      "id": "srd:criatura:giant-rat",
+      "nome": "Giant Rat",
+      "nome_pt": "Rato gigante",
+      "pagina": 353,
+      "tamanho": "small",
+      "tipo": "beast",
+      "tendencia": "unaligned",
+      "classe_armadura": 13,
+      "pontos_de_vida": 7,
+      "dados_de_vida": "2d6",
+      "velocidade_pes": 30,
+      "velocidades_extras": {
+        "escalar": 30
+      },
+      "atributos": {
+        "str": 7,
+        "dex": 16,
+        "con": 11,
+        "int": 2,
+        "wis": 10,
+        "cha": 4
+      },
+      "bonus_iniciativa": 3,
+      "percepcao_passiva": 12,
+      "nivel_de_desafio": "0.125",
+      "pontos_de_experiencia": 25,
+      "bonus_proficiencia": 2,
+      "tracos": [
+        {
+          "nome": "Pack Tactics",
+          "descricao": "The rat has Advantage on an attack roll against a creature if at least one of the rat's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition."
+        }
+      ],
+      "ataques": [
+        {
+          "nome": "Bite",
+          "tipo": "corpo_a_corpo",
+          "bonus": 5,
+          "alcance_pes": 5,
+          "dano_dados": "1d4+3",
+          "dano_tipo": "perfurante",
+          "descricao": "Melee Attack Roll: +5, reach 5 feet. 5 (1d4 + 3) Piercing damage."
+        }
+      ],
+      "acoes_texto": []
+    }
+  ],
+  "armas": [
+    {
+      "id": "srd:arma:battleaxe",
+      "nome": "Battleaxe",
+      "nome_pt": "Machado de batalha",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d8",
+      "dano_tipo": "cortante",
+      "propriedades": [
+        "Versatile"
+      ],
+      "maestria": "Topple",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:blowgun",
+      "nome": "Blowgun",
+      "nome_pt": "Zarabatana",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Ammunition",
+        "Loading"
+      ],
+      "maestria": "Vex",
+      "alcance_pes": 25,
+      "alcance_longo_pes": 100
+    },
+    {
+      "id": "srd:arma:club",
+      "nome": "Club",
+      "nome_pt": "Clava",
+      "pagina": 91,
+      "simples": true,
+      "dano_dados": "1d4",
+      "dano_tipo": "contundente",
+      "propriedades": [
+        "Light"
+      ],
+      "maestria": "Slow",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:dagger",
+      "nome": "Dagger",
+      "nome_pt": "Adaga",
+      "pagina": 91,
+      "simples": true,
+      "dano_dados": "1d4",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Finesse",
+        "Light",
+        "Thrown"
+      ],
+      "maestria": "Nick",
+      "alcance_pes": 20,
+      "alcance_longo_pes": 60
+    },
+    {
+      "id": "srd:arma:dart",
+      "nome": "Dart",
+      "nome_pt": "Dardo",
+      "pagina": 91,
+      "simples": true,
+      "dano_dados": "1d4",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Finesse",
+        "Thrown"
+      ],
+      "maestria": "Vex",
+      "alcance_pes": 20,
+      "alcance_longo_pes": 60
+    },
+    {
+      "id": "srd:arma:flail",
+      "nome": "Flail",
+      "nome_pt": "Mangual",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d8",
+      "dano_tipo": "contundente",
+      "propriedades": [],
+      "maestria": "Sap",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:glaive",
+      "nome": "Glaive",
+      "nome_pt": "Glaive",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d10",
+      "dano_tipo": "cortante",
+      "propriedades": [
+        "Heavy",
+        "Reach",
+        "Two-Handed"
+      ],
+      "maestria": "Graze",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:greataxe",
+      "nome": "Greataxe",
+      "nome_pt": "Machado grande",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d12",
+      "dano_tipo": "cortante",
+      "propriedades": [
+        "Heavy",
+        "Two-Handed"
+      ],
+      "maestria": "Cleave",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:greatclub",
+      "nome": "Greatclub",
+      "nome_pt": "Clava grande",
+      "pagina": 91,
+      "simples": true,
+      "dano_dados": "1d8",
+      "dano_tipo": "contundente",
+      "propriedades": [
+        "Two-Handed"
+      ],
+      "maestria": "Push",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:greatsword",
+      "nome": "Greatsword",
+      "nome_pt": "Espada grande",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "2d6",
+      "dano_tipo": "cortante",
+      "propriedades": [
+        "Heavy",
+        "Two-Handed"
+      ],
+      "maestria": "Graze",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:halberd",
+      "nome": "Halberd",
+      "nome_pt": "Alabarda",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d10",
+      "dano_tipo": "cortante",
+      "propriedades": [
+        "Heavy",
+        "Reach",
+        "Two-Handed"
+      ],
+      "maestria": "Cleave",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:hand-crossbow",
+      "nome": "Hand Crossbow",
+      "nome_pt": "Besta de mão",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d6",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Ammunition",
+        "Light",
+        "Loading"
+      ],
+      "maestria": "Vex",
+      "alcance_pes": 30,
+      "alcance_longo_pes": 120
+    },
+    {
+      "id": "srd:arma:handaxe",
+      "nome": "Handaxe",
+      "nome_pt": "Machadinha",
+      "pagina": 91,
+      "simples": true,
+      "dano_dados": "1d6",
+      "dano_tipo": "cortante",
+      "propriedades": [
+        "Light",
+        "Thrown"
+      ],
+      "maestria": "Vex",
+      "alcance_pes": 20,
+      "alcance_longo_pes": 60
+    },
+    {
+      "id": "srd:arma:heavy-crossbow",
+      "nome": "Heavy Crossbow",
+      "nome_pt": "Besta pesada",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d10",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Ammunition",
+        "Heavy",
+        "Loading",
+        "Two-Handed"
+      ],
+      "maestria": "Push",
+      "alcance_pes": 100,
+      "alcance_longo_pes": 400
+    },
+    {
+      "id": "srd:arma:javelin",
+      "nome": "Javelin",
+      "nome_pt": "Azagaia",
+      "pagina": 91,
+      "simples": true,
+      "dano_dados": "1d6",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Thrown"
+      ],
+      "maestria": "Slow",
+      "alcance_pes": 30,
+      "alcance_longo_pes": 120
+    },
+    {
+      "id": "srd:arma:lance",
+      "nome": "Lance",
+      "nome_pt": "Lança de justa",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d10",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Heavy",
+        "Reach",
+        "Two-Handed"
+      ],
+      "maestria": "Topple",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:light-crossbow",
+      "nome": "Light Crossbow",
+      "nome_pt": "Besta leve",
+      "pagina": 91,
+      "simples": true,
+      "dano_dados": "1d8",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Ammunition",
+        "Loading",
+        "Two-Handed"
+      ],
+      "maestria": "Slow",
+      "alcance_pes": 80,
+      "alcance_longo_pes": 320
+    },
+    {
+      "id": "srd:arma:light-hammer",
+      "nome": "Light Hammer",
+      "nome_pt": "Martelo leve",
+      "pagina": 91,
+      "simples": true,
+      "dano_dados": "1d4",
+      "dano_tipo": "contundente",
+      "propriedades": [
+        "Light",
+        "Thrown"
+      ],
+      "maestria": "Nick",
+      "alcance_pes": 20,
+      "alcance_longo_pes": 60
+    },
+    {
+      "id": "srd:arma:longbow",
+      "nome": "Longbow",
+      "nome_pt": "Arco longo",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d8",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Ammunition",
+        "Heavy",
+        "Two-Handed"
+      ],
+      "maestria": "Slow",
+      "alcance_pes": 150,
+      "alcance_longo_pes": 600
+    },
+    {
+      "id": "srd:arma:longsword",
+      "nome": "Longsword",
+      "nome_pt": "Espada longa",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d8",
+      "dano_tipo": "cortante",
+      "propriedades": [
+        "Versatile"
+      ],
+      "maestria": "Sap",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:mace",
+      "nome": "Mace",
+      "nome_pt": "Maça",
+      "pagina": 91,
+      "simples": true,
+      "dano_dados": "1d6",
+      "dano_tipo": "contundente",
+      "propriedades": [],
+      "maestria": "Sap",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:maul",
+      "nome": "Maul",
+      "nome_pt": "Malho",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "2d6",
+      "dano_tipo": "contundente",
+      "propriedades": [
+        "Heavy",
+        "Two-Handed"
+      ],
+      "maestria": "Topple",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:morningstar",
+      "nome": "Morningstar",
+      "nome_pt": "Estrela-da-manhã",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d8",
+      "dano_tipo": "perfurante",
+      "propriedades": [],
+      "maestria": "Sap",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:musket",
+      "nome": "Musket",
+      "nome_pt": "Mosquete",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d12",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Ammunition",
+        "Loading",
+        "Two-Handed"
+      ],
+      "maestria": "Slow",
+      "alcance_pes": 40,
+      "alcance_longo_pes": 120
+    },
+    {
+      "id": "srd:arma:pike",
+      "nome": "Pike",
+      "nome_pt": "Pique",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d10",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Heavy",
+        "Reach",
+        "Two-Handed"
+      ],
+      "maestria": "Push",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:pistol",
+      "nome": "Pistol",
+      "nome_pt": "Pistola",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d10",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Ammunition",
+        "Loading"
+      ],
+      "maestria": "Vex",
+      "alcance_pes": 30,
+      "alcance_longo_pes": 90
+    },
+    {
+      "id": "srd:arma:quarterstaff",
+      "nome": "Quarterstaff",
+      "nome_pt": "Bordão",
+      "pagina": 91,
+      "simples": true,
+      "dano_dados": "1d6",
+      "dano_tipo": "contundente",
+      "propriedades": [
+        "Versatile"
+      ],
+      "maestria": "Topple",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:rapier",
+      "nome": "Rapier",
+      "nome_pt": "Rapieira",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d8",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Finesse"
+      ],
+      "maestria": "Vex",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:scimitar",
+      "nome": "Scimitar",
+      "nome_pt": "Cimitarra",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d6",
+      "dano_tipo": "cortante",
+      "propriedades": [
+        "Finesse",
+        "Light"
+      ],
+      "maestria": "Nick",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:shortbow",
+      "nome": "Shortbow",
+      "nome_pt": "Arco curto",
+      "pagina": 91,
+      "simples": true,
+      "dano_dados": "1d6",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Ammunition",
+        "Two-Handed"
+      ],
+      "maestria": "Vex",
+      "alcance_pes": 80,
+      "alcance_longo_pes": 320
+    },
+    {
+      "id": "srd:arma:shortsword",
+      "nome": "Shortsword",
+      "nome_pt": "Espada curta",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d6",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Finesse",
+        "Light"
+      ],
+      "maestria": "Vex",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:sickle",
+      "nome": "Sickle",
+      "nome_pt": "Foice",
+      "pagina": 91,
+      "simples": true,
+      "dano_dados": "1d4",
+      "dano_tipo": "cortante",
+      "propriedades": [
+        "Light"
+      ],
+      "maestria": "Nick",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:sling",
+      "nome": "Sling",
+      "nome_pt": "Funda",
+      "pagina": 91,
+      "simples": true,
+      "dano_dados": "1d4",
+      "dano_tipo": "contundente",
+      "propriedades": [
+        "Ammunition"
+      ],
+      "maestria": "Slow",
+      "alcance_pes": 30,
+      "alcance_longo_pes": 120
+    },
+    {
+      "id": "srd:arma:spear",
+      "nome": "Spear",
+      "nome_pt": "Lança",
+      "pagina": 91,
+      "simples": true,
+      "dano_dados": "1d6",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Thrown",
+        "Versatile"
+      ],
+      "maestria": "Sap",
+      "alcance_pes": 20,
+      "alcance_longo_pes": 60
+    },
+    {
+      "id": "srd:arma:trident",
+      "nome": "Trident",
+      "nome_pt": "Tridente",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d8",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Thrown",
+        "Versatile"
+      ],
+      "maestria": "Topple",
+      "alcance_pes": 20,
+      "alcance_longo_pes": 60
+    },
+    {
+      "id": "srd:arma:war-pick",
+      "nome": "War Pick",
+      "nome_pt": "Picareta de guerra",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d8",
+      "dano_tipo": "perfurante",
+      "propriedades": [
+        "Versatile"
+      ],
+      "maestria": "Sap",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:warhammer",
+      "nome": "Warhammer",
+      "nome_pt": "Martelo de guerra",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d8",
+      "dano_tipo": "contundente",
+      "propriedades": [
+        "Versatile"
+      ],
+      "maestria": "Push",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    },
+    {
+      "id": "srd:arma:whip",
+      "nome": "Whip",
+      "nome_pt": "Chicote",
+      "pagina": 91,
+      "simples": false,
+      "dano_dados": "1d4",
+      "dano_tipo": "cortante",
+      "propriedades": [
+        "Finesse",
+        "Reach"
+      ],
+      "maestria": "Slow",
+      "alcance_pes": 0,
+      "alcance_longo_pes": 0
+    }
+  ],
+  "armaduras": [
+    {
+      "id": "srd:armadura:padded-armor",
+      "nome": "Padded Armor",
+      "nome_pt": "Armadura acolchoada",
+      "pagina": 92,
+      "categoria": "leve",
+      "classe_armadura_base": 11,
+      "soma_destreza": true,
+      "desvantagem_furtividade": true
+    },
+    {
+      "id": "srd:armadura:leather-armor",
+      "nome": "Leather Armor",
+      "nome_pt": "Armadura de couro",
+      "pagina": 92,
+      "categoria": "leve",
+      "classe_armadura_base": 11,
+      "soma_destreza": true,
+      "desvantagem_furtividade": false
+    },
+    {
+      "id": "srd:armadura:studded-leather-armor",
+      "nome": "Studded Leather Armor",
+      "nome_pt": "Couro batido",
+      "pagina": 92,
+      "categoria": "leve",
+      "classe_armadura_base": 12,
+      "soma_destreza": true,
+      "desvantagem_furtividade": false
+    },
+    {
+      "id": "srd:armadura:hide-armor",
+      "nome": "Hide Armor",
+      "nome_pt": "Armadura de peles",
+      "pagina": 92,
+      "categoria": "media",
+      "classe_armadura_base": 12,
+      "soma_destreza": true,
+      "teto_destreza": 2,
+      "desvantagem_furtividade": false
+    },
+    {
+      "id": "srd:armadura:chain-shirt",
+      "nome": "Chain Shirt",
+      "nome_pt": "Camisa de malha",
+      "pagina": 92,
+      "categoria": "media",
+      "classe_armadura_base": 13,
+      "soma_destreza": true,
+      "teto_destreza": 2,
+      "desvantagem_furtividade": false
+    },
+    {
+      "id": "srd:armadura:scale-mail",
+      "nome": "Scale Mail",
+      "nome_pt": "Brunea",
+      "pagina": 92,
+      "categoria": "media",
+      "classe_armadura_base": 14,
+      "soma_destreza": true,
+      "teto_destreza": 2,
+      "desvantagem_furtividade": true
+    },
+    {
+      "id": "srd:armadura:breastplate",
+      "nome": "Breastplate",
+      "nome_pt": "Peitoral",
+      "pagina": 92,
+      "categoria": "media",
+      "classe_armadura_base": 14,
+      "soma_destreza": true,
+      "teto_destreza": 2,
+      "desvantagem_furtividade": false
+    },
+    {
+      "id": "srd:armadura:half-plate-armor",
+      "nome": "Half Plate Armor",
+      "nome_pt": "Meia armadura",
+      "pagina": 92,
+      "categoria": "media",
+      "classe_armadura_base": 15,
+      "soma_destreza": true,
+      "teto_destreza": 2,
+      "desvantagem_furtividade": true
+    },
+    {
+      "id": "srd:armadura:ring-mail",
+      "nome": "Ring Mail",
+      "nome_pt": "Cota de anéis",
+      "pagina": 92,
+      "categoria": "pesada",
+      "classe_armadura_base": 14,
+      "soma_destreza": false,
+      "desvantagem_furtividade": true
+    },
+    {
+      "id": "srd:armadura:chain-mail",
+      "nome": "Chain Mail",
+      "nome_pt": "Cota de malha",
+      "pagina": 92,
+      "categoria": "pesada",
+      "classe_armadura_base": 16,
+      "soma_destreza": false,
+      "forca_minima": 13,
+      "desvantagem_furtividade": true
+    },
+    {
+      "id": "srd:armadura:splint-armor",
+      "nome": "Splint Armor",
+      "nome_pt": "Armadura de talas",
+      "pagina": 92,
+      "categoria": "pesada",
+      "classe_armadura_base": 17,
+      "soma_destreza": false,
+      "forca_minima": 15,
+      "desvantagem_furtividade": true
+    },
+    {
+      "id": "srd:armadura:plate-armor",
+      "nome": "Plate Armor",
+      "nome_pt": "Armadura de placas",
+      "pagina": 92,
+      "categoria": "pesada",
+      "classe_armadura_base": 18,
+      "soma_destreza": false,
+      "forca_minima": 15,
+      "desvantagem_furtividade": true
+    },
+    {
+      "id": "srd:armadura:shield",
+      "nome": "Shield",
+      "nome_pt": "Escudo",
+      "pagina": 92,
+      "categoria": "escudo",
+      "classe_armadura_base": 2,
+      "soma_destreza": false,
+      "desvantagem_furtividade": false
+    }
+  ],
+  "pericias": [
+    {
+      "id": "srd:pericia:acrobatics",
+      "nome": "Acrobatics",
+      "nome_pt": "Acrobacia",
+      "pagina": 9,
+      "atributo": "dex",
+      "descricao": "Stay on your feet in a tricky situation, or perform an acrobatic stunt."
+    },
+    {
+      "id": "srd:pericia:animal-handling",
+      "nome": "Animal Handling",
+      "nome_pt": "Lidar com Animais",
+      "pagina": 9,
+      "atributo": "wis",
+      "descricao": "Calm or train an animal, or get an animal to behave in a certain way."
+    },
+    {
+      "id": "srd:pericia:arcana",
+      "nome": "Arcana",
+      "nome_pt": "Arcanismo",
+      "pagina": 9,
+      "atributo": "int",
+      "descricao": "Recall lore about spells, magic items, and the planes of existence."
+    },
+    {
+      "id": "srd:pericia:athletics",
+      "nome": "Athletics",
+      "nome_pt": "Atletismo",
+      "pagina": 9,
+      "atributo": "str",
+      "descricao": "Jump farther than normal, stay afloat in rough water, or break something."
+    },
+    {
+      "id": "srd:pericia:deception",
+      "nome": "Deception",
+      "nome_pt": "Enganação",
+      "pagina": 9,
+      "atributo": "cha",
+      "descricao": "Tell a convincing lie, or wear a disguise convincingly."
+    },
+    {
+      "id": "srd:pericia:history",
+      "nome": "History",
+      "nome_pt": "História",
+      "pagina": 9,
+      "atributo": "int",
+      "descricao": "Recall lore about historical events, people, nations, and cultures."
+    },
+    {
+      "id": "srd:pericia:insight",
+      "nome": "Insight",
+      "nome_pt": "Intuição",
+      "pagina": 9,
+      "atributo": "wis",
+      "descricao": "Discern a person's mood and intentions."
+    },
+    {
+      "id": "srd:pericia:intimidation",
+      "nome": "Intimidation",
+      "nome_pt": "Intimidação",
+      "pagina": 9,
+      "atributo": "cha",
+      "descricao": "Awe or threaten someone into doing what you want."
+    },
+    {
+      "id": "srd:pericia:investigation",
+      "nome": "Investigation",
+      "nome_pt": "Investigação",
+      "pagina": 9,
+      "atributo": "int",
+      "descricao": "Find obscure information in books, or deduce how something works."
+    },
+    {
+      "id": "srd:pericia:medicine",
+      "nome": "Medicine",
+      "nome_pt": "Medicina",
+      "pagina": 9,
+      "atributo": "wis",
+      "descricao": "Diagnose an illness, or determine what killed the recently slain."
+    },
+    {
+      "id": "srd:pericia:nature",
+      "nome": "Nature",
+      "nome_pt": "Natureza",
+      "pagina": 9,
+      "atributo": "int",
+      "descricao": "Recall lore about terrain, plants, animals, and weather."
+    },
+    {
+      "id": "srd:pericia:perception",
+      "nome": "Perception",
+      "nome_pt": "Percepção",
+      "pagina": 9,
+      "atributo": "wis",
+      "descricao": "Using a combination of senses, notice something that's easy to miss."
+    },
+    {
+      "id": "srd:pericia:performance",
+      "nome": "Performance",
+      "nome_pt": "Atuação",
+      "pagina": 9,
+      "atributo": "cha",
+      "descricao": "Act, tell a story, perform music, or dance."
+    },
+    {
+      "id": "srd:pericia:persuasion",
+      "nome": "Persuasion",
+      "nome_pt": "Persuasão",
+      "pagina": 9,
+      "atributo": "cha",
+      "descricao": "Honestly and graciously convince someone of something."
+    },
+    {
+      "id": "srd:pericia:religion",
+      "nome": "Religion",
+      "nome_pt": "Religião",
+      "pagina": 9,
+      "atributo": "int",
+      "descricao": "Recall lore about gods, religious rituals, and holy symbols."
+    },
+    {
+      "id": "srd:pericia:sleight-of-hand",
+      "nome": "Sleight of Hand",
+      "nome_pt": "Prestidigitação",
+      "pagina": 9,
+      "atributo": "dex",
+      "descricao": "Pick a pocket, conceal a handheld object, or perform legerdemain."
+    },
+    {
+      "id": "srd:pericia:stealth",
+      "nome": "Stealth",
+      "nome_pt": "Furtividade",
+      "pagina": 9,
+      "atributo": "dex",
+      "descricao": "Escape notice by moving quietly and hiding behind things."
+    },
+    {
+      "id": "srd:pericia:survival",
+      "nome": "Survival",
+      "nome_pt": "Sobrevivência",
+      "pagina": 9,
+      "atributo": "wis",
+      "descricao": "Follow tracks, forage, find a trail, or avoid natural hazards."
+    }
+  ],
+  "condicoes": [
+    {
+      "id": "srd:condicao:blinded",
+      "nome": "Blinded",
+      "nome_pt": "Cego",
+      "pagina": 177,
+      "descricao": "While you have the Blinded condition, you experience the following effects.\n * Can’t See. You can’t see and automatically fail any ability check that requires sight.\n * Attacks Affected. Attack rolls against you have Advantage, and your attack rolls have Disadvantage."
+    },
+    {
+      "id": "srd:condicao:charmed",
+      "nome": "Charmed",
+      "nome_pt": "Enfeitiçado",
+      "pagina": 178,
+      "descricao": "While you have the Charmed condition, you experience the following effects. \n* Can’t Harm the Charmer. You can’t attack the charmer or target the charmer with damaging abilities or magical effects. \n* Social Advantage. The charmer has Advantage on any ability check to interact with you socially."
+    },
+    {
+      "id": "srd:condicao:deafened",
+      "nome": "Deafened",
+      "nome_pt": "Surdo",
+      "pagina": 181,
+      "descricao": "While you have the Deafened condition, you experience the following effect.\n* Can’t Hear. You can’t hear and automatically fail any ability check that requires hearing."
+    },
+    {
+      "id": "srd:condicao:exhaustion",
+      "nome": "Exhaustion",
+      "nome_pt": "Exaustão",
+      "pagina": 181,
+      "descricao": "While you have the Exhaustion condition, you experience the following effects. \n* Exhaustion Levels. This condition is cumulative. Each time you receive it, you gain 1 Exhaustion level. You die if your Exhaustion level is 6.\n* D20 Tests Affected. When you make a D20 Test, the roll is reduced by 2 times your Exhaustion level.\n* Speed Reduced. Your Speed is reduced by a number of feet equal to 5 times your Exhaustion level.\n* Removing Exhaustion Levels. Finishing a Long Rest removes 1 of your Exhaustion levels. When your Exhaustion level reaches 0, the condition ends."
+    },
+    {
+      "id": "srd:condicao:frightened",
+      "nome": "Frightened",
+      "nome_pt": "Amedrontado",
+      "pagina": 182,
+      "descricao": "While you have the Frightened condition, you experience the following effects. \n* Ability Checks and Attacks Affected. You have Disadvantage on ability checks and attack rolls while the source of fear is within line of sight. \n * Can’t Approach. You can’t willingly move closer to the source of fear."
+    },
+    {
+      "id": "srd:condicao:grappled",
+      "nome": "Grappled",
+      "nome_pt": "Agarrado",
+      "pagina": 182,
+      "descricao": "While you have the Grappled condition, you experience the following effects. \n* Speed 0. Your Speed is 0 and can’t increase. \n* Attacks Affected. You have Disadvantage on attack rolls against any target other than the grappler. \n* Movable. The grappler can drag or carry you when it moves, but every foot of movement costs it 1 extra foot unless you are Tiny or two or more sizes smaller than it."
+    },
+    {
+      "id": "srd:condicao:incapacitated",
+      "nome": "Incapacitated",
+      "nome_pt": "Incapacitado",
+      "pagina": 184,
+      "descricao": "While you have the Incapacitated condition, you experience the following effects. \n* Inactive. You can’t take any action, Bonus Action, or Reaction. \n* No Concentration. Your Concentration is broken. \n* Speechless. You can’t speak. \n* Surprised. If you’re Incapacitated when you roll Initiative, you have Disadvantage on the roll."
+    },
+    {
+      "id": "srd:condicao:invisible",
+      "nome": "Invisible",
+      "nome_pt": "Invisível",
+      "pagina": 184,
+      "descricao": "While you have the Invisible condition, you experience the following effects. \n* Surprise. If you’re Invisible when you roll Initiative, you have Advantage on the roll. \n* Concealed. You aren’t affected by any effect that requires its target to be seen unless the effect’s creator can somehow see you. Any equipment you are wearing or carrying is also concealed.\n* Attacks Affected. Attack rolls against you have Disadvantage, and your attack rolls have Advantage. If a creature can somehow see you, you don’t gain this benefit against that creature."
+    },
+    {
+      "id": "srd:condicao:paralyzed",
+      "nome": "Paralyzed",
+      "nome_pt": "Paralisado",
+      "pagina": 186,
+      "descricao": "While you have the Paralyzed condition, you experience the following effects. \n* Incapacitated. You have the Incapacitated condition. \n* Speed 0. Your Speed is 0 and can’t increase. \n* Saving Throws Affected. You automatically fail Strength and Dexterity saving throws. \n* Attacks Affected. Attack rolls against you have Advantage.\n* Automatic Critical Hits. Any attack roll that hits you is a Critical Hit if the attacker is within 5 feet of you."
+    },
+    {
+      "id": "srd:condicao:petrified",
+      "nome": "Petrified",
+      "nome_pt": "Petrificado",
+      "pagina": 186,
+      "descricao": "While you have the Petrified condition, you experience the following effects. \n* Turned to Inanimate Substance. You are transformed, along with any nonmagical objects you are wearing and carrying, into a solid inanimate substance (usually stone). Your weight increases by a factor of ten, and you cease aging. \n* Incapacitated. You have the Incapacitated condition. \n* Speed 0. Your Speed is 0 and can’t increase.\n* Attacks Affected. Attack rolls against you have Advantage. \n* Saving Throws Affected. You automatically fail Strength and Dexterity saving throws. \n* Resist Damage. You have Resistance to all damage. \n* Poison Immunity. You have Immunity to the Poisoned condition."
+    },
+    {
+      "id": "srd:condicao:poisoned",
+      "nome": "Poisoned",
+      "nome_pt": "Envenenado",
+      "pagina": 186,
+      "descricao": "While you have the Poisoned condition, you experience the following effect. \n* Ability Checks and Attacks Affected. You have Disadvantage on attack rolls and ability checks."
+    },
+    {
+      "id": "srd:condicao:prone",
+      "nome": "Prone",
+      "nome_pt": "Caído",
+      "pagina": 186,
+      "descricao": "While you have the Prone condition, you experience the following effects. \n* Restricted Movement. Your only movement options are to crawl or to spend an amount of movement equal to half your Speed (round down) to right yourself and thereby end the condition. If your Speed is 0, you can’t right yourself. \n* Attacks Affected. You have Disadvantage on attack rolls. An attack roll against you has Advantage if the attacker is within 5 feet of you. Otherwise, that attack roll has Disadvantage."
+    },
+    {
+      "id": "srd:condicao:restrained",
+      "nome": "Restrained",
+      "nome_pt": "Impedido",
+      "pagina": 187,
+      "descricao": "While you have the Restrained condition, you experience the following effects.\n* Speed 0. Your Speed is 0 and can’t increase.\n* Attacks Affected. Attack rolls against you have Advantage, and your attack rolls have Disadvantage. \n* Saving Throws Affected. You have Disadvantage on Dexterity saving throws."
+    },
+    {
+      "id": "srd:condicao:stunned",
+      "nome": "Stunned",
+      "nome_pt": "Atordoado",
+      "pagina": 189,
+      "descricao": "While you have the Stunned condition, you experience the following effects. \n* Incapacitated. You have the Incapacitated condition. \n* Saving Throws Affected. You automatically fail Strength and Dexterity saving throws. \n* Attacks Affected. Attack rolls against you have Advantage."
+    },
+    {
+      "id": "srd:condicao:unconscious",
+      "nome": "Unconscious",
+      "nome_pt": "Inconsciente",
+      "pagina": 191,
+      "descricao": "While you have the Unconscious condition, you experience the following effects. \n* Inert. You have the Incapacitated and Prone conditions, and you drop whatever you’re holding. When this condition ends, you remain Prone. \n* Speed 0. Your Speed is 0 and can’t increase.\n* Attacks Affected. Attack rolls against you have Advantage. \n* Saving Throws Affected. You automatically fail Strength and Dexterity saving throws. \n* Automatic Critical Hits. Any attack roll that hits you is a Critical Hit if the attacker is within 5 feet of you. Unaware. You’re unaware of your surroundings."
+    }
+  ],
+  "especies": [
+    {
+      "id": "srd:especie:human",
+      "nome": "Human",
+      "nome_pt": "Humano",
+      "pagina": 86,
+      "tamanho": "Medium (about 4–7 feet tall) or Small (about 2–4 feet tall), chosen when you select this species",
+      "velocidade_pes": 30,
+      "tracos": [
+        {
+          "nome": "Size",
+          "descricao": "Medium (about 4–7 feet tall) or Small (about 2–4 feet tall), chosen when you select this species"
+        },
+        {
+          "nome": "Speed",
+          "descricao": "30 feet"
+        },
+        {
+          "nome": "Resourceful",
+          "descricao": "You gain Heroic Inspiration whenever you finish a Long Rest."
+        },
+        {
+          "nome": "Skillful",
+          "descricao": "You gain proficiency in one skill of your choice."
+        },
+        {
+          "nome": "Versatile",
+          "descricao": "You gain an Origin feat of your choice (see \"Feats\"). Skilled is recommended."
+        }
+      ]
+    }
+  ],
+  "classes": [
+    {
+      "id": "srd:classe:fighter",
+      "nome": "Fighter",
+      "nome_pt": "Guerreiro",
+      "pagina": 47,
+      "dado_de_vida": "d10",
+      "salvaguardas": [
+        "con",
+        "str"
+      ],
+      "atributos_primarios": [
+        "str",
+        "dex"
+      ],
+      "tracos_basicos": "|||\n|---|---|\n|Primary Ability|Strength or Dexterity|\n|Hit Point Die|D10 per Fighter level|\n|Saving Throw Proficiencies|Strength and Constitution|\n|Skill Proficiencies|Choose 2: Acrobatics, Animal Handling, Athletics, History, Insight, Intimidation, Persuasion, Perception, or Survival|\n|Weapon Proficiencies|Simple and Martial weapons|\n|Armor Training|Light, Medium, and Heavy armor and Shields|\n|Starting Equipment|Choose A, B, or C: (A) Chain Mail, Greatsword, Flail, 8 Javelins, Dungeoneer's Pack, and 4 GP; (B) Studded Leather Armor, Scimitar, Shortsword, Longbow, 20 Arrows, Quiver, Dungeoneer's Pack, and 11 GP; or (C) 155 GP|",
+      "tracos_nivel_1": [
+        {
+          "nome": "Fighting Style",
+          "descricao": "You have honed your martial prowess and gain a Fighting Style feat of your choice (see \"Feats\"). Defense is recommended.\n\nWhenever you gain a Fighter level, you can replace the feat you chose with a different Fighting Style feat."
+        },
+        {
+          "nome": "Second Wind",
+          "descricao": "You have a limited well of physical and mental stamina that you can draw on. As a Bonus Action, you can use it to regain Hit Points equal to 1d10 plus your Fighter level.\n\nYou can use this feature twice. You regain one expended use when you finish a Short Rest, and you regain all expended uses when you finish a Long Rest.\n\nWhen you reach certain Fighter levels, you gain more uses of this feature, as shown in the Second Wind column of the Fighter Features table."
+        },
+        {
+          "nome": "Weapon Mastery",
+          "descricao": "Your training with weapons allows you to use the mastery properties of three kinds of Simple or Martial weapons of your choice. Whenever you finish a Long Rest, you can practice weapon drills and change one of those weapon choices.\n\nWhen you reach certain Fighter levels, you gain the ability to use the mastery properties of more kinds of weapons, as shown in the Weapon Mastery column of the Fighter Features table."
+        }
+      ]
+    }
+  ]
+}
