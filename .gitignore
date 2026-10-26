@@ -1,7 +1,24 @@
-node_modules/
-.env*
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+# Segredos e dados locais
+.env
+.env.*
 !.env.example
-*.log
-.DS_Store
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
 # Aventuras importadas nunca entram no repositório (RN-09)
 aventuras/
+campanhas/
+# Ferramentas dos documentos
+docs/fonte/node_modules/
+*.log
+.DS_Store

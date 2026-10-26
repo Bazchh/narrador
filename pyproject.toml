@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "narrador"
+version = "0.1.0"
+description = "Mestre de D&D 5e (regras de 2024, SRD 5.2) por inteligência artificial, no terminal."
+readme = "README.md"
+requires-python = ">=3.13"
+license = { text = "Proprietary" }
+dependencies = [
+  "pydantic>=2.11,<3",
+  "rich>=13.7",
+  "PyMuPDF>=1.26",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3",
+  "hypothesis>=6.112",
+  "ruff>=0.6",
+  "mypy>=1.11",
+]
+
+[project.scripts]
+narrador = "narrador.cli:principal"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+narrador = ["py.typed"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py313"
+src = ["src", "tests"]
+extend-exclude = ["docs/fonte"]  # geradores dos documentos, fora do produto
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "N", "SIM", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]  # letras acentuadas em português não são ambiguidade
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+warn_unreachable = true
+packages = ["narrador"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = ["fitz", "fitz.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = ["rede: teste que precisaria de rede (proibido: o conftest derruba)"]
