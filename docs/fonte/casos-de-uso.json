@@ -2,7 +2,7 @@
   "produto": "Narrador",
   "titulo": "Casos de Uso",
   "kicker": "Especificação funcional · outubro de 2026",
-  "entrega": "Entrega 6: módulos A a F detalhados. Os demais módulos estão no índice com código fixo e serão detalhados nas próximas entregas, módulo a módulo.",
+  "entrega": "Entrega 7: módulos A a G detalhados. Os módulos H e I estão no índice com código fixo e serão detalhados na última entrega.",
   "intro": "Tudo o que a mesa com mestre por inteligência artificial precisa fazer, descrito um a um: quem usa, o que acontece passo a passo, o que fazer quando algo dá errado e o que ganhamos com cada um. Documento complementar ao Mapa do Projeto e ao Blueprint Técnico.",
   "rodape": "Casos de uso · Narrador",
   "fases": {
@@ -3352,7 +3352,7 @@
       "letra": "G",
       "nome": "Processos automáticos",
       "fase": 1,
-      "detalhado": false,
+      "detalhado": true,
       "resumo": "Resumo de sessão, verificação de consistência, salvamento e atribuição de licença.",
       "casos": [
         {
@@ -3360,49 +3360,464 @@
           "nome": "Salvar a campanha viva a cada fato",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Nunca perder nada: cada fato está em disco antes de a mesa seguir.",
+          "fluxo": [
+            {
+              "t": "Fato gravado ou estado mudado",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Acrescenta ao diário, só inserção",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Escreve de forma atômica e confirma",
+              "tipo": "sistema",
+              "desvio": {
+                "rotulo": "falha de escrita",
+                "t": "Pausa a mesa e avisa; nada se perde em memória",
+                "tipo": "falha"
+              }
+            },
+            {
+              "t": "Campanha íntegra em disco",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Pasta local da campanha com permissão de escrita."
+          ],
+          "gatilho": "Qualquer gravação de fato, rolagem, desvio, mudança de ficha ou configuração.",
+          "apoio": [],
+          "principal": [
+            "A plataforma serializa a mudança como registro acrescentado ao diário da campanha: só inserção, nunca edição no lugar.",
+            "A plataforma escreve de forma atômica (arquivo temporário e renomeação) para nunca deixar registro parcial.",
+            "A plataforma confirma a escrita antes de devolver o controle ao caso de uso de origem.",
+            "Periodicamente a plataforma consolida um instantâneo do estado atual para abertura rápida (caso de uso C02), sem apagar o diário.",
+            "A campanha pode ser copiada inteira pela pasta, como cópia de segurança manual, e aberta em outra máquina com o mesmo produto."
+          ],
+          "alternativos": [
+            {
+              "t": "Muitas gravações em sequência",
+              "d": "Em combate, as gravações são agrupadas por turno, mas a confirmação continua antes do turno seguinte."
+            },
+            {
+              "t": "Cópia de segurança automática",
+              "d": "Ao encerrar a sessão (caso de uso C09), o instantâneo é copiado para uma pasta escolhida pelo dono da mesa."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Falha de escrita",
+              "d": "Disco cheio ou sem permissão: a plataforma pausa a mesa, diz o que fazer e não aceita nova ação até gravar; nada é perdido em memória."
+            },
+            {
+              "t": "Diário corrompido na abertura",
+              "d": "A plataforma reconstrói do último instantâneo válido mais os registros íntegros posteriores, informa o que ficou de fora e abre em só leitura se faltar algo."
+            }
+          ],
+          "resultado": "Campanha sempre íntegra em disco.",
+          "regras": [
+            "RN-10"
+          ]
         },
         {
           "codigo": "G02",
           "nome": "Resumir a sessão",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Produzir, ao fim de cada sessão, um resumo fiel e sem segredos que sirva ao jogador e ao mestre na próxima abertura.",
+          "fluxo": [
+            {
+              "t": "Sessão encerrada (C09)",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Reúne fatos, desvios e estado final",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Serviço de linguagem escreve o resumo",
+              "tipo": "llm"
+            },
+            {
+              "t": "Confere contra fatos e segredos (G03)",
+              "tipo": "sistema",
+              "desvio": {
+                "rotulo": "contradiz ou vaza",
+                "t": "Regenera a partir dos fatos; na segunda falha, lista mecânica",
+                "tipo": "atencao"
+              }
+            },
+            {
+              "t": "Resumo gravado e ligado à sessão",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Sessão com pelo menos um fato."
+          ],
+          "gatilho": "O caso de uso C09 encerra a sessão, ou a abertura seguinte encontra resumo pendente.",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma reúne os fatos da sessão (F01), os desvios (F02), o estado do personagem no fim e a cena de parada.",
+            "O serviço de linguagem escreve o resumo em português: o que aconteceu, as decisões do jogador, o estado atual e os ganchos abertos, só a partir do que o personagem conhece (caso de uso F04).",
+            "A plataforma confere o resumo pelo caso de uso G03: nenhum segredo não descoberto, nenhuma contradição com fato.",
+            "A plataforma grava o resumo ligado à sessão, como versão 1.",
+            "O resumo é mostrado ao jogador (C09) e usado na abertura (C02) e na memória longa (F07)."
+          ],
+          "alternativos": [
+            {
+              "t": "Sessão muito curta",
+              "d": "Poucos fatos: resumo de uma linha montado pela plataforma, sem passar pelo serviço."
+            },
+            {
+              "t": "Jogador corrige o resumo",
+              "d": "Edita uma frase: nova versão do resumo; os fatos não mudam."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Resumo contradiz fato ou vaza segredo",
+              "d": "Regenerado com a lista de violações; na segunda falha, a plataforma monta o resumo mecânico (lista de fatos) e marca para o dono da mesa."
+            },
+            {
+              "t": "Serviço indisponível",
+              "d": "Resumo fica pendente; a abertura seguinte usa os fatos brutos, como no caso de uso F07."
+            }
+          ],
+          "resultado": "Resumo fiel, sem segredos, ligado à sessão.",
+          "regras": [
+            "RN-01",
+            "RN-05"
+          ]
         },
         {
           "codigo": "G03",
           "nome": "Verificar consistência e vazamento de segredo",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Barrar, antes de chegar ao jogador, qualquer texto do mestre que contradiga um fato estabelecido ou revele segredo não descoberto.",
+          "fluxo": [
+            {
+              "t": "Texto do mestre pronto",
+              "tipo": "llm"
+            },
+            {
+              "t": "Extrai as afirmações concretas",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Confere contra fatos, segredos, regras de mesa e classificação",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Violação: devolve à origem com o motivo",
+              "tipo": "falha"
+            },
+            {
+              "t": "Texto aprovado segue; verificação registrada",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Campanha viva com fatos (F01) e módulo canônico com segredos marcados (A03)."
+          ],
+          "gatilho": "Toda narração (C03), fala de personagem (C06), resumo (G02) e proposta de caminho (F03), antes de ser entregue.",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma extrai do texto as afirmações concretas: quem, o quê, onde, em que estado.",
+            "A plataforma confere cada afirmação contra os fatos ativos (contradição) e contra os segredos ainda ocultos (vazamento: menção direta, descrição que só faria sentido sabendo, ou dica explícita).",
+            "A plataforma confere também as regras de mesa da campanha (F06) e a classificação de conteúdo (C10).",
+            "Sem violação, o texto segue e a verificação fica registrada com o que foi conferido.",
+            "Com violação, o texto volta ao caso de uso de origem com a lista de violações para nova geração, e a ocorrência é registrada para a revisão (F06)."
+          ],
+          "alternativos": [
+            {
+              "t": "Afirmação nova que não contradiz nada",
+              "d": "Vira candidata a fato pelo caso de uso F01, não violação."
+            },
+            {
+              "t": "Texto ambíguo",
+              "d": "Aprovado com a marca \"ambíguo\"; a plataforma registra para o teste de consistência medir o que passou."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Extração indisponível",
+              "d": "Serviço fora: a plataforma aplica só a verificação mecânica (nomes de segredos e de itens ocultos no texto) e marca a verificação como \"parcial\"."
+            },
+            {
+              "t": "Falso positivo repetido",
+              "d": "Texto correto barrado três vezes: a plataforma entrega ao jogador com a marca \"não verificado\" em vez de travar a mesa, e registra o incidente no registro de defeitos."
+            }
+          ],
+          "resultado": "Nada contradito, nada vazado; verificação registrada e medível.",
+          "regras": [
+            "RN-01",
+            "RN-05"
+          ]
         },
         {
           "codigo": "G04",
           "nome": "Verificar consistência de vereditos",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Importante"
+          "prioridade": "Importante",
+          "objetivo": "Garantir que a mesma situação receba o mesmo veredito ao longo da campanha, e medir o mestre quanto a isso.",
+          "fluxo": [
+            {
+              "t": "Veredito dado (C04 ou C05)",
+              "tipo": "llm"
+            },
+            {
+              "t": "Procura vereditos anteriores em situação semelhante",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Compara tipo, perícia e dificuldade",
+              "tipo": "sistema",
+              "desvio": {
+                "rotulo": "diverge",
+                "t": "Mostra o anterior ao mestre: coerência ou motivo",
+                "tipo": "atencao"
+              }
+            },
+            {
+              "t": "Par e desfecho registrados; indicador atualizado",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Registro de vereditos da campanha (casos de uso C04 e C05)."
+          ],
+          "gatilho": "Todo veredito, antes da rolagem.",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma descreve a situação em termos comparáveis: ação, perícia pedida, condições relevantes (luz, ferramentas, pressa) e dificuldade.",
+            "A plataforma procura vereditos anteriores com situação semelhante na campanha.",
+            "A plataforma compara: mesmo tipo (de cara, impossível ou teste), mesma perícia, dificuldade na mesma faixa.",
+            "Se coerente, segue. Se diverge, mostra ao mestre o veredito anterior e pede coerência ou um motivo registrado (o que mudou na cena).",
+            "A plataforma registra o par e o desfecho; a taxa de divergência sem motivo é indicador do mestre (G07) e aparece na revisão (F06)."
+          ],
+          "alternativos": [
+            {
+              "t": "Primeira ocorrência da situação",
+              "d": "Só registra, sem comparação."
+            },
+            {
+              "t": "Motivo válido",
+              "d": "A situação de fato mudou: a divergência é registrada como justificada."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Situações parecidas tratadas como iguais",
+              "d": "Falso positivo: o mestre justifica, a plataforma registra, e o indicador separa as justificadas."
+            },
+            {
+              "t": "Mestre insiste em divergir sem motivo",
+              "d": "O veredito anterior prevalece para a rolagem, que é o lado previsível, e a ocorrência é elevada na revisão."
+            }
+          ],
+          "resultado": "Vereditos coerentes ou divergência justificada; indicador do mestre atualizado.",
+          "regras": [
+            "RN-11"
+          ]
         },
         {
           "codigo": "G05",
           "nome": "Tratar recusa ou falha do serviço de linguagem",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Nunca perder uma cena por recusa, erro ou indisponibilidade do serviço: tentar de novo com o contexto certo, degradar com honestidade e registrar.",
+          "fluxo": [
+            {
+              "t": "Chamada falha ou é recusada",
+              "tipo": "llm"
+            },
+            {
+              "t": "Classifica: indisponível, erro de formato, recusa de conteúdo",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Repete uma vez com o contexto reforçado",
+              "tipo": "llm",
+              "desvio": {
+                "rotulo": "persiste",
+                "t": "Degrada: texto do módulo ou mecânica pelo motor",
+                "tipo": "atencao"
+              }
+            },
+            {
+              "t": "Registra a ocorrência classificada",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Mesa segue, ou pausa com aviso",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Serviço de linguagem configurado."
+          ],
+          "gatilho": "Qualquer chamada devolve erro, tempo esgotado, resposta fora do formato ou recusa.",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma classifica a falha: indisponibilidade (rede, limite de uso), erro de formato, ou recusa de conteúdo por política do serviço.",
+            "Indisponibilidade: repete com espera crescente até um limite; passado o limite, pausa a mesa com aviso e salva (G01).",
+            "Erro de formato: repete uma vez pedindo o formato; persistindo, usa a alternativa mecânica do caso de uso de origem (por exemplo, ação padrão da criatura em D03, texto literal do módulo em C03).",
+            "Recusa de conteúdo: repete uma vez com o contexto reforçado (mesa de ficção, classificação configurada); persistindo, entrega o texto literal do módulo quando houver, ou avisa o jogador que o mestre não narra esta cena, e registra.",
+            "Toda ocorrência fica registrada com classificação, caso de uso, cena e resposta; as recusas de conteúdo alimentam a bateria de cenas da escolha de provedor (decisão DC-11)."
+          ],
+          "alternativos": [
+            {
+              "t": "Falha durante a estruturação",
+              "d": "Retomada por trecho no caso de uso A02, não aqui."
+            },
+            {
+              "t": "Resposta válida mas vazia",
+              "d": "Tratada como erro de formato."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Pausa longa",
+              "d": "Serviço fora por muito tempo: o jogador pode encerrar (C09) com tudo salvo, e a sessão retoma depois (F05)."
+            },
+            {
+              "t": "Recusas de conteúdo frequentes na mesma campanha",
+              "d": "A plataforma avisa o dono da mesa que a classificação configurada e o serviço não combinam, como no caso de uso C10."
+            }
+          ],
+          "resultado": "Nenhuma cena perdida; degradação visível e registrada.",
+          "regras": [
+            "RN-10"
+          ]
         },
         {
           "codigo": "G06",
           "nome": "Exibir a atribuição do SRD",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Cumprir a licença CC-BY-4.0 mostrando a atribuição exigida sempre que conteúdo do SRD aparece.",
+          "fluxo": [
+            {
+              "t": "Conteúdo do SRD vai para a tela ou exportação",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Anexa a atribuição, curta ou completa",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Tela \"sobre\" e exportações com a atribuição completa",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Texto de atribuição da licença embutido com a versão do SRD."
+          ],
+          "gatilho": "Exibição de texto do SRD (B03, C04, E03), exportação (E06, relatórios, fichas) e a tela \"sobre\" do produto.",
+          "apoio": [
+            "SRD 5.2"
+          ],
+          "principal": [
+            "O produto embute o texto de atribuição exigido pela licença, com a versão do SRD.",
+            "A tela \"sobre\" e o rodapé de qualquer exportação (relatórios, resumos, fichas) incluem a atribuição completa.",
+            "Exibições curtas em sessão (trecho de magia, traço) levam a atribuição curta com referência à completa.",
+            "A atribuição nunca é editável pelo usuário.",
+            "A versão do SRD exibida é a mesma carregada no motor (E03)."
+          ],
+          "alternativos": [
+            {
+              "t": "Conteúdo do módulo do usuário",
+              "d": "Não é do SRD: sem atribuição do SRD. O produto não atribui o que não é dele nem altera o que é do dono da mesa."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Atribuição ausente por erro de montagem",
+              "d": "Teste automático bloqueia a publicação da versão do produto; é critério de aceite, não aviso."
+            }
+          ],
+          "resultado": "Licença cumprida em toda superfície do produto.",
+          "regras": [
+            "RN-08"
+          ]
         },
         {
           "codigo": "G07",
           "nome": "Medir custo e latência por sessão",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Importante"
+          "prioridade": "Importante",
+          "objetivo": "Saber quanto cada sessão custa e quanto demora, por caso de uso, para decidir provedor e otimizações com número e não com impressão.",
+          "fluxo": [
+            {
+              "t": "Cada chamada ao serviço e ao motor",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Registra tempo, tamanhos, custo estimado, resultado",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Agrega por caso de uso e por sessão",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Linha ao encerrar; histórico para o dono da mesa",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Tabela de preços do serviço configurada, ou medição em unidades de uso."
+          ],
+          "gatilho": "Toda chamada; encerramento da sessão (C09); pedido do dono da mesa.",
+          "apoio": [],
+          "principal": [
+            "A plataforma registra por chamada: caso de uso, tempo de resposta, tamanho de entrada e saída, custo estimado pela tabela e resultado (ok, repetida, recusa).",
+            "A plataforma agrega por sessão: custo total, custo por hora de jogo, latência média e máxima por caso de uso, taxa de repetições e recusas (G05), taxa de devoluções por consistência (G03) e divergências de veredito (G04).",
+            "Ao encerrar, o jogador vê uma linha com custo e tempo da sessão.",
+            "O dono da mesa vê o histórico, compara sessões e, ao trocar de serviço, compara provedores (lacunas LC-06 e LC-07 do Mapa).",
+            "Os indicadores são exportáveis para o registro de defeitos e para o teste de bancada (LC-08)."
+          ],
+          "alternativos": [
+            {
+              "t": "Serviço sem tabela de preços",
+              "d": "Modelo local: custo em tempo e uso de máquina, sem dinheiro."
+            },
+            {
+              "t": "Limite de custo por sessão configurado",
+              "d": "Aviso ao atingir 80 por cento; ao atingir 100, pausa com decisão do jogador de continuar ou encerrar."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Tabela de preços desatualizada",
+              "d": "Custo marcado como \"estimado com tabela de\" seguido da data."
+            },
+            {
+              "t": "Medição falha",
+              "d": "A mesa não para; o relatório marca a lacuna de medição."
+            }
+          ],
+          "resultado": "Custo e latência conhecidos por sessão e por caso de uso.",
+          "regras": []
         }
       ]
     },
