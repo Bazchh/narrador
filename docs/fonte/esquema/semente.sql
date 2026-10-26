@@ -24,7 +24,7 @@ insert into item_canonico (id, aventura_id, versao, tipo, nome, dados, pagina_or
 
 insert into item_canonico (id, aventura_id, versao, tipo, nome, dados, pagina_origem, segredo, condicao_descoberta) values
  ('seg-anel', 'av-porao', 1, 'segredo', 'O taverneiro perdeu o anel apostando com o cavador do túnel',
-   '{"texto":"O túnel foi cavado por um contrabandista que ganhou o anel no jogo e o deixou cair."}', 2, 1,
+   '{"texto":"O túnel foi cavado por um contrabandista que ganhou o anel no jogo e o deixou cair.","palavras_chave":["contrabandista","aposta","apostou","apostando","cavador","cavou o túnel"]}', 2, 1,
    'Persuadir ou intimidar o taverneiro, ou examinar as marcas de ferramenta no túnel');
 
 insert into ligacao (aventura_id, versao, de_item, para_item, tipo, caminho_critico) values

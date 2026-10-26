@@ -1,14 +1,14 @@
-"""Os tratadores das ferramentas já cobertas pelos cards anteriores (N-04, N-05, N-06).
+"""Os tratadores de consulta (N-04, N-05, N-06) e a narração verificada (N-10).
 
-Cada card seguinte acrescenta os seus. `narrar` entra aqui só com o contrato; a
-verificação de segredo e fato (G03) é o card N-10.
+Cada card acrescenta os seus no próprio módulo; `registro.TODOS` junta tudo.
 """
 
 from __future__ import annotations
 
 from typing import Any
 
-from narrador.campanha import personagens
+from narrador.campanha import fatos, personagens
+from narrador.mestre import tratadores_narracao
 from narrador.mestre.protocolo import (
     ConsultarCena,
     ConsultarFicha,
@@ -16,7 +16,6 @@ from narrador.mestre.protocolo import (
     Contexto,
     ErroDeFerramentaError,
     Estrita,
-    Narrar,
     Tratador,
 )
 from narrador.modulo import canonico
@@ -30,12 +29,20 @@ def consultar_cena(entrada: Estrita, ctx: Contexto) -> dict[str, Any]:
     cena_id = entrada.cena_id or cena_atual
     if cena_id is None:
         raise ErroDeFerramentaError("entrada_invalida", "sem cena atual; informe cena_id")
+    # O estado da campanha viva entra por cima do canônico: fatos do diário e segredos descobertos,
+    # mais o que a mesa passar pelos extras (testes e sobreposições pontuais).
+    fatos_por_item = fatos.por_item(ctx.con, ctx.campanha_id)
+    for item, lista in (ctx.extras.get("fatos_por_item") or {}).items():
+        fatos_por_item.setdefault(item, []).extend(lista)
+    descobertos = fatos.segredos_descobertos(ctx.con, ctx.campanha_id) | set(
+        ctx.extras.get("segredos_descobertos", ())
+    )
     try:
         recorte = canonico.recortar(
             modulo,
             cena_id,
-            fatos_por_item=ctx.extras.get("fatos_por_item"),
-            segredos_descobertos=ctx.extras.get("segredos_descobertos", ()),
+            fatos_por_item=fatos_por_item,
+            segredos_descobertos=descobertos,
             cena_atual=cena_atual,
         )
     except canonico.CenaInexistenteError as ex:
@@ -125,17 +132,8 @@ def consultar_srd(entrada: Estrita, ctx: Contexto) -> dict[str, Any]:
     }
 
 
-def narrar(entrada: Estrita, ctx: Contexto) -> dict[str, Any]:
-    """Contrato da narração. A verificação de segredo e fato entra no card N-10."""
-    assert isinstance(entrada, Narrar)
-    if not entrada.texto.strip():
-        raise ErroDeFerramentaError("entrada_invalida", "narração vazia")
-    return {
-        "aprovado": True,
-        "texto": entrada.texto,
-        "fatos": [f.model_dump() for f in entrada.fatos],
-        "desvios": [d.model_dump() for d in entrada.desvios],
-    }
+narrar = tratadores_narracao.narrar
+registrar_fato = tratadores_narracao.registrar_fato
 
 
 TRATADORES: dict[str, Tratador] = {
@@ -143,4 +141,5 @@ TRATADORES: dict[str, Tratador] = {
     "consultar_ficha": consultar_ficha,
     "consultar_srd": consultar_srd,
     "narrar": narrar,
+    "registrar_fato": registrar_fato,
 }
