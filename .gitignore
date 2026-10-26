@@ -1,0 +1,7 @@
+node_modules/
+.env*
+!.env.example
+*.log
+.DS_Store
+# Aventuras importadas nunca entram no repositório (RN-09)
+aventuras/

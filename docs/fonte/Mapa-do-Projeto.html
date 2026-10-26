@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Mapa do Projeto · Narrador</title>
+<style>
+  @page { size: A4; margin: 0; }
+  :root {
+    --ink: #0f1b33; --text: #222a38; --muted: #5b6577; --line: #d7dde8;
+    --accent: #1f4fd1; --bg-soft: #f3f5f9; --bg-card: #ffffff;
+    --f1: #1f4fd1; --f2: #e08a1e; --f3: #1f9d55; --red: #c53030; --amber: #c77d0a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; color: var(--text);
+    font-family: "Segoe UI", "IBM Plex Sans", Arial, sans-serif; font-size: 10.5pt; line-height: 1.45; }
+  h1, h2, h3, .big { font-family: "Segoe UI", Arial, sans-serif; font-weight: 700; color: var(--ink); margin: 0; letter-spacing: -0.02em; }
+  .mono { font-family: Consolas, "Cascadia Mono", monospace; }
+  .page { width: 210mm; height: 297mm; position: relative; padding: 16mm 16mm 18mm; overflow: hidden; page-break-after: always; break-after: page; }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+  .cover { background: var(--bg-soft); }
+  .footer { position: absolute; left: 16mm; right: 16mm; bottom: 9mm; display: flex; justify-content: space-between; font-size: 8pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 4px; }
+  .kicker { font-family: Consolas, monospace; font-size: 8.5pt; letter-spacing: 0.14em; color: var(--accent); text-transform: uppercase; margin-bottom: 6px; }
+  h1 { font-size: 40pt; line-height: 1; margin: 2px 0 10px; }
+  h2 { font-size: 22pt; line-height: 1.1; margin: 0 0 6px; }
+  h3 { font-size: 12.5pt; margin: 0 0 3px; }
+  .lead { font-size: 11.5pt; color: var(--text); max-width: 150mm; margin-bottom: 12px; }
+  p { margin: 0 0 6px; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 14px 0; }
+  .stat { background: var(--bg-card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+  .stat .big { font-size: 26pt; line-height: 1; }
+  .stat .lbl { font-size: 9pt; color: var(--muted); margin-top: 4px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .card { background: var(--bg-card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; border-top: 3px solid var(--line); }
+  .card .code { font-family: Consolas, monospace; font-size: 8pt; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
+  .card h3 { margin-top: 2px; }
+  .card .meta { font-family: Consolas, monospace; font-size: 8pt; color: var(--accent); margin: 2px 0 5px; }
+  .card p { font-size: 9.2pt; color: var(--text); margin: 0; }
+  .f1 { border-top-color: var(--f1); } .f2 { border-top-color: var(--f2); } .f3 { border-top-color: var(--f3); }
+  .pill { display: inline-block; font-family: Consolas, monospace; font-size: 7.5pt; padding: 1px 7px; border-radius: 10px; border: 1px solid; margin-right: 3px; vertical-align: middle; }
+  .pill.p1 { color: var(--f1); border-color: var(--f1); background: #eaf0ff; }
+  .pill.p2 { color: var(--f2); border-color: var(--f2); background: #fff4e5; }
+  .pill.p3 { color: var(--f3); border-color: var(--f3); background: #e8f7ee; }
+  .pill.ess { color: var(--red); border-color: var(--red); background: #fdecec; }
+  .pill.imp { color: var(--amber); border-color: var(--amber); background: #fff6e0; }
+  .pill.des { color: var(--muted); border-color: var(--line); background: #f3f5f9; }
+  .pill.rn { color: var(--muted); border-color: var(--line); background: #fff; }
+  table { width: 100%; border-collapse: collapse; font-size: 9.3pt; }
+  th { text-align: left; font-family: Consolas, monospace; font-size: 7.5pt; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; background: #e9edf4; padding: 6px 8px; }
+  td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.code { font-family: Consolas, monospace; color: var(--accent); white-space: nowrap; }
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .rule { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: grid; grid-template-columns: 44px 1fr; gap: 8px; }
+  .rule .tag { font-family: Consolas, monospace; font-size: 8pt; background: var(--ink); color: #fff; padding: 2px 5px; border-radius: 3px; height: fit-content; }
+  .rule b { display: block; font-size: 9.8pt; color: var(--ink); }
+  .rule p { font-size: 8.8pt; margin: 2px 0 0; }
+  .rule .where { font-family: Consolas, monospace; font-size: 7.5pt; color: var(--accent); margin-top: 3px; }
+  .flow { display: flex; align-items: stretch; gap: 0; margin: 8px 0 12px; }
+  .flow .step { flex: 1; border: 1px solid var(--line); border-radius: 6px; padding: 8px 9px; font-size: 8.8pt; background: #fff; position: relative; }
+  .flow .step b { display: block; font-size: 9.6pt; color: var(--ink); }
+  .flow .arrow { width: 22px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 14pt; }
+  .flow .step.gate { background: #eaf0ff; border-color: var(--f1); }
+  .flow .step.done { background: #e8f7ee; border-color: var(--f3); }
+  .callout { background: var(--ink); color: #fff; border-radius: 8px; padding: 12px 14px; font-size: 9.6pt; }
+  .callout b { color: #fff; }
+  .note { background: var(--bg-soft); border-radius: 8px; padding: 10px 12px; font-size: 9.2pt; }
+  .arch { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 8px 0 10px; }
+  .box { border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; font-size: 9pt; }
+  .box h3 { font-size: 11.5pt; }
+  .box ul { margin: 4px 0 0 14px; padding: 0; }
+  .box li { margin: 1px 0; }
+  .box.imm { border-color: var(--ink); } .box.mut { border-color: var(--f2); } .box.llm { border-color: var(--f3); }
+  .actors { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px; }
+  .actor { display: grid; grid-template-columns: 34px 1fr; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--line); }
+  .actor .ico { width: 30px; height: 30px; border-radius: 6px; background: var(--bg-soft); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 13pt; color: var(--muted); }
+  .actor b { display: block; font-size: 10pt; color: var(--ink); }
+  .actor .m { font-family: Consolas, monospace; font-size: 7.8pt; color: var(--accent); }
+  .actor p { font-size: 9pt; margin: 2px 0 0; }
+  ul.clean { margin: 4px 0 0 16px; padding: 0; } ul.clean li { margin: 2px 0; }
+  .phase { border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: 8px; padding: 9px 12px; margin-bottom: 8px; }
+  .phase.p1 { border-left-color: var(--f1); } .phase.p2 { border-left-color: var(--f2); } .phase.p3 { border-left-color: var(--f3); }
+  .phase h3 { display: flex; justify-content: space-between; }
+  .phase h3 span { font-family: Consolas, monospace; font-size: 8pt; color: var(--accent); font-weight: normal; }
+  .phase p { font-size: 9.2pt; margin: 2px 0 4px; }
+  .chip { display: inline-block; font-size: 8.4pt; border: 1px solid var(--line); border-radius: 10px; padding: 1px 8px; margin: 2px 2px 0 0; background: #fff; }
+  .chip .mono { color: var(--accent); font-size: 7.8pt; }
+</style>
+</head>
+<body>
+
+<!-- ============ CAPA ============ -->
+<section class="page cover">
+  <div class="kicker">Mapa do projeto · outubro de 2026</div>
+  <h1>Narrador</h1>
+  <p class="lead">Um mestre de jogo por inteligência artificial para Dungeons &amp; Dragons 5e, nas regras de 2024, que conduz campanhas prontas com liberdade de adaptação e, mais adiante, cria as próprias. Este documento é a referência de visão, escopo, decisões e roteiro. Os dois documentos seguintes, Casos de Uso e Blueprint Técnico, derivam dele.</p>
+  <div class="note" style="max-width:150mm;margin-bottom:6px"><b>Nome provisório.</b> "Narrador" é o nome de trabalho do produto e da pasta do projeto, escolhido para destravar o início. Trocar o nome é uma decisão do cliente e não altera nada neste documento além do título. <b>Revisão 1, 26 de outubro de 2026:</b> acrescentadas a regra RN-11 e a decisão DC-11, a pedido do cliente.</div>
+
+  <div class="stats">
+    <div class="stat"><div class="big">9</div><div class="lbl">módulos funcionais</div></div>
+    <div class="stat"><div class="big">3</div><div class="lbl">fases de entrega</div></div>
+    <div class="stat"><div class="big">11</div><div class="lbl">regras de negócio</div></div>
+    <div class="stat"><div class="big">11</div><div class="lbl">decisões fechadas</div></div>
+  </div>
+
+  <div class="grid3">
+    <div class="card f1"><div class="code">Módulo A</div><h3>Campanha e módulo</h3><div class="meta">fase 1</div><p>Importar o arquivo da aventura, estruturar em cenas, locais, personagens e encontros, e consultar.</p></div>
+    <div class="card f1"><div class="code">Módulo B</div><h3>Personagem</h3><div class="meta">fase 1</div><p>Criar o personagem pelo SRD, manter a ficha e subir de nível.</p></div>
+    <div class="card f1"><div class="code">Módulo C</div><h3>Mesa e narração</h3><div class="meta">fase 1</div><p>Abrir a sessão, narrar a cena, dar veredito a cada tentativa, conversar com personagens, explorar, descansar, encerrar.</p></div>
+    <div class="card f1"><div class="code">Módulo D</div><h3>Combate</h3><div class="meta">fase 1</div><p>Iniciativa, turnos, ataques, magias, condições e morte, sempre arbitrados pelo motor.</p></div>
+    <div class="card f1"><div class="code">Módulo E</div><h3>Regras e dados</h3><div class="meta">fase 1</div><p>O motor determinístico: rolagens, testes, cálculos e o SRD 5.2 como dado consultável.</p></div>
+    <div class="card f1"><div class="code">Módulo F</div><h3>Campanha viva</h3><div class="meta">fase 1</div><p>Memória da mesa, desvios registrados com motivo e continuidade entre sessões.</p></div>
+    <div class="card f1"><div class="code">Módulo G</div><h3>Processos automáticos</h3><div class="meta">fase 1</div><p>Resumo de sessão, verificação de consistência, salvamento e atribuição de licença.</p></div>
+    <div class="card f2"><div class="code">Módulo H</div><h3>Grupo</h3><div class="meta">fase 2</div><p>Vários jogadores na mesma mesa, com turnos e falas coordenados.</p></div>
+    <div class="card f3"><div class="code">Módulo I</div><h3>Campanha livre</h3><div class="meta">fase 3</div><p>Gerador que preenche o mesmo formato do módulo canônico com uma história nova.</p></div>
+  </div>
+
+  <div class="footer"><span>Mapa do projeto · Narrador</span><span>página 1 de 8</span></div>
+</section>
+
+<!-- ============ VISÃO ============ -->
+<section class="page">
+  <div class="kicker">Visão</div>
+  <h2>Um mestre que narra, um motor que arbitra</h2>
+  <p class="lead">O produto é uma mesa de D&amp;D em que a inteligência artificial faz o papel completo do mestre: descreve o mundo, dá voz aos personagens, reage às escolhas do jogador e conduz a história de um módulo pronto. O que ela não faz é decidir resultado de regra: dados, pontos de vida, iniciativa, salvaguardas, espaços de magia e condições vivem em código determinístico que o mestre consulta como ferramenta.</p>
+
+  <div class="arch">
+    <div class="box llm"><h3>Mestre (modelo de linguagem)</h3><ul><li>Narra cenas e dá voz aos personagens</li><li>Interpreta a intenção do jogador</li><li>Decide o que acontece na história</li><li>Chama o motor para qualquer regra</li><li>Pode desviar do módulo, registrando o motivo</li></ul></div>
+    <div class="box imm"><h3>Motor de regras</h3><ul><li>Rola todo dado, com registro</li><li>Aplica as regras do SRD 5.2</li><li>Mantém ficha, combate e condições</li><li>Recusa pedido fora das regras</li><li>Testável sem modelo de linguagem</li></ul></div>
+    <div class="box mut"><h3>Campanha viva</h3><ul><li>Estado real da mesa, sessão a sessão</li><li>Fatos estabelecidos, imutáveis</li><li>Desvios do módulo, com motivo</li><li>Memória do que cada personagem sabe</li><li>Base de todo teste de consistência</li></ul></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card f3"><div class="code">A primeira versão é</div>
+      <ul class="clean" style="font-size:9.4pt">
+        <li>Um jogador, um personagem, um módulo pronto importado de arquivo.</li>
+        <li>Interface de texto no terminal; jogo em português do Brasil.</li>
+        <li>O ciclo completo: criar personagem, cena, exploração, combate, descanso, encerrar sessão e retomar depois.</li>
+        <li>Regras de 2024 pelo SRD 5.2, único conteúdo de regras embutido.</li>
+        <li>O mestre pode adaptar o módulo, dentro das regras de negócio deste documento.</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top-color:var(--red)"><div class="code">A primeira versão não é</div>
+      <ul class="clean" style="font-size:9.4pt">
+        <li>Mesa com vários jogadores (fase 2).</li>
+        <li>Campanha criada pela própria inteligência artificial (fase 3).</li>
+        <li>Interface gráfica, mapa tático ou voz.</li>
+        <li>Conteúdo oficial fora do SRD embutido no produto: aventuras, monstros ou subclasses que não estão no documento aberto.</li>
+        <li>Assistente de um mestre humano. O mestre é a própria plataforma.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:10px"><b>Por que começar por campanha pronta.</b> Com o módulo em mãos existe gabarito: sabemos o que o mestre deveria narrar em cada cena, então dá para medir fidelidade, detectar invenção indevida e comparar versões. A campanha livre não tem gabarito, só gosto. Começar pelo que é mensurável é o caminho de engenharia, e a transição para a fase 3 é só trocar a fonte do módulo, não o motor nem o mestre.</div>
+
+  <div class="footer"><span>Mapa do projeto · Narrador</span><span>página 2 de 8</span></div>
+</section>
+
+<!-- ============ ATORES ============ -->
+<section class="page">
+  <div class="kicker">Atores</div>
+  <h2>Quem usa e o que fica de fora</h2>
+  <p class="lead">Ator é quem inicia ou recebe alguma coisa da plataforma. Na primeira versão, jogador e dono da mesa são a mesma pessoa, que também é o cliente deste projeto: ele aprova cada documento e cada sessão jogada é um teste de aceitação.</p>
+
+  <div class="actors">
+    <div class="actor"><div class="ico">&#9823;</div><div><b>Jogador</b><div class="m">pessoa · ator principal nos módulos B, C, D</div><p>Cria o personagem, descreve o que faz na cena, rola o que o motor pedir e decide o rumo da história.</p></div></div>
+    <div class="actor"><div class="ico">&#9819;</div><div><b>Dono da mesa</b><div class="m">pessoa · ator principal nos módulos A, F</div><p>Traz o arquivo da aventura, confere a estruturação, define as regras de mesa e aprova desvios quando a plataforma pedir.</p></div></div>
+    <div class="actor"><div class="ico">&#9881;</div><div><b>Plataforma (rotina)</b><div class="m">sistema · ator principal nos módulos E, G</div><p>O que o produto faz sozinho: rolar, calcular, resumir, verificar consistência, salvar.</p></div></div>
+    <div class="actor"><div class="ico">&#9998;</div><div><b>Serviço de linguagem</b><div class="m">sistema externo · participa de C, D, F, I</div><p>O modelo que narra e interpreta. Trocável por configuração; nunca guarda estado, nunca rola dado.</p></div></div>
+    <div class="actor"><div class="ico">&#128214;</div><div><b>Fonte da aventura</b><div class="m">sistema externo · participa de A</div><p>O arquivo do módulo, trazido pelo dono da mesa. Fica na máquina dele e nunca entra no repositório nem no produto.</p></div></div>
+    <div class="actor"><div class="ico">&#9878;</div><div><b>SRD 5.2</b><div class="m">dado embutido · participa de B, D, E</div><p>O documento de referência aberto, em licença CC-BY-4.0, convertido para formato consultável pelo motor.</p></div></div>
+  </div>
+
+  <div class="kicker" style="margin-top:16px">Dois objetos que não se misturam</div>
+  <h2>Módulo canônico e campanha viva</h2>
+  <div class="grid2" style="margin-top:6px">
+    <div class="box imm"><h3>Módulo canônico</h3><p style="font-size:9.2pt">Imutável. É o que o arquivo da aventura diz, estruturado em cenas, locais, personagens, ganchos, encontros, segredos e caminho crítico. Na fase 3 o gerador produz exatamente este formato.</p></div>
+    <div class="box mut"><h3>Campanha viva</h3><p style="font-size:9.2pt">Mutável. É o que de fato aconteceu na mesa: fatos estabelecidos, estado dos personagens, decisões do jogador e cada desvio do canônico com o motivo. É a fonte de verdade para continuar e para verificar.</p></div>
+  </div>
+  <p style="font-size:9.3pt;margin-top:8px">O mestre pode desviar do canônico, como um mestre humano faz. A diferença é que todo desvio fica registrado: isso é o que separa adaptar de alucinar, e é o que permite testar a adaptação em vez de só opinar sobre ela.</p>
+
+  <div class="footer"><span>Mapa do projeto · Narrador</span><span>página 3 de 8</span></div>
+</section>
+
+<!-- ============ REGRAS DE NEGÓCIO ============ -->
+<section class="page">
+  <div class="kicker">Regras de negócio</div>
+  <h2>Onze regras que valem em todos os casos de uso</h2>
+  <p class="lead">As cinco primeiras são as regras de mesa: o que mantém a diversão quando o mestre adapta a história. As demais são regras do produto. Cada uma vira teste, montado a partir do módulo de abertura.</p>
+
+  <div class="rules">
+    <div class="rule"><span class="tag">RN-01</span><div><b>Fato estabelecido não se contradiz</b><p>O que entrou na campanha viva é verdade para sempre. Correção entra como novo fato narrado, nunca como apagamento. Obtemos: continuidade que o jogador percebe.</p><div class="where">módulos C, D, F, G</div></div></div>
+    <div class="rule"><span class="tag">RN-02</span><div><b>Escolha do jogador nunca é anulada por conveniência</b><p>A história reage à escolha; não a desfaz nem a ignora para voltar ao trilho do módulo. Obtemos: agência real.</p><div class="where">módulos C, F</div></div></div>
+    <div class="rule"><span class="tag">RN-03</span><div><b>Desvio que fecha o caminho crítico abre outro na hora</b><p>Se uma adaptação torna o objetivo do módulo inalcançável, o mestre cria um caminho alternativo na mesma cena e registra. Obtemos: campanha que nunca trava.</p><div class="where">módulos C, F</div></div></div>
+    <div class="rule"><span class="tag">RN-04</span><div><b>Ritmo e dificuldade mudam; o conquistado não</b><p>O mestre pode acelerar, cortar ou endurecer. Não pode reverter vitória, tesouro ou revelação que o jogador conquistou. Obtemos: conquista com valor.</p><div class="where">módulos C, D, F</div></div></div>
+    <div class="rule"><span class="tag">RN-05</span><div><b>Segredo do módulo só sai pela história</b><p>O que o personagem não descobriu não aparece na narração, em descrição nem em dica. Obtemos: mistério preservado.</p><div class="where">módulos A, C, F</div></div></div>
+    <div class="rule"><span class="tag">RN-06</span><div><b>Todo dado é do motor</b><p>Nenhuma rolagem, cálculo ou resultado de regra é decidido pelo serviço de linguagem. Cada rolagem fica registrada com semente, motivo e resultado. Obtemos: jogo justo e reproduzível.</p><div class="where">módulos B, C, D, E</div></div></div>
+    <div class="rule"><span class="tag">RN-07</span><div><b>Todo desvio do canônico é registrado com motivo</b><p>Adaptação sem registro é alucinação. O registro liga a cena, o que o módulo dizia, o que foi feito e por quê. Obtemos: adaptação auditável.</p><div class="where">módulos C, F, G</div></div></div>
+    <div class="rule"><span class="tag">RN-08</span><div><b>Só o SRD entra no produto, com atribuição</b><p>O único conteúdo de regras embutido é o SRD 5.2, e o texto de atribuição exigido pela licença CC-BY-4.0 aparece no produto. Obtemos: distribuição legal.</p><div class="where">módulos E, G</div></div></div>
+    <div class="rule"><span class="tag">RN-09</span><div><b>O arquivo da aventura é do dono da mesa</b><p>O módulo importado fica na máquina dele, nunca entra no repositório, nos testes compartilhados nem em qualquer envio além do necessário para narrar a cena. Obtemos: respeito à licença da obra.</p><div class="where">módulos A, F</div></div></div>
+    <div class="rule"><span class="tag">RN-10</span><div><b>Sessão sempre retomável</b><p>Qualquer interrupção, inclusive queda do serviço de linguagem, deixa a campanha viva íntegra e a sessão retoma do último fato registrado. Obtemos: nada se perde.</p><div class="where">módulos C, F, G</div></div></div>
+    <div class="rule" style="grid-column:1 / -1"><span class="tag">RN-11</span><div><b>Pergunta não é ação; toda tentativa tem veredito</b><p>"E se eu fizer?" recebe resposta do mestre sem mudar a campanha viva e sem rolar dado. "Eu faço" recebe um de três vereditos: consegue de cara, impossível, ou teste com perícia e dificuldade na escala do SRD, rolado pelo motor. O veredito fica registrado, e a mesma situação recebe o mesmo veredito em qualquer sessão. Obtemos: mesa justa e previsível.</p><div class="where">módulos C, D, E, F</div></div></div>
+  </div>
+
+  <div class="footer"><span>Mapa do projeto · Narrador</span><span>página 4 de 8</span></div>
+</section>
+
+<!-- ============ ROTEIRO ============ -->
+<section class="page">
+  <div class="kicker">Roteiro de implementação</div>
+  <h2>Três documentos, um portão entre cada, depois código</h2>
+  <p class="lead">O projeto é conduzido como processo de engenharia, do zero ao produto. Nenhuma etapa começa sem a anterior aprovada pelo cliente. O que for aprendido numa etapa volta para o documento anterior como revisão numerada, não como conversa perdida.</p>
+
+  <div class="flow">
+    <div class="step done"><b>1. Mapa do projeto</b>Este documento: visão, atores, módulos, regras, decisões e lacunas.</div>
+    <div class="arrow">&#8594;</div>
+    <div class="step gate"><b>Portão</b>Aprovação do cliente.</div>
+    <div class="arrow">&#8594;</div>
+    <div class="step"><b>2. Casos de uso</b>Uma ficha por caso: objetivo, fluxo, alternativas, exceções, resultado, regras.</div>
+    <div class="arrow">&#8594;</div>
+    <div class="step gate"><b>Portão</b>Aprovação do cliente.</div>
+  </div>
+  <div class="flow">
+    <div class="step"><b>3. Blueprint técnico</b>Arquitetura, esquema de dados, protocolo de ferramentas do mestre, cards de implementação com critério de aceite.</div>
+    <div class="arrow">&#8594;</div>
+    <div class="step gate"><b>Portão</b>Aprovação do cliente.</div>
+    <div class="arrow">&#8594;</div>
+    <div class="step"><b>4. Código, card a card</b>Branch por card, revisão, integração contínua verde, critério de aceite provado.</div>
+    <div class="arrow">&#8594;</div>
+    <div class="step gate"><b>Portão por fase</b>Sessões jogadas pelo cliente.</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card f1"><div class="code">Como cada card é fechado</div>
+      <ul class="clean" style="font-size:9.2pt">
+        <li>Critério de aceite escrito antes do código, no blueprint.</li>
+        <li>Motor de regras testado isolado, sem serviço de linguagem.</li>
+        <li>Mestre testado contra o gabarito do módulo de abertura.</li>
+        <li>Integração contínua verde é o registro de entrega.</li>
+        <li>Mudança de requisito entra como caso de uso novo, com código próprio.</li>
+      </ul>
+    </div>
+    <div class="card f1"><div class="code">Como a qualidade é medida</div>
+      <ul class="clean" style="font-size:9.2pt">
+        <li>Registro de defeitos: cada travada em sessão jogada vira item com causa.</li>
+        <li>Medir antes de corrigir: narração, custo e latência têm número antes de qualquer ajuste.</li>
+        <li>Revisão pós-fase: o que funcionou, o que falhou, o que muda no processo.</li>
+        <li>Lista de lacunas fechada e republicada no fim de cada fase.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="kicker" style="margin-top:14px">O esqueleto ambulante</div>
+  <p style="font-size:9.6pt">O primeiro código entregue é a fatia mais fina de ponta a ponta: um personagem pré-gerado, uma cena do módulo de abertura, um encontro, dados pelo motor, tudo no terminal. Ele prova a arquitetura antes de qualquer funcionalidade ganhar corpo, e é o primeiro item que o cliente joga.</p>
+
+  <div class="footer"><span>Mapa do projeto · Narrador</span><span>página 5 de 8</span></div>
+</section>
+
+<!-- ============ FASES ============ -->
+<section class="page">
+  <div class="kicker">Fases de entrega</div>
+  <h2>O que entra em cada fase</h2>
+  <p class="lead">A fase 1 é a mesa jogável, solo, com um módulo pronto. A fase 2 traz a mesa longa e o grupo. A fase 3 solta a campanha livre, que só usa o que as duas anteriores provaram.</p>
+
+  <div class="phase p1"><h3>Fase 1 · mesa jogável solo <span>módulos A a G</span></h3>
+    <p>Importar um módulo, criar um personagem pelo SRD 5.2, jogar o ciclo completo com o mestre adaptando dentro das regras de negócio, salvar e retomar. Termina quando o cliente joga o módulo de abertura do início ao fim sem travar.</p>
+    <span class="chip"><span class="mono">A</span> Importar e estruturar o módulo</span><span class="chip"><span class="mono">A</span> Conferência do dono da mesa</span><span class="chip"><span class="mono">B</span> Criar personagem</span><span class="chip"><span class="mono">B</span> Subir de nível</span><span class="chip"><span class="mono">C</span> Cena e narração</span><span class="chip"><span class="mono">C</span> Veredito de tentativa</span><span class="chip"><span class="mono">C</span> Diálogo com personagem</span><span class="chip"><span class="mono">C</span> Exploração e descanso</span><span class="chip"><span class="mono">D</span> Combate por turnos</span><span class="chip"><span class="mono">D</span> Magias e condições</span><span class="chip"><span class="mono">E</span> Rolagens registradas</span><span class="chip"><span class="mono">E</span> SRD consultável</span><span class="chip"><span class="mono">F</span> Fatos e desvios</span><span class="chip"><span class="mono">F</span> Retomar sessão</span><span class="chip"><span class="mono">G</span> Resumo e consistência</span><span class="chip"><span class="mono">G</span> Atribuição de licença</span>
+  </div>
+
+  <div class="phase p2"><h3>Fase 2 · mesa longa e grupo <span>módulos F, H e interface</span></h3>
+    <p>Campanha de muitas sessões com memória que não degrada, vários jogadores na mesma mesa e a primeira interface além do terminal. Só começa com a fase 1 jogada e revisada.</p>
+    <span class="chip"><span class="mono">F</span> Memória de campanha longa</span><span class="chip"><span class="mono">H</span> Vários jogadores</span><span class="chip"><span class="mono">H</span> Turnos e falas coordenados</span><span class="chip"><span class="mono">—</span> Interface web</span><span class="chip"><span class="mono">—</span> Módulo oficial grande importado</span>
+  </div>
+
+  <div class="phase p3"><h3>Fase 3 · campanha livre <span>módulo I</span></h3>
+    <p>Um gerador preenche o formato do módulo canônico com uma história nova, e a mesa roda sobre ele sem nenhuma mudança no motor nem no mestre. A qualidade é medida com as mesmas regras de negócio já provadas nas fases anteriores.</p>
+    <span class="chip"><span class="mono">I</span> Gerar módulo canônico</span><span class="chip"><span class="mono">I</span> Revisão do dono da mesa</span><span class="chip"><span class="mono">I</span> Rodar como campanha pronta</span>
+  </div>
+
+  <div class="note" style="margin-top:8px"><b>Módulo de abertura.</b> Para as sessões de aceite, uma aventura curta de 5e, gratuita e de nível 1, importada pelo fluxo de arquivo e mantida fora do repositório; a candidata atual é uma aventura de 2014, o que não atrapalha porque monstros e regras vêm do SRD 5.2 pelo nome. Para testes automáticos e integração contínua, uma aventura original minúscula escrita pelo projeto, de duas ou três cenas e um encontro, no formato do módulo canônico. Uma aventura em licença aberta de terceiros fica como opção de amostra embutida mais rica, com a confirmação da licença como primeira tarefa.</div>
+
+  <div class="footer"><span>Mapa do projeto · Narrador</span><span>página 6 de 8</span></div>
+</section>
+
+<!-- ============ DECISÕES ============ -->
+<section class="page">
+  <div class="kicker">Decisões fechadas</div>
+  <h2>Onze decisões registradas com o cliente</h2>
+  <p class="lead">Fechadas em 26 de outubro de 2026. Qualquer mudança entra como revisão deste documento, com data, e propaga para os casos de uso e para o blueprint.</p>
+
+  <table>
+    <thead><tr><th>Código</th><th>Decisão</th><th>Escolha</th><th>Por quê</th></tr></thead>
+    <tbody>
+      <tr><td class="code">DC-01</td><td>Papel da inteligência artificial</td><td>Mestre inteiro</td><td>É o produto pedido; assistente de mestre humano é outro escopo.</td></tr>
+      <tr><td class="code">DC-02</td><td>Ordem das campanhas</td><td>Pronta primeiro; livre na fase 3</td><td>Campanha pronta tem gabarito e torna o mestre mensurável.</td></tr>
+      <tr><td class="code">DC-03</td><td>Liberdade do mestre</td><td>Adapta, com registro e dentro das regras de negócio</td><td>É assim na mesa real; o registro torna a adaptação testável.</td></tr>
+      <tr><td class="code">DC-04</td><td>Jogadores na primeira versão</td><td>Solo; grupo na fase 2</td><td>Grupo soma sincronização antes de o motor estar provado.</td></tr>
+      <tr><td class="code">DC-05</td><td>Idioma</td><td>Jogo em português do Brasil; SRD em inglês por baixo</td><td>Público do cliente; o documento aberto só existe em inglês.</td></tr>
+      <tr><td class="code">DC-06</td><td>Interface da primeira versão</td><td>Terminal em texto; web na fase 2</td><td>Prova a arquitetura sem custo de interface.</td></tr>
+      <tr><td class="code">DC-07</td><td>Base de regras</td><td>Regras de 2024, SRD 5.2, licença CC-BY-4.0</td><td>Versão viva do jogo; licença permanente e sem OGL.</td></tr>
+      <tr><td class="code">DC-08</td><td>Conteúdo fora do SRD</td><td>O usuário traz o arquivo; nada oficial embutido</td><td>Aventuras oficiais não estão no SRD; o fluxo serve ao cliente e ao produto.</td></tr>
+      <tr><td class="code">DC-09</td><td>Módulo de abertura</td><td>Aventura curta 5e gratuita importada, mais aventura original mínima para testes</td><td>Gabarito real nas sessões; conteúdo sem restrição na integração contínua.</td></tr>
+      <tr><td class="code">DC-10</td><td>Nome, pasta e repositório</td><td>"Narrador" (provisório); pasta Projetos-SSD\narrador; repositório privado, branch e merge, nunca commit direto na principal</td><td>Mesmo esquema de trabalho dos outros projetos do cliente.</td></tr>
+      <tr><td class="code">DC-11</td><td>Classificação de conteúdo</td><td>Máxima "adulto": temas sem restrição dentro da lei; intimidade entre adultos acontece e a narração corta, nunca descreve em detalhe; nível configurável por mesa</td><td>Ficção adulta por tema, não por explicitude; cabe nas políticas dos provedores e não restringe a escolha do narrador. Recusa do narrador é exceção tratada, nunca cena perdida.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="kicker" style="margin-top:16px">Fica para o blueprint técnico</div>
+  <ul class="clean" style="font-size:9.4pt">
+    <li>Linguagem, estrutura do repositório e ferramentas de teste, decididas a partir da interface de terminal.</li>
+    <li>Qual serviço de linguagem e qual modelo, decididos com medição de custo, latência e qualidade de narração em português, nunca por preferência.</li>
+    <li>Formato exato do módulo canônico e da campanha viva, e como o dono da mesa confere a estruturação.</li>
+    <li>Protocolo de ferramentas entre mestre e motor, e o que acontece quando o mestre pede algo fora das regras.</li>
+  </ul>
+
+  <div class="footer"><span>Mapa do projeto · Narrador</span><span>página 7 de 8</span></div>
+</section>
+
+<!-- ============ LACUNAS E FECHAMENTO ============ -->
+<section class="page">
+  <div class="kicker">Lacunas</div>
+  <h2>O que ainda não está resolvido</h2>
+  <p class="lead">Lista republicada no fim de cada fase. Item fechado sai com a data e o documento em que foi resolvido.</p>
+
+  <table>
+    <thead><tr><th>Código</th><th>Lacuna</th><th>Onde resolve</th><th>Risco se ficar aberta</th></tr></thead>
+    <tbody>
+      <tr><td class="code">LC-01</td><td>SRD 5.2 em formato estruturado, consultável pelo motor. O documento oficial é um PDF; a conversão e sua conferência são tarefa própria.</td><td>Casos de uso do módulo E; card no blueprint</td><td>Motor sem dado de regra; nada roda.</td></tr>
+      <tr><td class="code">LC-02</td><td>Aventura gratuita nas regras de 2024 ainda não localizada. A candidata atual é de 2014 e serve, porque monstros e regras vêm do SRD 5.2 pelo nome.</td><td>Antes do esqueleto ambulante</td><td>Baixo: diferença de edição fica no motor, não no módulo.</td></tr>
+      <tr><td class="code">LC-03</td><td>Licença das aventuras de terceiros em licença aberta a confirmar na página de direitos do próprio arquivo.</td><td>Primeira tarefa se a opção for usada</td><td>Baixo: é opção, não dependência.</td></tr>
+      <tr><td class="code">LC-04</td><td>Nome definitivo do produto.</td><td>Decisão do cliente, a qualquer momento</td><td>Nenhum.</td></tr>
+      <tr><td class="code">LC-05</td><td>Como um PDF de aventura, que varia muito de formato, vira módulo canônico: automático, semiautomático com conferência, ou manual assistido.</td><td>Casos de uso do módulo A</td><td>Importação frágil contamina todo o gabarito.</td></tr>
+      <tr><td class="code">LC-06</td><td>Como medir fidelidade ao módulo e qualidade da adaptação de forma repetível, além da sessão jogada.</td><td>Blueprint, seção de testes do mestre</td><td>Sem medida, regressão passa despercebida.</td></tr>
+      <tr><td class="code">LC-07</td><td>Custo por sessão do serviço de linguagem e limite aceitável para o cliente.</td><td>Medição no esqueleto ambulante</td><td>Produto inviável de operar.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout" style="margin-top:18px"><b>Como usar este documento no dia a dia.</b> Ele é a origem de tudo: os casos de uso detalham os módulos daqui, o blueprint implementa os casos de uso, e cada card de código aponta para o caso de uso que cumpre. Quando uma necessidade nova surgir, ela entra primeiro aqui, como módulo, regra, decisão ou lacuna com código próprio, e só depois desce. Assim o escopo continua visível e negociável, e nenhuma decisão fica só na conversa.</div>
+
+  <div class="footer"><span>Mapa do projeto · Narrador</span><span>página 8 de 8</span></div>
+</section>
+
+</body>
+</html>
