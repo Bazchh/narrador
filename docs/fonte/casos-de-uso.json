@@ -2,7 +2,7 @@
   "produto": "Narrador",
   "titulo": "Casos de Uso",
   "kicker": "Especificação funcional · outubro de 2026",
-  "entrega": "Entrega 5: módulos A a E detalhados. Os demais módulos estão no índice com código fixo e serão detalhados nas próximas entregas, módulo a módulo.",
+  "entrega": "Entrega 6: módulos A a F detalhados. Os demais módulos estão no índice com código fixo e serão detalhados nas próximas entregas, módulo a módulo.",
   "intro": "Tudo o que a mesa com mestre por inteligência artificial precisa fazer, descrito um a um: quem usa, o que acontece passo a passo, o que fazer quando algo dá errado e o que ganhamos com cada um. Documento complementar ao Mapa do Projeto e ao Blueprint Técnico.",
   "rodape": "Casos de uso · Narrador",
   "fases": {
@@ -2847,7 +2847,7 @@
       "letra": "F",
       "nome": "Campanha viva",
       "fase": 1,
-      "detalhado": false,
+      "detalhado": true,
       "resumo": "Memória da mesa, desvios registrados com motivo e continuidade entre sessões.",
       "casos": [
         {
@@ -2855,49 +2855,496 @@
           "nome": "Registrar fato estabelecido",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Tornar permanente, com data e origem, tudo o que aconteceu de verdade na mesa, para que nunca seja contradito.",
+          "fluxo": [
+            {
+              "t": "Evento na mesa",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Extrai os fatos: quem, o quê, onde, quando",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Confere contra os fatos existentes (G03)",
+              "tipo": "sistema",
+              "desvio": {
+                "rotulo": "contradiz",
+                "t": "Rejeita; o caso de uso de origem reformula",
+                "tipo": "falha"
+              }
+            },
+            {
+              "t": "Grava com sessão, cena, origem e versão do módulo",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Fato na campanha viva",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Campanha viva aberta."
+          ],
+          "gatilho": "Narração (C03), diálogo (C06), ação resolvida (C05), fim de combate (D08), mudança de ficha (B05) ou configuração (C10).",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma recebe o evento do caso de uso de origem e identifica os fatos: afirmações concretas sobre o mundo (porta trancada, personagem morto, item com o personagem, aliança feita).",
+            "Cada fato ganha tipo (estado de local, estado de personagem, posse, relação, conhecimento do personagem, evento), referência ao módulo canônico (cena, personagem, item), sessão, data e origem.",
+            "A verificação de consistência (caso de uso G03) confere contra os fatos ativos: se contradiz um, o novo é rejeitado e o caso de uso de origem reformula.",
+            "Fato que substitui um estado (a porta estava trancada, agora está aberta) entra como novo estado ligado ao anterior, nunca como apagamento.",
+            "A plataforma grava e salva pelo caso de uso G01."
+          ],
+          "alternativos": [
+            {
+              "t": "Fato que só o mestre conhece",
+              "d": "Resultado de segredo: gravado com a marca \"oculto do personagem\" até a descoberta, consultável pelo caso de uso F04."
+            },
+            {
+              "t": "Fato derivado de regra",
+              "d": "Pontos de vida, condição, item: o motor é a origem e o fato é gravado sem passar pelo serviço de linguagem."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Extração ambígua",
+              "d": "Narração vaga: a plataforma grava só o inequívoco e marca o resto como narração, não como fato."
+            },
+            {
+              "t": "Muitos fatos numa cena",
+              "d": "Agrupados por cena; nada é descartado."
+            }
+          ],
+          "resultado": "Campanha viva com registro imutável do que aconteceu.",
+          "regras": [
+            "RN-01"
+          ]
         },
         {
           "codigo": "F02",
           "nome": "Registrar desvio do canônico com motivo",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Registrar toda diferença entre o que o módulo diz e o que a mesa fez, com o motivo, para que a adaptação seja auditável e não alucinação.",
+          "fluxo": [
+            {
+              "t": "Mestre adapta ou inventa",
+              "tipo": "llm"
+            },
+            {
+              "t": "Detecta a diferença contra o canônico",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Pede o motivo ao mestre",
+              "tipo": "llm"
+            },
+            {
+              "t": "Grava: cena, canônico, feito, motivo, regra",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Desvio aplicado; marcado para revisão",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Módulo canônico fixado na campanha (caso de uso C01)."
+          ],
+          "gatilho": "Narração ou decisão do mestre diverge do módulo (C03, C06, C07, D03), ou uma cena ou personagem é inventado.",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma compara o que o mestre narrou ou decidiu com o recorte canônico da cena (caso de uso A05): item ausente, alterado ou acrescentado.",
+            "Para cada diferença, a plataforma pede ao mestre o motivo em uma frase: reação à escolha do jogador, ritmo, clareza, erro do módulo, criatura pendente.",
+            "A plataforma grava o desvio ligado à cena, ao item canônico afetado, ao que foi feito, ao motivo, à sessão e à regra de negócio invocada.",
+            "O desvio passa a valer como estado da campanha viva por cima do canônico, como o caso de uso A05 entrega.",
+            "A plataforma marca o desvio para a revisão do dono da mesa (caso de uso F06)."
+          ],
+          "alternativos": [
+            {
+              "t": "Desvio pedido pelo jogador",
+              "d": "O jogador quer explorar algo fora do módulo: motivo registrado como \"escolha do jogador\", sem revisão obrigatória."
+            },
+            {
+              "t": "Caminho crítico fechado",
+              "d": "O mestre invoca a regra RN-03: segue para o caso de uso F03, e o caminho novo é o desvio."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Desvio que reverte conquista ou contradiz fato",
+              "d": "Bloqueado pelo caso de uso G03 pelas regras RN-01 e RN-04; o mestre refaz."
+            },
+            {
+              "t": "Mestre não dá motivo",
+              "d": "A plataforma registra \"sem motivo informado\" e eleva o item na revisão; o desvio não é bloqueado por isso, porque a mesa não pode travar."
+            }
+          ],
+          "resultado": "Cada adaptação registrada e auditável.",
+          "regras": [
+            "RN-02",
+            "RN-03",
+            "RN-04",
+            "RN-07"
+          ]
         },
         {
           "codigo": "F03",
           "nome": "Abrir caminho alternativo",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Quando um desvio torna o objetivo do módulo inalcançável, criar um caminho novo na mesma cena, sem anular a escolha do jogador.",
+          "fluxo": [
+            {
+              "t": "Detecta caminho crítico fechado",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Mestre propõe caminho alternativo",
+              "tipo": "llm"
+            },
+            {
+              "t": "Valida: alcança o objetivo, respeita fatos e segredos",
+              "tipo": "sistema",
+              "desvio": {
+                "rotulo": "inválido",
+                "t": "Pede outra; na terceira, o dono da mesa escolhe",
+                "tipo": "atencao"
+              }
+            },
+            {
+              "t": "Grava como desvio e liga ao grafo",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Mestre introduz na cena",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Campanha com caminho crítico marcado (caso de uso A03)."
+          ],
+          "gatilho": "Um fato (F01) ou desvio (F02) remove ou bloqueia cena, personagem ou item do caminho crítico: personagem-chave morto, local destruído, item perdido.",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma verifica, a cada fato novo, se o caminho crítico do módulo continua alcançável a partir da cena atual.",
+            "Se não, pede ao mestre uma proposta: nova cena, personagem ou pista que leve ao objetivo, coerente com o mundo do módulo.",
+            "A plataforma valida: a proposta alcança o objetivo, não contradiz fatos, não devolve o que foi conquistado ou perdido, não revela segredo não descoberto.",
+            "A plataforma grava a proposta como desvio (caso de uso F02) com motivo \"RN-03\" e liga a nova cena ao grafo da campanha viva.",
+            "O mestre introduz o caminho na cena atual ou na seguinte de forma natural (pista, encontro, boato), nunca como aviso de sistema."
+          ],
+          "alternativos": [
+            {
+              "t": "O módulo já prevê alternativa",
+              "d": "Cena opcional do próprio módulo: a plataforma usa a do módulo, sem desvio."
+            },
+            {
+              "t": "Jogador abandona o objetivo de propósito",
+              "d": "Não é caminho fechado: o mestre segue a escolha (regra RN-02) e a plataforma marca o objetivo como \"abandonado pelo jogador\"."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Proposta inválida duas vezes",
+              "d": "A plataforma apresenta as opções ao dono da mesa, que escolhe, fora da sessão se preciso."
+            },
+            {
+              "t": "Objetivo inalcançável por regra",
+              "d": "Personagem morto em campanha solo: fim da campanha pelo caso de uso D07; não há caminho a abrir."
+            }
+          ],
+          "resultado": "Módulo continua jogável sem anular a escolha do jogador.",
+          "regras": [
+            "RN-01",
+            "RN-02",
+            "RN-03",
+            "RN-04",
+            "RN-05"
+          ]
         },
         {
           "codigo": "F04",
           "nome": "Consultar o que o personagem sabe",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Dar ao mestre, a cada narração, exatamente o que o personagem já descobriu e nada além, para proteger segredos e manter coerência.",
+          "fluxo": [
+            {
+              "t": "Pedido: o que o personagem sabe sobre X",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Filtra os fatos pela marca de conhecimento",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Separa o conhecido do oculto",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Entrega ao mestre com o oculto marcado",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Campanha viva com fatos marcados por conhecimento (caso de uso F01)."
+          ],
+          "gatilho": "Abertura de sessão (C02), narração (C03), diálogo (C06), pergunta do jogador (C04) ou verificação de vazamento (G03).",
+          "apoio": [],
+          "principal": [
+            "A plataforma recebe o pedido com o assunto: cena, personagem, item ou segredo.",
+            "A plataforma seleciona os fatos que o personagem presenciou, ouviu de alguém ou descobriu por teste, pela marca de conhecimento.",
+            "A plataforma monta \"o que o personagem sabe\" e, separado, \"o que existe e ele não sabe\", com segredos e fatos ocultos marcados \"não narrar\".",
+            "A plataforma entrega ao mestre; a mesma consulta, sem a parte oculta, responde ao jogador que pergunta \"o que eu sei sobre X\"."
+          ],
+          "alternativos": [
+            {
+              "t": "Pergunta direta do jogador",
+              "d": "\"O que eu sei sobre X\": a plataforma responde sem passar pelo mestre, só com o conhecido."
+            },
+            {
+              "t": "Segredo descoberto nesta sessão",
+              "d": "Muda de \"oculto\" para \"conhecido\", com a sessão e o modo de descoberta registrados."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Fato sem marca de conhecimento",
+              "d": "Erro ou registro antigo: a plataforma assume \"desconhecido\", que é o lado seguro, e marca para o caso de uso G03."
+            },
+            {
+              "t": "Conhecimento parcial",
+              "d": "O personagem ouviu um boato falso: o fato fica com a marca \"acredita\", separada de \"sabe\", e o mestre recebe as duas."
+            }
+          ],
+          "resultado": "Mestre e jogador com o conhecimento exato do personagem; segredos protegidos.",
+          "regras": [
+            "RN-05"
+          ]
         },
         {
           "codigo": "F05",
           "nome": "Retomar de interrupção",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Depois de queda, fechamento abrupto ou falha do serviço, voltar exatamente ao último fato registrado, sem repetir nem perder nada.",
+          "fluxo": [
+            {
+              "t": "Abertura encontra sessão não encerrada",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Carrega o último fato e a ação pendente",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Motor reconstrói cena, combate, relógio, condições",
+              "tipo": "motor",
+              "desvio": {
+                "rotulo": "registro parcial",
+                "t": "Descarta o parcial; volta ao anterior íntegro",
+                "tipo": "atencao"
+              }
+            },
+            {
+              "t": "Mestre recapitula o instante",
+              "tipo": "llm"
+            },
+            {
+              "t": "Sessão retomada",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Campanha viva salva a cada fato (caso de uso G01)."
+          ],
+          "gatilho": "O caso de uso C02 encontra sessão aberta sem encerramento, ou o serviço volta após falhar no meio de uma ação (C05, D03).",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma detecta a sessão não encerrada e o último fato gravado.",
+            "A plataforma identifica a ação pendente: veredito dado sem rolagem, rolagem feita sem narração, turno iniciado sem fim.",
+            "O motor reconstrói o estado: cena atual; se em combate, a rodada, a ordem e quem já agiu; pontos de vida; condições com duração recalculada; relógio.",
+            "A ação pendente retoma do ponto exato: nenhuma rolagem é refeita (o contador do caso de uso E01 garante) e nenhuma narração é repetida.",
+            "O mestre recapitula o instante (\"você estava no meio de...\") e a sessão continua.",
+            "A plataforma grava o fato \"sessão retomada\" com o motivo da interrupção."
+          ],
+          "alternativos": [
+            {
+              "t": "Jogador prefere encerrar",
+              "d": "O caso de uso C09 fecha a sessão do ponto em que estava, sem retomar."
+            },
+            {
+              "t": "Interrupção durante a estruturação",
+              "d": "É retomada por trecho pelo caso de uso A02, não por este."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Último registro incompleto",
+              "d": "Gravação cortada: a plataforma descarta o parcial, volta ao anterior íntegro e informa o que se perdeu, que é no máximo uma ação."
+            },
+            {
+              "t": "Estado irreconstruível",
+              "d": "Inconsistência: modo só leitura e aviso ao dono da mesa, como no caso de uso C02; nunca uma correção silenciosa."
+            }
+          ],
+          "resultado": "Sessão de volta ao último instante íntegro, sem repetição.",
+          "regras": [
+            "RN-01",
+            "RN-06",
+            "RN-10"
+          ]
         },
         {
           "codigo": "F06",
           "nome": "Revisar desvios e vereditos",
           "ator": "Dono da mesa",
           "fase": 1,
-          "prioridade": "Importante"
+          "prioridade": "Importante",
+          "objetivo": "Deixar o dono da mesa ver, entre sessões, cada adaptação e cada veredito do mestre, aprovar o que foi bom e corrigir o que foi mal, sem reescrever o passado.",
+          "fluxo": [
+            {
+              "t": "Abre a revisão da sessão",
+              "tipo": "ator"
+            },
+            {
+              "t": "Lista desvios, vereditos, recusas e ocorrências",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Marca cada item: aprovado, ruim ou instrução",
+              "tipo": "ator"
+            },
+            {
+              "t": "Instruções viram regras de mesa da campanha",
+              "tipo": "sistema",
+              "desvio": {
+                "rotulo": "instrução contra regra",
+                "t": "Recusa e explica",
+                "tipo": "falha"
+              }
+            },
+            {
+              "t": "Revisão gravada; passado intocado",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Pelo menos uma sessão encerrada."
+          ],
+          "gatilho": "O dono da mesa abre a revisão, ou a plataforma sugere após sessão com desvio sem motivo ou ocorrência de vazamento.",
+          "apoio": [],
+          "principal": [
+            "A plataforma lista, por sessão: desvios (F02) com motivo, vereditos (C05) com a consistência apurada (G04), recusas do motor ao mestre (E04), ocorrências de vazamento ou contradição (G03) e rolagens informadas.",
+            "O dono da mesa marca cada item como aprovado ou ruim, ou acrescenta uma instrução, por exemplo \"o ferreiro não sabe do mapa\" ou \"peça teste de Percepção com menos frequência\".",
+            "As instruções viram regras de mesa da campanha, aplicadas ao mestre nas próximas sessões (caso de uso C02) e registradas com data.",
+            "Nada do passado muda: um desvio marcado como ruim continua valendo como fato; o que muda é o comportamento futuro.",
+            "A revisão fica gravada como fato de mesa."
+          ],
+          "alternativos": [
+            {
+              "t": "Dono da mesa quer desfazer um desvio",
+              "d": "Não há retcon. A plataforma oferece uma instrução para o mestre corrigir pela história na próxima cena (novo fato que reinterpreta), ou criar campanha nova a partir de um fato anterior."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Instrução contraria regra de negócio ou a classificação de conteúdo",
+              "d": "A plataforma recusa a instrução e explica qual regra ou decisão ela viola."
+            },
+            {
+              "t": "Instruções em conflito entre si",
+              "d": "A plataforma aponta o conflito e pede que o dono da mesa escolha qual vale."
+            }
+          ],
+          "resultado": "Mestre ajustado para o futuro; passado intocado; revisão registrada.",
+          "regras": [
+            "RN-01",
+            "RN-07",
+            "RN-11"
+          ]
         },
         {
           "codigo": "F07",
           "nome": "Manter memória de campanha longa",
           "ator": "Plataforma",
           "fase": 2,
-          "prioridade": "Importante"
+          "prioridade": "Importante",
+          "objetivo": "Em campanhas de muitas sessões, manter o mestre com o contexto certo sem degradar: resumos em camadas, fatos sempre acessíveis, nada esquecido.",
+          "fluxo": [
+            {
+              "t": "Contexto ultrapassa o limite",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Resumos por sessão, por arco e por campanha",
+              "tipo": "llm"
+            },
+            {
+              "t": "Fatos continuam íntegros e buscáveis",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Mestre recebe camadas + fatos da cena",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Contexto estável",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Campanha com várias sessões e resumos do caso de uso G02."
+          ],
+          "gatilho": "O contexto que o mestre receberia na abertura (C02) ultrapassa o limite configurado, ou a campanha fecha um arco do módulo.",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma mantém resumos em três camadas: sessão (G02), arco do módulo e campanha inteira; cada camada é gerada da anterior e dos fatos, sem segredos.",
+            "A cada abertura e a cada cena, o mestre recebe o resumo da campanha, o do arco atual, o das últimas sessões e os fatos ligados à cena, aos personagens presentes e aos itens em jogo, por busca de referência e não por memória.",
+            "Fatos nunca são resumidos fora: permanecem íntegros e consultáveis (F01, F04).",
+            "A plataforma mede o que entrou e o que ficou de fora do contexto (G07) para a verificação de consistência (G03)."
+          ],
+          "alternativos": [
+            {
+              "t": "Pergunta sobre algo de muitas sessões atrás",
+              "d": "A plataforma busca os fatos e entrega ao mestre na hora, mesmo fora dos resumos."
+            },
+            {
+              "t": "Arco do módulo encerrado",
+              "d": "Resumo do arco fechado e marcado; o seguinte começa vazio."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Resumo contradiz fatos",
+              "d": "Detectado pelo caso de uso G03: o resumo é regenerado a partir dos fatos e o anterior descartado."
+            },
+            {
+              "t": "Serviço indisponível para resumir",
+              "d": "O mestre recebe os últimos fatos brutos até o resumo existir; a mesa não trava."
+            }
+          ],
+          "resultado": "Mestre com contexto estável em campanha longa; fatos íntegros.",
+          "regras": [
+            "RN-01",
+            "RN-05",
+            "RN-10"
+          ]
         }
       ]
     },
