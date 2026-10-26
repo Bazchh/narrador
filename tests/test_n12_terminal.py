@@ -211,6 +211,20 @@ def test_mesa_pausa_quando_o_mestre_cai_e_segue_quando_volta(pastas: tuple[Path,
     assert "(instável)" in fim[0].texto
 
 
+def test_roteiro_entende_frases_livres_e_pergunta_quando_nao_entende(pastas: tuple[Path, Path]) -> None:
+    jogo, _ = abrir(pastas)
+    r = jogo.entrada("eu gostaria de falar com ele para me informar melhor sobre o que há no porão")
+    assert any("três noites" in t for t in textos(r, "narracao"))
+    r = jogo.entrada("canto uma cantiga de ninar")
+    assert r[0].tipo == "pergunta" and "não entendeu" in r[0].texto and "desço ao porão" in r[0].texto
+    r = jogo.entrada("/continuar")
+    assert textos(r, "narracao")
+    r = jogo.entrada("quero descer ao porão")
+    assert jogo.mesa.estado == "em_combate" and r[0].texto == "Você segue para: O porão."
+    assert jogo.entrada("/continuar")[0].tipo == "recusa"
+    jogo.encerrar()
+
+
 def test_ficha_e_cena_nao_gastam_turno(pastas: tuple[Path, Path]) -> None:
     jogo, _ = abrir(pastas)
     turnos = jogo.turnos_do_mestre

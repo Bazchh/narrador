@@ -153,8 +153,8 @@ class RoteiroDoPorao:
                 "O taverneiro continua enxugando o caneco, esperando você decidir." if r.ok else TEXTO_NEUTRO
             )
             return
-        if re.search(r"\b(pression|persuad|convenc|intimid|ameac|encaro|insisto)", tn):
-            pericia = "Intimidação" if re.search(r"\b(intimid|ameac|encaro)", tn) else "Persuasão"
+        if re.search(r"\b(pression|persuad|convenc|intimid|ameac|encar|insist|exij|forc|cobr)", tn):
+            pericia = "Intimidação" if re.search(r"\b(intimid|ameac|encar|exij|forc)", tn) else "Persuasão"
             r = t.chamar(
                 "dar_veredito",
                 {"tentativa": texto, "veredito": {"tipo": "teste", "pericia": pericia, "dificuldade": 12}},
@@ -174,14 +174,14 @@ class RoteiroDoPorao:
             else:
                 t.narrar("O taverneiro se fecha: 'É só barulho de rato. Vai olhar ou não vai?'")
             return
-        if re.search(r"\b(falo|converso|pergunto|digo|cumprimento|taverneiro)", tn):
+        if re.search(r"\b(fal|convers|pergunt|dig|cumpriment|taverneiro|ele|inform|explic|sab|quest)", tn):
             t.narrar(
                 "O taverneiro fala baixo: o barulho começou há três noites, sempre depois que a casa fecha. "
                 "Ele não desce lá de jeito nenhum. A chave do alçapão está no bolso dele, pronta para quem for.",
                 [_fato("conhecimento", "np-taverneiro", "o barulho no porão começou há três noites")],
             )
             return
-        if re.search(r"\b(examino|olho|procuro|investigo|observo|vasculho)", tn):
+        if re.search(r"\b(examin|olh|procur|investig|observ|vasculh|inspecion|verific)", tn):
             r = t.chamar(
                 "dar_veredito",
                 {
@@ -204,15 +204,16 @@ class RoteiroDoPorao:
             else:
                 t.narrar("Pouca luz, muita poeira: nada além de um alçapão trancado.")
             return
-        if re.search(r"\b(abro|destranco|forco|arrombo|alcapao)", tn):
+        if re.search(r"\b(abr|destranc|arromb|alcapao|chave)", tn):
             t.chamar("dar_veredito", {"tentativa": texto, "veredito": {"tipo": "de_cara"}})
             t.narrar(
                 "O taverneiro destranca o alçapão e recua. Uma escada estreita desce para o escuro. "
                 "Para descer, diga: desço ao porão."
             )
             return
-        t.chamar("dar_veredito", {"tentativa": texto, "veredito": {"tipo": "de_cara"}})
-        t.narrar("Você faz isso. A taverna continua silenciosa; o alçapão continua trancado.")
+        self._nao_entendi(
+            t, ["falo com o taverneiro", "pressiono o taverneiro", "examino o alçapão", "desço ao porão"]
+        )
 
     # ---------------------------------------------------------------- o porão
 
@@ -257,7 +258,7 @@ class RoteiroDoPorao:
         if _ATAQUE.search(tn):
             t.narrar("O golpe acerta em cheio e o último rato cai, imóvel. O porão fica em silêncio.")
             return
-        if re.search(r"\b(examino|olho|procuro|investigo|vasculho|barris|afasto os barris|empurro)", tn):
+        if re.search(r"\b(examin|olh|procur|investig|vasculh|barris|empurr|afast|revir|mex)", tn):
             r = t.chamar(
                 "dar_veredito",
                 {
@@ -276,8 +277,7 @@ class RoteiroDoPorao:
                     "Barris, umidade e marcas de dentes. Se há algo mais, está bem escondido. Pode tentar de novo."
                 )
             return
-        t.chamar("dar_veredito", {"tentativa": texto, "veredito": {"tipo": "de_cara"}})
-        t.narrar("Você faz isso. O porão continua escuro e úmido; os barris roídos seguem no lugar.")
+        self._nao_entendi(t, ["examino os barris", "sigo pelo túnel"])
 
     # ---------------------------------------------------------------- o túnel
 
@@ -302,7 +302,7 @@ class RoteiroDoPorao:
             )
             t.narrar("O anel continua brilhando no chão de terra." if r.ok else TEXTO_NEUTRO)
             return
-        if re.search(r"\b(pego|pegar|apanho|recolho|guardo)\b", tn) and "anel" in tn:
+        if re.search(r"\b(peg|apanh|recolh|guard|pass)", tn) and "anel" in tn:
             if anel_recuperado:
                 t.chamar("dar_veredito", {"tentativa": texto, "veredito": {"tipo": "de_cara"}})
                 t.narrar("O anel já está com você.")
@@ -314,7 +314,7 @@ class RoteiroDoPorao:
                 [_fato("posse", "it-anel", "Brenna recuperou o anel de prata do taverneiro")],
             )
             return
-        if re.search(r"\b(examino|olho|investigo|marcas|parede|ferramenta)", tn):
+        if re.search(r"\b(examin|olh|investig|marca|parede|ferramenta|observ)", tn):
             r = t.chamar(
                 "dar_veredito",
                 {
@@ -337,8 +337,18 @@ class RoteiroDoPorao:
             else:
                 t.narrar("Terra revirada e marcas que você não sabe ler. Pode tentar de novo com mais luz.")
             return
-        t.chamar("dar_veredito", {"tentativa": texto, "veredito": {"tipo": "de_cara"}})
-        t.narrar("Você faz isso. O túnel continua estreito e úmido.")
+        self._nao_entendi(t, ["pego o anel", "examino as marcas na parede"])
+
+    def _nao_entendi(self, t: _Turno, opcoes: list[str]) -> None:
+        """O roteiro desta fase entende pouco; em vez de fingir, pergunta ao jogador (C04)."""
+        t.chamar(
+            "perguntar_ao_jogador",
+            {
+                "pergunta": "O mestre roteirizado desta fase não entendeu. Tente, por exemplo:",
+                "opcoes": opcoes,
+            },
+        )
+        t.narrar("O mestre espera você dizer de outro jeito.")
 
     # ---------------------------------------------------------------- combate
 

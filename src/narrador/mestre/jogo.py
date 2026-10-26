@@ -37,7 +37,8 @@ LIMITE_TURNOS_DE_CRIATURA = 40  # trava contra laço: nenhuma rodada real passa 
 
 AJUDA = (
     "Escreva o que o personagem faz ou pergunta. Comandos: /ficha (a ficha e de onde vem cada número), "
-    "/cena (a descrição do módulo e as saídas), /ir <lugar> (deslocar-se), /ajuda, /sair (encerra a sessão). "
+    "/cena (a descrição do módulo e as saídas), /ir <lugar> (deslocar-se), /continuar (o mestre segue sem você agir), "
+    "/ajuda, /sair (encerra a sessão). "
     "Em combate: ataco <alvo>, me aproximo de <alvo>, me afasto, esquivo, desengajo, corro, fujo, passo."
 )
 
@@ -112,8 +113,8 @@ class Painel:
 
 
 _MOVIMENTO = re.compile(
-    r"\b(vou|sigo|entro|desco|subo|atravesso|caminho|ando|rastejo|passo (pelo|pela|para|por)|me enfio|"
-    r"avanco (pelo|pela|para|por)|volto)\b"
+    r"\b(vou|vamos|ir|sigo|seguir|entro|entrar|desco|descer|subo|subir|atravesso|atravessar|caminho|ando|"
+    r"rastejo|passo (pelo|pela|para|por)|me enfio|avanco (pelo|pela|para|por)|volto|voltar)\b"
 )
 _PALAVRAS_VAZIAS = {
     "o",
@@ -332,6 +333,10 @@ class Jogo:
             return self.encerrar()
         if nome == "ajuda":
             return [Mensagem("sistema", AJUDA)]
+        if nome == "continuar":
+            if self.mesa.estado == "em_combate":
+                return [Mensagem("recusa", "Em combate é a sua vez: declare o que faz, ou passo.")]
+            return [*self._turno(ENTRADA_CONTINUAR), *self._turnos_das_criaturas()]
         if nome == "ficha":
             return [Mensagem("sistema", self.texto_da_ficha())]
         if nome == "cena":

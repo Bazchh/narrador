@@ -24,7 +24,7 @@ ESTILOS: dict[str, str] = {
     "eco": "dim",
 }
 
-PROMPT_EM_CENA = "O que você faz? (/ajuda)"
+PROMPT_EM_CENA = "{nome} diz ou faz... (/ajuda)"
 PROMPT_EM_COMBATE = "Seu turno: ataco <alvo>, me aproximo, esquivo, fujo, passo"
 PROMPT_PAUSADA = "Mesa pausada: escreva para tentar de novo, ou /sair"
 
@@ -54,7 +54,7 @@ class Terminal(App[None]):
                 yield RichLog(id="narracao", wrap=True, markup=False)
                 yield Static(id="combate")
             yield Static(id="mestre")
-            yield Input(placeholder=PROMPT_EM_CENA, id="entrada")
+            yield Input(placeholder=PROMPT_EM_CENA.format(nome="Você"), id="entrada")
 
     def on_mount(self) -> None:
         self.mostrar(self.iniciais)
@@ -99,7 +99,7 @@ class Terminal(App[None]):
         elif painel.em_combate:
             entrada.placeholder = PROMPT_EM_COMBATE
         else:
-            entrada.placeholder = PROMPT_EM_CENA
+            entrada.placeholder = PROMPT_EM_CENA.format(nome=painel.nome)
 
 
 def texto_da_barra(p: Painel) -> str:
