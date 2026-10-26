@@ -2,7 +2,7 @@
   "produto": "Narrador",
   "titulo": "Casos de Uso",
   "kicker": "Especificação funcional · outubro de 2026",
-  "entrega": "Entrega 3: módulos A, B e C detalhados. Os demais módulos estão no índice com código fixo e serão detalhados nas próximas entregas, módulo a módulo.",
+  "entrega": "Entrega 4: módulos A, B, C e D detalhados. Os demais módulos estão no índice com código fixo e serão detalhados nas próximas entregas, módulo a módulo.",
   "intro": "Tudo o que a mesa com mestre por inteligência artificial precisa fazer, descrito um a um: quem usa, o que acontece passo a passo, o que fazer quando algo dá errado e o que ganhamos com cada um. Documento complementar ao Mapa do Projeto e ao Blueprint Técnico.",
   "rodape": "Casos de uso · Narrador",
   "fases": {
@@ -1806,7 +1806,7 @@
       "letra": "D",
       "nome": "Combate",
       "fase": 1,
-      "detalhado": false,
+      "detalhado": true,
       "resumo": "Iniciativa, turnos, ataques, magias, condições e morte, sempre arbitrados pelo motor.",
       "casos": [
         {
@@ -1814,56 +1814,616 @@
           "nome": "Iniciar combate e rolar iniciativa",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Passar da narração livre para o combate por turnos, com participantes, posições e iniciativa definidos pelo motor.",
+          "fluxo": [
+            {
+              "t": "Gatilho de combate",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Mestre declara participantes e situação",
+              "tipo": "llm"
+            },
+            {
+              "t": "Motor monta o encontro com as fichas mapeadas",
+              "tipo": "motor",
+              "desvio": {
+                "rotulo": "criatura pendente",
+                "t": "Bloqueia; mestre narra o impasse; avisa o dono da mesa",
+                "tipo": "falha"
+              }
+            },
+            {
+              "t": "Motor resolve surpresa e rola iniciativa",
+              "tipo": "motor"
+            },
+            {
+              "t": "Primeiro turno aberto",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Sessão aberta.",
+            "Criaturas da cena mapeadas (caso de uso A04)."
+          ],
+          "gatilho": "Ação hostil do jogador (caso de uso C05), encontro do módulo (caso de uso C07) ou emboscada narrada pelo mestre.",
+          "apoio": [
+            "Serviço de linguagem",
+            "SRD 5.2"
+          ],
+          "principal": [
+            "O mestre declara os participantes (criaturas, personagens do mestre e o personagem) e a situação inicial: distâncias aproximadas, cobertura, luz e quem percebeu quem.",
+            "O motor carrega as fichas do SRD ou mapeadas e cria o estado do combate: pontos de vida, classe de armadura, condições e posição por zona (perto, médio, longe), sem grade tática na primeira versão.",
+            "O motor resolve a surpresa conforme o SRD, a partir do que o mestre declarou e dos testes já feitos: quem não percebeu não age na primeira rodada.",
+            "O motor rola a iniciativa de todos, com registro, e monta a ordem.",
+            "A plataforma mostra a ordem de iniciativa e o estado ao jogador.",
+            "O primeiro turno abre (casos de uso D02 ou D03) e o fato \"combate iniciado\" entra na campanha viva."
+          ],
+          "alternativos": [
+            {
+              "t": "Jogador evita o combate antes do primeiro turno",
+              "d": "Fala ou fuga: volta ao caso de uso C05 com veredito; o combate só começa se a tentativa falhar."
+            },
+            {
+              "t": "Criatura sem ficha mapeada",
+              "d": "O combate é bloqueado; o mestre narra o impasse (a criatura hesita ou recua) e o dono da mesa é avisado para resolver no caso de uso A04."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Criatura que não está na cena do módulo nem na campanha viva",
+              "d": "Entra só como desvio registrado pelo caso de uso F02, antes do combate."
+            },
+            {
+              "t": "Posições ambíguas",
+              "d": "O motor pede ao mestre a zona de cada participante; sem resposta, assume \"médio\" e registra."
+            }
+          ],
+          "resultado": "Combate iniciado com estado determinístico e iniciativa registrada.",
+          "regras": [
+            "RN-06",
+            "RN-07"
+          ]
         },
         {
           "codigo": "D02",
           "nome": "Jogar o turno do personagem",
           "ator": "Jogador",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Usar ação, ação bônus, movimento e reação exatamente como o SRD permite, com o resultado rolado pelo motor.",
+          "fluxo": [
+            {
+              "t": "Declara o que faz no turno",
+              "tipo": "ator"
+            },
+            {
+              "t": "Motor confere economia de ação e alvo",
+              "tipo": "motor",
+              "desvio": {
+                "rotulo": "não permitido",
+                "t": "Recusa citando a regra; jogador refaz",
+                "tipo": "falha"
+              }
+            },
+            {
+              "t": "Motor resolve (D04, D05 ou ação do SRD)",
+              "tipo": "motor"
+            },
+            {
+              "t": "Mestre narra o resultado",
+              "tipo": "llm"
+            },
+            {
+              "t": "Turno encerrado e registrado",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Combate iniciado (caso de uso D01).",
+            "É o turno do personagem."
+          ],
+          "gatilho": "A ordem de iniciativa chega ao personagem.",
+          "apoio": [
+            "Serviço de linguagem",
+            "SRD 5.2"
+          ],
+          "principal": [
+            "A plataforma mostra o estado: pontos de vida, condições, e o que ainda pode fazer (ação, ação bônus, movimento, reação, objetos).",
+            "O jogador declara em texto o que faz, em qualquer ordem.",
+            "O motor interpreta e confere: a ação existe, o alvo está ao alcance da zona, a economia de ação é respeitada, nenhuma condição impede.",
+            "O motor resolve: ataque (caso de uso D04), magia (caso de uso D05) ou outra ação do SRD (esquivar, desengajar, correr, ajudar, esconder, usar objeto), com os testes que couberem.",
+            "O mestre narra o resultado em uma ou duas frases, sem alterar os números.",
+            "O motor registra tudo e passa o turno."
+          ],
+          "alternativos": [
+            {
+              "t": "Ação criativa fora da lista",
+              "d": "Derrubar o lustre, por exemplo: o mestre dá o veredito (regra RN-11) e o motor aplica como ação com teste; o efeito mecânico é escolhido entre os que o SRD prevê (dano, condição, terreno)."
+            },
+            {
+              "t": "Preparar ação",
+              "d": "O motor registra a condição de disparo e o gatilho conforme o SRD e pergunta no momento certo."
+            },
+            {
+              "t": "Jogador quer saber as opções",
+              "d": "A plataforma lista sem gastar nada (caso de uso B03)."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Declaração não permitida",
+              "d": "Duas ações, alvo fora de alcance, condição que impede: o motor recusa citando a regra e o jogador refaz; nada é gasto."
+            },
+            {
+              "t": "Jogador não responde",
+              "d": "Nada acontece; o combate fica aguardando e é retomável pelo caso de uso F05."
+            },
+            {
+              "t": "Alvo ambíguo",
+              "d": "O motor pergunta qual, listando os possíveis."
+            }
+          ],
+          "resultado": "Turno resolvido pelas regras, narrado e registrado.",
+          "regras": [
+            "RN-02",
+            "RN-06",
+            "RN-11"
+          ]
         },
         {
           "codigo": "D03",
           "nome": "Jogar o turno das criaturas",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Fazer criaturas e personagens do mestre agirem com inteligência coerente com o módulo, e com as regras aplicadas pelo motor.",
+          "fluxo": [
+            {
+              "t": "Turno da criatura",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Mestre decide a intenção pela ficha e pela cena",
+              "tipo": "llm"
+            },
+            {
+              "t": "Motor confere e resolve",
+              "tipo": "motor",
+              "desvio": {
+                "rotulo": "intenção impossível",
+                "t": "Mestre escolhe outra; persistindo, ação padrão da ficha",
+                "tipo": "atencao"
+              }
+            },
+            {
+              "t": "Mestre narra",
+              "tipo": "llm"
+            },
+            {
+              "t": "Turno registrado",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Combate iniciado.",
+            "É o turno de uma criatura ou personagem do mestre."
+          ],
+          "gatilho": "A ordem de iniciativa chega à criatura.",
+          "apoio": [
+            "Serviço de linguagem",
+            "SRD 5.2"
+          ],
+          "principal": [
+            "A plataforma entrega ao mestre a ficha da criatura (ações, traços, inteligência e o comportamento descrito no módulo), o estado atual dela e o que ela sabe do personagem.",
+            "O mestre decide a intenção: atacar quem e com o quê, mover para onde, fugir, render-se, usar o ambiente.",
+            "O motor confere que a intenção é possível pela ficha e pelo estado, e resolve pelos casos de uso D04 ou D05.",
+            "O mestre narra.",
+            "O motor registra e passa o turno."
+          ],
+          "alternativos": [
+            {
+              "t": "Moral quebrada",
+              "d": "Quando o módulo ou o mestre decide que a criatura foge ou se rende, o motor aplica as regras de movimento e o estado muda na campanha viva."
+            },
+            {
+              "t": "Várias criaturas iguais",
+              "d": "O motor agrupa os turnos na mesma iniciativa e o mestre decide por grupo, com alvos individuais."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Intenção impossível",
+              "d": "Ação que a ficha não tem ou alvo fora de alcance: o motor recusa e o mestre escolhe outra; persistindo, o motor aplica a ação padrão da ficha (ataque básico no alvo mais próximo) e registra."
+            },
+            {
+              "t": "Serviço de linguagem falha no turno",
+              "d": "Caso de uso G05: o motor aplica a ação padrão da ficha para o combate não travar, registrado como \"turno automático\", e a narração fica mínima."
+            }
+          ],
+          "resultado": "Turno da criatura resolvido, narrado e registrado.",
+          "regras": [
+            "RN-06",
+            "RN-07"
+          ]
         },
         {
           "codigo": "D04",
           "nome": "Resolver ataque e dano",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Aplicar rolagem de ataque, acerto, crítico, dano, resistências e pontos de vida exatamente pelo SRD, com cada número rastreável.",
+          "fluxo": [
+            {
+              "t": "Ataque declarado e validado",
+              "tipo": "motor"
+            },
+            {
+              "t": "Rola o ataque com modificadores",
+              "tipo": "motor"
+            },
+            {
+              "t": "Compara com a classe de armadura; crítico ou falha",
+              "tipo": "motor"
+            },
+            {
+              "t": "Rola o dano; aplica resistências",
+              "tipo": "motor"
+            },
+            {
+              "t": "Pontos de vida e condições atualizados",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Turno em andamento (casos de uso D02 ou D03).",
+            "Atacante, alvo e arma ou ataque identificados."
+          ],
+          "gatilho": "Uma ação de ataque validada pelo motor.",
+          "apoio": [
+            "SRD 5.2"
+          ],
+          "principal": [
+            "O motor monta o ataque: bônus de ataque (proficiência, atributo, arma mágica), vantagem ou desvantagem por condições, cobertura e distância por zona.",
+            "O motor rola o d20 com registro (caso de uso E01): 20 natural acerta e é crítico; 1 natural erra.",
+            "O motor compara com a classe de armadura do alvo.",
+            "No acerto, o motor rola o dano (dados dobrados no crítico), soma os modificadores e aplica resistência, vulnerabilidade e imunidade do alvo.",
+            "O motor subtrai dos pontos de vida temporários e depois dos pontos de vida; ao chegar a zero, segue o caso de uso D07.",
+            "O motor aplica efeitos do ataque (veneno, agarrar, derrubar) com as salvaguardas que o SRD exige, e registra cada dado, cada modificador e cada regra aplicada."
+          ],
+          "alternativos": [
+            {
+              "t": "Ataque à distância com inimigo adjacente",
+              "d": "Desvantagem conforme o SRD."
+            },
+            {
+              "t": "Ataque contra objeto",
+              "d": "Pontos de vida e classe de armadura de objeto pelo SRD."
+            },
+            {
+              "t": "Vários ataques na mesma ação",
+              "d": "Ataque extra ou multiataque: cada um resolvido em sequência, com alvos distintos se declarado."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Alvo fora de alcance ou sem linha de visão",
+              "d": "O ataque não é rolado; volta ao turno sem gastar a ação."
+            },
+            {
+              "t": "Tipo de dano não reconhecido",
+              "d": "Ficha própria com tipo fora do SRD: o motor aplica sem resistência e marca \"tipo desconhecido\" para o dono da mesa resolver no caso de uso A04."
+            }
+          ],
+          "resultado": "Ataque resolvido; pontos de vida e condições atualizados; registro completo.",
+          "regras": [
+            "RN-06"
+          ]
         },
         {
           "codigo": "D05",
           "nome": "Conjurar magia",
           "ator": "Jogador",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Lançar magias com espaços, componentes, alcance, área, salvaguardas e concentração tratados pelo SRD, dentro e fora do combate.",
+          "fluxo": [
+            {
+              "t": "Declara a magia, o espaço e os alvos",
+              "tipo": "ator"
+            },
+            {
+              "t": "Motor confere disponibilidade, espaço, componentes, alcance, concentração",
+              "tipo": "motor",
+              "desvio": {
+                "rotulo": "não pode conjurar",
+                "t": "Recusa com a regra; nada é gasto",
+                "tipo": "falha"
+              }
+            },
+            {
+              "t": "Motor resolve: ataque, salvaguarda ou efeito",
+              "tipo": "motor"
+            },
+            {
+              "t": "Mestre narra o efeito",
+              "tipo": "llm"
+            },
+            {
+              "t": "Espaço gasto; efeito e duração registrados",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Personagem conjurador com a magia disponível.",
+            "Em combate, é o turno dele."
+          ],
+          "gatilho": "O jogador declara a conjuração: em combate como ação do turno, fora dele como ação do caso de uso C05.",
+          "apoio": [
+            "SRD 5.2",
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "O motor confere: magia conhecida ou preparada, espaço do nível disponível, componentes (verbal, somático, material ou foco), tempo de conjuração, alcance e alvos válidos na zona, e concentração (se já concentra, a anterior cai).",
+            "O motor resolve conforme o SRD: ataque de magia (caso de uso D04), salvaguarda dos alvos contra a dificuldade do conjurador, ou efeito automático.",
+            "O motor aplica dano, cura, condição ou efeito, com o escalonamento pelo nível do espaço.",
+            "O mestre narra o efeito.",
+            "O motor gasta o espaço, registra o efeito e a duração, e agenda o fim por rodadas, minutos ou concentração."
+          ],
+          "alternativos": [
+            {
+              "t": "Truque",
+              "d": "Sem espaço; escala pelo nível do personagem."
+            },
+            {
+              "t": "Ritual fora de combate",
+              "d": "Sem espaço, com o tempo extra do SRD aplicado ao relógio da campanha."
+            },
+            {
+              "t": "Magia de reação",
+              "d": "Escudo ou contramágica: o motor pergunta ao jogador no momento do gatilho, dentro do turno de outro."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Conjuração não permitida",
+              "d": "Sem espaço, condição que impede, sem componente: recusa com a regra, sem gastar nada."
+            },
+            {
+              "t": "Alvo imune ou efeito sem sentido na cena",
+              "d": "Encantar um construto, por exemplo: o motor aplica a regra (sem efeito) e avisa antes de gastar o espaço, deixando o jogador trocar."
+            },
+            {
+              "t": "Concentração quebrada por dano",
+              "d": "O motor rola a salvaguarda de constituição na hora, com registro, e encerra o efeito se falhar."
+            }
+          ],
+          "resultado": "Magia resolvida pelo SRD; espaço, efeito e duração registrados.",
+          "regras": [
+            "RN-06",
+            "RN-08"
+          ]
         },
         {
           "codigo": "D06",
           "nome": "Aplicar e remover condições",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Manter as condições do SRD (caído, agarrado, envenenado, cego e as demais) com os efeitos mecânicos certos e o fim no momento certo.",
+          "fluxo": [
+            {
+              "t": "Efeito aplica uma condição",
+              "tipo": "motor"
+            },
+            {
+              "t": "Registra origem, duração e condição de fim",
+              "tipo": "motor"
+            },
+            {
+              "t": "Aplica os efeitos em cada rolagem e ação",
+              "tipo": "motor"
+            },
+            {
+              "t": "Fim por duração, salvaguarda ou ação",
+              "tipo": "motor"
+            },
+            {
+              "t": "Estado atualizado",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Combate ou cena com efeito que gera condição."
+          ],
+          "gatilho": "Ataque, magia, terreno, veneno ou veredito do mestre produz uma condição do SRD.",
+          "apoio": [
+            "SRD 5.2"
+          ],
+          "principal": [
+            "O motor aplica a condição com origem (quem e o quê), duração e condição de fim: salvaguarda no fim do turno, ação para se levantar, fim da concentração do conjurador.",
+            "Enquanto vale, o motor aplica os efeitos do SRD em cada rolagem e ação: vantagem ou desvantagem, impedimento de agir, velocidade zero.",
+            "A plataforma mostra as condições ativas ao jogador no turno dele.",
+            "No gatilho de fim, o motor rola a salvaguarda ou aceita a ação e remove a condição.",
+            "Tudo fica registrado."
+          ],
+          "alternativos": [
+            {
+              "t": "Condição só narrativa",
+              "d": "\"Assustado pela cena\" só vira condição mecânica se o mestre nomear uma do SRD; senão fica na narração, sem efeito."
+            },
+            {
+              "t": "Exaustão",
+              "d": "Níveis acumulados conforme o SRD, com efeito também fora de combate."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Condição de ficha própria sem equivalente no SRD",
+              "d": "O motor pede ao dono da mesa mapear para uma do SRD; até lá não aplica efeito mecânico e registra."
+            },
+            {
+              "t": "Duração perdida por interrupção",
+              "d": "Ao retomar pelo caso de uso F05, o motor recalcula pela rodada e pelo relógio registrados."
+            }
+          ],
+          "resultado": "Condições corretas, com efeito e fim rastreáveis.",
+          "regras": [
+            "RN-06"
+          ]
         },
         {
           "codigo": "D07",
           "nome": "Cair a zero pontos de vida",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Tratar inconsciência, salvaguardas contra a morte, estabilização e morte exatamente pelo SRD, com a narração à altura.",
+          "fluxo": [
+            {
+              "t": "Pontos de vida chegam a zero",
+              "tipo": "motor"
+            },
+            {
+              "t": "Dano massivo? morte imediata",
+              "tipo": "motor"
+            },
+            {
+              "t": "Inconsciente; salvaguarda a cada turno",
+              "tipo": "motor"
+            },
+            {
+              "t": "Três sucessos: estável; três falhas: morte",
+              "tipo": "motor"
+            },
+            {
+              "t": "Mestre narra; fato registrado",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Combate, ou dano fora de combate."
+          ],
+          "gatilho": "Os pontos de vida do personagem ou de uma criatura chegam a zero.",
+          "apoio": [
+            "SRD 5.2",
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "O motor confere dano massivo (dano restante maior ou igual ao máximo de pontos de vida): morte imediata.",
+            "Senão, o personagem cai inconsciente, com a condição aplicada pelo caso de uso D06.",
+            "A cada turno dele, o motor rola a salvaguarda contra a morte com registro: 10 ou mais é sucesso; 20 natural recupera 1 ponto de vida; 1 natural conta duas falhas; dano enquanto a zero conta falha, duas se crítico.",
+            "Três sucessos: estável. Três falhas: morte.",
+            "Cura ou estabilização (ação de medicina, magia) interrompe conforme o SRD.",
+            "O mestre narra cada momento no tom da mesa; a morte, se ocorrer, entra como fato definitivo e a campanha segue conforme o dono da mesa decidir, com novo personagem pelos casos de uso B01 ou B02."
+          ],
+          "alternativos": [
+            {
+              "t": "Criatura a zero",
+              "d": "Morre, salvo se o atacante declarou nocaute em corpo a corpo, como o SRD permite: fica inconsciente e estável."
+            },
+            {
+              "t": "Personagem do mestre importante a zero",
+              "d": "O mestre pode aplicar nocaute pela história; se o módulo dizia morte, entra como desvio registrado."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Jogador quer voltar atrás após a morte",
+              "d": "Não há retcon. O dono da mesa pode criar uma campanha nova a partir de um fato anterior, explicitamente, como outra campanha."
+            },
+            {
+              "t": "Serviço de linguagem falha",
+              "d": "A mecânica segue pelo motor; a narração fica mínima e marcada para o jogador."
+            }
+          ],
+          "resultado": "Desfecho pelas regras, registrado; a morte é definitiva na campanha viva.",
+          "regras": [
+            "RN-01",
+            "RN-04",
+            "RN-06"
+          ]
         },
         {
           "codigo": "D08",
           "nome": "Encerrar o combate e dar a recompensa",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Sair do modo de turnos quando o combate acaba e aplicar experiência, tesouro e consequências na campanha viva.",
+          "fluxo": [
+            {
+              "t": "Motor detecta o fim ou o mestre declara",
+              "tipo": "motor"
+            },
+            {
+              "t": "Mestre narra o desfecho",
+              "tipo": "llm"
+            },
+            {
+              "t": "Motor calcula a experiência; tesouro vem do módulo",
+              "tipo": "motor",
+              "desvio": {
+                "rotulo": "combate preso",
+                "t": "Após rodadas sem dano, pergunta ao mestre",
+                "tipo": "atencao"
+              }
+            },
+            {
+              "t": "Fatos registrados; efeitos com duração seguem",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Volta à narração livre",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Combate iniciado."
+          ],
+          "gatilho": "Todas as criaturas hostis mortas, fugidas ou rendidas; o personagem morto ou fugido; ou o mestre declara o fim por rendição aceita.",
+          "apoio": [
+            "Serviço de linguagem",
+            "SRD 5.2"
+          ],
+          "principal": [
+            "O motor detecta a condição de fim, ou o mestre declara (rendição aceita, fuga bem-sucedida).",
+            "O mestre narra o desfecho.",
+            "O motor calcula a experiência pelas criaturas derrotadas, pela tabela do SRD, ou aplica o marco se a mesa foi configurada por marcos.",
+            "O tesouro vem do módulo, pelos casos de uso A04 e B05, nunca inventado; o mestre só descreve.",
+            "Condições e efeitos com duração continuam pelo relógio (caso de uso D06).",
+            "Os fatos entram na campanha viva: quem morreu, quem fugiu, o que foi levado, o estado do local.",
+            "A mesa volta ao modo de narração (caso de uso C03)."
+          ],
+          "alternativos": [
+            {
+              "t": "Fuga do personagem",
+              "d": "O motor resolve a perseguição pelas regras de movimento e testes do SRD; o combate termina quando a distância é rompida."
+            },
+            {
+              "t": "Rendição de criaturas",
+              "d": "Viram personagens do mestre na campanha viva, com atitude registrada, prontos para o caso de uso C06."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Combate preso",
+              "d": "Criatura inalcançável e inofensiva, por exemplo: após um número de rodadas sem dano, o motor pergunta ao mestre, que pode declarar o fim com desvio registrado. Não existem turnos infinitos sem ação."
+            },
+            {
+              "t": "Experiência não calculável",
+              "d": "Criatura de ficha própria sem nível de desafio: o dono da mesa define o valor no caso de uso A04; até lá fica registrada como pendente."
+            }
+          ],
+          "resultado": "Combate encerrado; recompensas e consequências na campanha viva.",
+          "regras": [
+            "RN-01",
+            "RN-04",
+            "RN-06",
+            "RN-07"
+          ]
         }
       ]
     },
