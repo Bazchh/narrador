@@ -2,7 +2,7 @@
   "produto": "Narrador",
   "titulo": "Casos de Uso",
   "kicker": "Especificação funcional · outubro de 2026",
-  "entrega": "Entrega 4: módulos A, B, C e D detalhados. Os demais módulos estão no índice com código fixo e serão detalhados nas próximas entregas, módulo a módulo.",
+  "entrega": "Entrega 5: módulos A a E detalhados. Os demais módulos estão no índice com código fixo e serão detalhados nas próximas entregas, módulo a módulo.",
   "intro": "Tudo o que a mesa com mestre por inteligência artificial precisa fazer, descrito um a um: quem usa, o que acontece passo a passo, o que fazer quando algo dá errado e o que ganhamos com cada um. Documento complementar ao Mapa do Projeto e ao Blueprint Técnico.",
   "rodape": "Casos de uso · Narrador",
   "fases": {
@@ -2431,7 +2431,7 @@
       "letra": "E",
       "nome": "Regras e dados",
       "fase": 1,
-      "detalhado": false,
+      "detalhado": true,
       "resumo": "O motor determinístico: rolagens, testes, cálculos e o SRD 5.2 como dado consultável.",
       "casos": [
         {
@@ -2439,42 +2439,407 @@
           "nome": "Rolar dado com registro",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Produzir todo número aleatório da mesa de forma justa, reproduzível e registrada, fora do alcance do serviço de linguagem.",
+          "fluxo": [
+            {
+              "t": "Pedido: expressão, motivo, origem, modo",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Gera pela semente da campanha e pelo contador",
+              "tipo": "motor"
+            },
+            {
+              "t": "Aplica vantagem, desvantagem e modificadores",
+              "tipo": "motor"
+            },
+            {
+              "t": "Registra semente, dados, total e motivo",
+              "tipo": "motor"
+            },
+            {
+              "t": "Resultado entregue e mostrado",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Campanha viva com semente definida na criação (caso de uso C01)."
+          ],
+          "gatilho": "Qualquer caso de uso precisa de um número aleatório: teste, ataque, dano, iniciativa, tabela do módulo, pontos de vida por nível.",
+          "apoio": [],
+          "principal": [
+            "O pedido chega com a expressão (por exemplo, 1d20+5 ou 2d6), o motivo (teste de Atletismo), a origem (caso de uso, turno, quem pediu) e o modo (normal, vantagem, desvantagem).",
+            "O motor gera os dados com o gerador determinístico da campanha: semente da campanha mais contador sequencial, de modo que a rolagem de número N é sempre a mesma dado o histórico.",
+            "O motor aplica vantagem ou desvantagem (dois d20, maior ou menor) e os modificadores.",
+            "O motor registra no diário de rolagens: número sequencial, data, expressão, cada dado, modificadores, total, motivo e origem.",
+            "O motor devolve o total e os dados individuais a quem pediu, e a plataforma mostra ao jogador no formato \"d20 (14) + 3 = 17\"."
+          ],
+          "alternativos": [
+            {
+              "t": "Dado físico informado pelo jogador",
+              "d": "Permitido pela configuração da mesa (caso de uso C10): o motor registra o valor como \"informado\", sem semente, na mesma estrutura do diário."
+            },
+            {
+              "t": "Rolagem em tabela do módulo",
+              "d": "Encontro aleatório, por exemplo: mesma rotina, com o resultado mapeado à linha da tabela e registrado."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Expressão inválida",
+              "d": "Recusa com a sintaxe esperada; nada é gerado nem consumido do contador."
+            },
+            {
+              "t": "Pedido vindo do serviço de linguagem com resultado sugerido",
+              "d": "O motor ignora o número sugerido, rola normalmente e registra a tentativa de sugestão para a auditoria do caso de uso G04."
+            }
+          ],
+          "resultado": "Número justo, registrado e reproduzível.",
+          "regras": [
+            "RN-06"
+          ]
         },
         {
           "codigo": "E02",
           "nome": "Resolver teste contra dificuldade",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Decidir sucesso ou falha de um teste de atributo, perícia ou salvaguarda exatamente pelo SRD, a partir de um veredito validado.",
+          "fluxo": [
+            {
+              "t": "Veredito validado: perícia ou salvaguarda, dificuldade, modo",
+              "tipo": "motor"
+            },
+            {
+              "t": "Monta o modificador pela ficha e pelas condições",
+              "tipo": "motor"
+            },
+            {
+              "t": "Rola pelo caso de uso E01",
+              "tipo": "motor"
+            },
+            {
+              "t": "Compara com a dificuldade",
+              "tipo": "motor"
+            },
+            {
+              "t": "Resultado, margem e composição registrados",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Veredito validado (caso de uso C05), pedido de salvaguarda (casos de uso D04 e D05) ou teste de regra (casos de uso C07 e C08)."
+          ],
+          "gatilho": "Pedido de teste com perícia ou atributo e dificuldade, ou de salvaguarda com atributo e dificuldade.",
+          "apoio": [
+            "SRD 5.2"
+          ],
+          "principal": [
+            "O motor confirma que a perícia ou salvaguarda existe no SRD e qual atributo usa.",
+            "O motor monta o modificador pela ficha: modificador do atributo, proficiência (simples, dupla ou meia) quando aplicável, bônus de item ou magia ativos, e vantagem ou desvantagem decorrentes de condições (caso de uso D06) e do veredito.",
+            "O motor rola pelo caso de uso E01.",
+            "O motor compara com a dificuldade: igual ou maior é sucesso.",
+            "O motor registra resultado, margem e a composição do modificador, e devolve ao caso de uso que pediu."
+          ],
+          "alternativos": [
+            {
+              "t": "Teste passivo",
+              "d": "Percepção passiva, por exemplo: sem rolagem, 10 mais o modificador, registrado como passivo."
+            },
+            {
+              "t": "Teste resistido",
+              "d": "Furtividade contra percepção: dois testes, o maior vence, empate resolvido como o SRD define."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Perícia inexistente ou atributo errado para a salvaguarda",
+              "d": "Recusa a quem pediu, que volta ao caso de uso C05 para o mestre refazer o veredito."
+            },
+            {
+              "t": "Ficha sem o valor necessário",
+              "d": "Inconsistência: o motor usa a última versão gravada da ficha, marca a ocorrência e registra para o caso de uso G03."
+            }
+          ],
+          "resultado": "Sucesso ou falha determinado, com margem e composição registradas.",
+          "regras": [
+            "RN-06"
+          ]
         },
         {
           "codigo": "E03",
           "nome": "Consultar o SRD",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Dar ao motor, ao mestre e ao jogador o texto e os dados de qualquer regra, magia, criatura, item ou condição do SRD 5.2, com atribuição.",
+          "fluxo": [
+            {
+              "t": "Pedido por tipo e nome ou identificador",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Busca exata, aproximada e por nome de 2014",
+              "tipo": "motor",
+              "desvio": {
+                "rotulo": "fora do SRD",
+                "t": "Responde \"fora do SRD\"; caminho é o caso de uso A04",
+                "tipo": "atencao"
+              }
+            },
+            {
+              "t": "Entrega dados estruturados e texto",
+              "tipo": "motor"
+            },
+            {
+              "t": "Atribuição e versão anexadas",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "SRD 5.2 convertido para o formato estruturado do produto e carregado (lacuna LC-01 do Mapa)."
+          ],
+          "gatilho": "O motor precisa de um dado de regra; o mestre precisa do texto; o jogador pede (casos de uso B03 e C04).",
+          "apoio": [
+            "SRD 5.2"
+          ],
+          "principal": [
+            "O pedido chega com o tipo (magia, criatura, item, condição, regra, classe, espécie) e o nome ou identificador, em inglês ou português.",
+            "O motor procura por identificador, nome exato, nome aproximado, tabela de nomes de 2014 para 2024 e nomes em português.",
+            "O motor devolve os dados estruturados (números, listas, requisitos) e o texto original em inglês, com a tradução em português quando existir.",
+            "A plataforma anexa a atribuição exigida pela licença CC-BY-4.0 a qualquer exibição ao usuário.",
+            "O motor registra a versão do SRD usada na resposta."
+          ],
+          "alternativos": [
+            {
+              "t": "Vários resultados aproximados",
+              "d": "Devolve a lista ordenada por semelhança para quem pediu escolher, como no caso de uso A04."
+            },
+            {
+              "t": "Pedido do serviço de linguagem",
+              "d": "O motor devolve só o necessário para narrar, no formato que o mestre consome."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Conteúdo fora do SRD",
+              "d": "Material oficial que não está no documento aberto: resposta \"fora do SRD\", sem inventar; o caminho é a ficha própria do caso de uso A04."
+            },
+            {
+              "t": "SRD não carregado ou versão incompatível com o módulo",
+              "d": "O motor bloqueia a mesa e aponta a lacuna LC-01; nada roda com dado de regra ausente."
+            }
+          ],
+          "resultado": "Dado de regra entregue, com atribuição e versão.",
+          "regras": [
+            "RN-08"
+          ]
         },
         {
           "codigo": "E04",
           "nome": "Recusar pedido fora das regras",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Impedir que o mestre ou o jogador obtenham do motor qualquer efeito que o SRD não permite, explicando o porquê e oferecendo o caminho válido.",
+          "fluxo": [
+            {
+              "t": "Pedido ao motor",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Valida em três camadas: SRD, ficha, estado da mesa",
+              "tipo": "motor"
+            },
+            {
+              "t": "Inválido: recusa com regra, falta e alternativa",
+              "tipo": "falha"
+            },
+            {
+              "t": "Recusa registrada com autor e motivo",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Motor carregado com o SRD e com o estado da campanha viva."
+          ],
+          "gatilho": "Qualquer pedido ao motor: veredito, ação de turno, magia, alteração de ficha, ou pedido direto do mestre (curar sem fonte, matar sem dano).",
+          "apoio": [
+            "SRD 5.2"
+          ],
+          "principal": [
+            "O motor valida o pedido em três camadas: regra do SRD, estado da ficha (recursos, proficiências) e estado da mesa (condições, posição, turno).",
+            "Se válido, executa.",
+            "Se inválido, recusa com a regra citada, o que faltou e a alternativa válida mais próxima quando houver.",
+            "A recusa fica registrada com quem pediu (jogador, mestre ou plataforma) e o motivo.",
+            "Recusas ao mestre contam para a auditoria do caso de uso G04; recusas ao jogador aparecem na tela como orientação."
+          ],
+          "alternativos": [
+            {
+              "t": "Pedido do mestre com motivo narrativo legítimo",
+              "d": "O módulo diz que um personagem morre nesta cena: o motor não executa \"morte sem dano\"; o mestre narra e o fato entra como desvio registrado (caso de uso F02), com a mecânica real registrada como evento do módulo."
+            },
+            {
+              "t": "Regra opcional do SRD",
+              "d": "Aceita só se habilitada na configuração da mesa (caso de uso C10)."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Pedido idêntico repetido após recusa",
+              "d": "O motor recusa de novo; na terceira vez avisa o dono da mesa, porque mestre insistindo é sinal de problema no serviço de linguagem."
+            },
+            {
+              "t": "Pedido ambíguo",
+              "d": "Não dá para validar: o motor pede esclarecimento em vez de recusar."
+            }
+          ],
+          "resultado": "Nada fora das regras entra na campanha viva; cada recusa explicada e registrada.",
+          "regras": [
+            "RN-06"
+          ]
         },
         {
           "codigo": "E05",
           "nome": "Calcular valores derivados da ficha",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Manter classe de armadura, pontos de vida máximos, iniciativa, proficiência, salvaguardas, modificadores, dificuldade de magia e ataques sempre corretos e explicáveis.",
+          "fluxo": [
+            {
+              "t": "Mudança na ficha ou no estado",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Recalcula pelas fórmulas do SRD",
+              "tipo": "motor"
+            },
+            {
+              "t": "Aplica efeitos temporários por cima dos permanentes",
+              "tipo": "motor"
+            },
+            {
+              "t": "Grava cada valor com a composição",
+              "tipo": "motor"
+            },
+            {
+              "t": "Ficha atualizada",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Ficha válida (casos de uso B01 ou B02)."
+          ],
+          "gatilho": "Criação, subida de nível, equipar ou desequipar, efeito de magia ou condição, cura ou dano.",
+          "apoio": [
+            "SRD 5.2"
+          ],
+          "principal": [
+            "O motor identifica o que mudou: atributo, nível, item equipado, efeito ativo.",
+            "O motor recalcula pelas fórmulas do SRD: modificadores de atributo, bônus de proficiência pelo nível, pontos de vida máximos, classe de armadura (armadura, escudo, destreza com limite, traços), iniciativa, salvaguardas, dificuldade de magia e bônus de ataque por arma.",
+            "O motor aplica os efeitos temporários ativos (magias, condições) por cima dos permanentes, com o fim agendado.",
+            "O motor grava cada valor com a composição, por exemplo \"classe de armadura 16 = 14 da armadura + 2 de destreza\".",
+            "A plataforma mostra o valor e a composição quando o jogador pede (caso de uso B03)."
+          ],
+          "alternativos": [
+            {
+              "t": "Mais de um cálculo possível para a classe de armadura",
+              "d": "Armadura contra traço de espécie ou classe: o motor usa o maior, como o SRD manda, e mostra os dois."
+            },
+            {
+              "t": "Efeito temporário expira",
+              "d": "Recálculo automático pelo relógio e pelo caso de uso D06."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Item ou traço com regra não modelada",
+              "d": "Ficha própria: o motor aplica o que entende, marca o valor como \"parcial\" e avisa o dono da mesa."
+            },
+            {
+              "t": "Resultado fora da escala do SRD",
+              "d": "Classe de armadura 30 no nível 1, por exemplo: o motor grava, marca \"fora da escala\" e manda para a revisão do caso de uso A04."
+            }
+          ],
+          "resultado": "Valores derivados corretos e explicáveis.",
+          "regras": [
+            "RN-06",
+            "RN-08"
+          ]
         },
         {
           "codigo": "E06",
           "nome": "Reproduzir uma rolagem pelo registro",
           "ator": "Dono da mesa",
           "fase": 1,
-          "prioridade": "Importante"
+          "prioridade": "Importante",
+          "objetivo": "Provar que qualquer rolagem passada foi justa, refazendo-a a partir do registro e comparando.",
+          "fluxo": [
+            {
+              "t": "Abre o diário de rolagens",
+              "tipo": "ator"
+            },
+            {
+              "t": "Escolhe uma rolagem ou um intervalo",
+              "tipo": "ator"
+            },
+            {
+              "t": "Motor refaz pela semente e pelo contador",
+              "tipo": "motor"
+            },
+            {
+              "t": "Compara dado a dado",
+              "tipo": "motor",
+              "desvio": {
+                "rotulo": "divergência",
+                "t": "Marca a campanha para revisão; incidente registrado",
+                "tipo": "falha"
+              }
+            },
+            {
+              "t": "Relatório exibido e exportável",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Campanha viva com diário de rolagens íntegro."
+          ],
+          "gatilho": "O dono da mesa quer auditar: desconfiança, revisão de sessão ou teste de bancada da lacuna LC-08.",
+          "apoio": [],
+          "principal": [
+            "A plataforma lista as rolagens por sessão, com motivo, origem e resultado.",
+            "O dono da mesa escolhe uma rolagem ou um intervalo.",
+            "O motor refaz cada rolagem a partir da semente da campanha e do número sequencial, sem olhar o resultado gravado.",
+            "O motor compara dado a dado.",
+            "A plataforma mostra o relatório: rolagem, registrado, reproduzido, igual ou diferente, e a cadeia de modificadores; o relatório pode ser exportado em texto."
+          ],
+          "alternativos": [
+            {
+              "t": "Rolagem informada",
+              "d": "Dado físico não é reproduzível: o relatório diz isso e mostra quem informou e quando."
+            },
+            {
+              "t": "Auditoria de vereditos junto",
+              "d": "O relatório inclui o veredito que originou cada rolagem, pelo caso de uso G04."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Divergência entre registrado e reproduzido",
+              "d": "A plataforma marca a campanha para revisão, bloqueia novas sessões até o dono da mesa decidir e registra o incidente. Isso é defeito do produto e entra no registro de defeitos."
+            },
+            {
+              "t": "Diário incompleto",
+              "d": "Interrupção no meio de uma rolagem: o relatório mostra a lacuna e reproduz o que existe."
+            }
+          ],
+          "resultado": "Prova de justiça das rolagens, ou incidente registrado.",
+          "regras": [
+            "RN-06"
+          ]
         }
       ]
     },
