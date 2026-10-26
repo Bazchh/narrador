@@ -1,0 +1,370 @@
+{
+  "produto": "Narrador",
+  "titulo": "Casos de Uso",
+  "kicker": "Especificação funcional · outubro de 2026",
+  "entrega": "Entrega 1: módulo A detalhado. Os demais módulos estão no índice com código fixo e serão detalhados nas próximas entregas, módulo a módulo.",
+  "intro": "Tudo o que a mesa com mestre por inteligência artificial precisa fazer, descrito um a um: quem usa, o que acontece passo a passo, o que fazer quando algo dá errado e o que ganhamos com cada um. Documento complementar ao Mapa do Projeto e ao Blueprint Técnico.",
+  "rodape": "Casos de uso · Narrador",
+  "fases": {
+    "1": {"nome": "mesa jogável solo", "cor": "f1", "resumo": "Importar um módulo, criar um personagem pelo SRD 5.2, jogar o ciclo completo com o mestre adaptando dentro das regras, salvar e retomar."},
+    "2": {"nome": "mesa longa e grupo", "cor": "f2", "resumo": "Campanha de muitas sessões com memória que não degrada e vários jogadores na mesma mesa."},
+    "3": {"nome": "campanha livre", "cor": "f3", "resumo": "Um gerador preenche o formato do módulo canônico com uma história nova e a mesa roda sobre ele."}
+  },
+  "atores": [
+    {"id": "Jogador", "tipo": "pessoa", "desc": "Cria o personagem, descreve o que faz na cena, rola o que o motor pedir e decide o rumo da história."},
+    {"id": "Dono da mesa", "tipo": "pessoa", "desc": "Traz o arquivo da aventura, confere a estruturação, define as regras de mesa e aprova desvios quando a plataforma pedir."},
+    {"id": "Plataforma", "tipo": "pessoa", "rotulo": "Plataforma (rotina)", "desc": "O que o produto faz sozinho: rolar, calcular, resumir, verificar consistência, salvar. Inclui o mestre quando ele age por conta própria."},
+    {"id": "Serviço de linguagem", "tipo": "sistema", "desc": "O modelo que narra e interpreta. Trocável por configuração; nunca guarda estado, nunca rola dado."},
+    {"id": "Fonte da aventura", "tipo": "sistema", "desc": "O arquivo do módulo, trazido pelo dono da mesa. Fica na máquina dele e nunca entra no repositório nem no produto."},
+    {"id": "SRD 5.2", "tipo": "sistema", "desc": "O documento de referência aberto, em licença CC-BY-4.0, convertido para formato consultável pelo motor."}
+  ],
+  "regras": [
+    {"codigo": "RN-01", "titulo": "Fato estabelecido não se contradiz", "texto": "O que entrou na campanha viva é verdade para sempre. Correção entra como novo fato narrado, nunca como apagamento.", "obtemos": "continuidade que o jogador percebe."},
+    {"codigo": "RN-02", "titulo": "Escolha do jogador nunca é anulada por conveniência", "texto": "A história reage à escolha; não a desfaz nem a ignora para voltar ao trilho do módulo.", "obtemos": "agência real."},
+    {"codigo": "RN-03", "titulo": "Desvio que fecha o caminho crítico abre outro na hora", "texto": "Se uma adaptação torna o objetivo do módulo inalcançável, o mestre cria um caminho alternativo na mesma cena e registra.", "obtemos": "campanha que nunca trava."},
+    {"codigo": "RN-04", "titulo": "Ritmo e dificuldade mudam; o conquistado não", "texto": "O mestre pode acelerar, cortar ou endurecer. Não pode reverter vitória, tesouro ou revelação que o jogador conquistou.", "obtemos": "conquista com valor."},
+    {"codigo": "RN-05", "titulo": "Segredo do módulo só sai pela história", "texto": "O que o personagem não descobriu não aparece na narração, em descrição nem em dica.", "obtemos": "mistério preservado."},
+    {"codigo": "RN-06", "titulo": "Todo dado é do motor", "texto": "Nenhuma rolagem, cálculo ou resultado de regra é decidido pelo serviço de linguagem. Cada rolagem fica registrada com semente, motivo e resultado.", "obtemos": "jogo justo e reproduzível."},
+    {"codigo": "RN-07", "titulo": "Todo desvio do canônico é registrado com motivo", "texto": "Adaptação sem registro é alucinação. O registro liga a cena, o que o módulo dizia, o que foi feito e por quê.", "obtemos": "adaptação auditável."},
+    {"codigo": "RN-08", "titulo": "Só o SRD entra no produto, com atribuição", "texto": "O único conteúdo de regras embutido é o SRD 5.2, e o texto de atribuição exigido pela licença CC-BY-4.0 aparece no produto.", "obtemos": "distribuição legal."},
+    {"codigo": "RN-09", "titulo": "O arquivo da aventura é do dono da mesa", "texto": "O módulo importado fica na máquina dele, nunca entra no repositório, nos testes compartilhados nem em qualquer envio além do necessário para narrar a cena.", "obtemos": "respeito à licença da obra."},
+    {"codigo": "RN-10", "titulo": "Sessão sempre retomável", "texto": "Qualquer interrupção, inclusive queda do serviço de linguagem, deixa a campanha viva íntegra e a sessão retoma do último fato registrado.", "obtemos": "nada se perde."},
+    {"codigo": "RN-11", "titulo": "Pergunta não é ação; toda tentativa tem veredito", "texto": "\"E se eu fizer?\" recebe resposta sem mudar a campanha viva e sem rolar dado. \"Eu faço\" recebe um de três vereditos: consegue de cara, impossível, ou teste com perícia e dificuldade na escala do SRD, rolado pelo motor. O veredito fica registrado e a mesma situação recebe o mesmo veredito.", "obtemos": "mesa justa e previsível."}
+  ],
+  "modulos": [
+    {
+      "letra": "A", "nome": "Campanha e módulo", "fase": 1, "detalhado": true,
+      "resumo": "Da aventura em arquivo ao módulo canônico que o mestre consulta: importar, estruturar, conferir, mapear para o SRD, versionar e remover.",
+      "casos": [
+        {
+          "codigo": "A01", "nome": "Importar o arquivo da aventura", "ator": "Dono da mesa", "fase": 1, "prioridade": "Essencial",
+          "objetivo": "Trazer a aventura para a máquina do dono da mesa, com texto legível e origem registrada, sem copiar nada para fora.",
+          "fluxo": [
+            {"t": "Aponta o arquivo", "tipo": "ator"},
+            {"t": "Copia para a pasta local e extrai o texto", "tipo": "sistema"},
+            {"t": "Confere texto legível", "tipo": "sistema", "desvio": {"rotulo": "sem camada de texto", "t": "Recusa e oferece OCR local ou outro arquivo", "tipo": "falha"}},
+            {"t": "Registra origem e impressão digital", "tipo": "sistema"},
+            {"t": "Aventura pronta para estruturar", "tipo": "fim"}
+          ],
+          "pre": ["Pasta local de aventuras configurada, fora do repositório e fora de qualquer sincronização em nuvem.", "Arquivo em formato aceito: PDF com camada de texto, Markdown ou texto puro."],
+          "gatilho": "O dono da mesa escolhe importar uma aventura e aponta o arquivo.",
+          "apoio": ["Fonte da aventura"],
+          "principal": [
+            "O dono da mesa aponta o arquivo e informa o título e, se quiser, autor e edição das regras (2014 ou 2024).",
+            "A plataforma copia o arquivo para a pasta local de aventuras e calcula a impressão digital do conteúdo.",
+            "A plataforma extrai o texto página a página, preservando a numeração de página para referência futura.",
+            "A plataforma mede a proporção de texto legível e mostra uma amostra ao dono da mesa.",
+            "O dono da mesa confirma que a amostra corresponde à aventura.",
+            "A plataforma registra a importação: título, origem, impressão digital, data, edição informada e a declaração de uso pessoal do dono da mesa."
+          ],
+          "alternativos": [
+            {"t": "Mesmo arquivo já importado", "d": "A impressão digital coincide com uma aventura existente; a plataforma mostra essa aventura e oferece reaproveitar, sem duplicar."},
+            {"t": "Arquivo em Markdown ou texto puro", "d": "Não há extração; a referência de origem passa a ser o título de seção em vez do número de página."}
+          ],
+          "excecoes": [
+            {"t": "PDF sem camada de texto (escaneado)", "d": "A plataforma recusa a importação, explica que precisa de texto e oferece dois caminhos: reconhecimento de texto local, se instalado, ou importar outro arquivo. Nada fica copiado."},
+            {"t": "Formato não aceito", "d": "Mensagem com os formatos aceitos; nada é copiado."},
+            {"t": "Texto extraído ilegível", "d": "Abaixo do limite de caracteres válidos por página, a plataforma mostra a amostra e o dono da mesa decide seguir com a marca \"texto parcial\" ou cancelar, o que apaga a cópia."}
+          ],
+          "resultado": "Aventura copiada localmente, texto extraído com páginas, origem registrada. Nenhum módulo canônico ainda.",
+          "regras": ["RN-09"]
+        },
+        {
+          "codigo": "A02", "nome": "Estruturar o módulo canônico", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial",
+          "objetivo": "Transformar o texto da aventura num rascunho estruturado de cenas, locais, personagens, encontros, ganchos, segredos e caminho crítico, cada item apontando para a página de origem.",
+          "fluxo": [
+            {"t": "Pede autorização de envio ao serviço", "tipo": "ator"},
+            {"t": "Divide o texto em trechos com páginas", "tipo": "sistema"},
+            {"t": "Serviço de linguagem extrai os itens", "tipo": "llm", "desvio": {"rotulo": "serviço fora do ar", "t": "Guarda o progresso e retoma do trecho", "tipo": "atencao"}},
+            {"t": "Monta o rascunho e marca incertezas", "tipo": "sistema"},
+            {"t": "Rascunho pronto para conferência", "tipo": "fim"}
+          ],
+          "pre": ["Caso de uso A01 concluído.", "Dono da mesa autorizou, nesta importação, o envio do texto da aventura ao serviço de linguagem, com a autorização registrada."],
+          "gatilho": "O dono da mesa escolhe estruturar uma aventura importada.",
+          "apoio": ["Serviço de linguagem", "Dono da mesa"],
+          "principal": [
+            "A plataforma mostra ao dono da mesa o que será enviado ao serviço de linguagem, trecho a trecho, e pede a autorização; a resposta fica registrada com data.",
+            "A plataforma divide o texto em trechos por capítulo ou seção, mantendo as páginas de cada trecho.",
+            "Para cada trecho, o serviço de linguagem devolve os itens encontrados: cenas, locais, personagens do mestre, criaturas, itens, ganchos, segredos e ligações entre cenas, cada um com a página de origem.",
+            "A plataforma monta o rascunho do módulo canônico, unindo itens repetidos entre trechos e montando o grafo de cenas com o caminho crítico proposto.",
+            "A plataforma marca como incerto todo item sem página de origem clara, toda ligação de cena deduzida e todo segredo que o texto não deixa explícito.",
+            "A plataforma salva o rascunho com a impressão digital do texto de origem e abre a conferência do caso de uso A03."
+          ],
+          "alternativos": [
+            {"t": "Sem autorização de envio", "d": "A plataforma abre a estruturação manual assistida: o dono da mesa cria os itens a partir do texto, com a plataforma sugerindo apenas recortes locais (títulos, listas, tabelas). Nada sai da máquina."},
+            {"t": "Aventura já com estrutura por títulos", "d": "A plataforma usa os títulos como esqueleto de cenas e o serviço de linguagem só preenche os itens de cada uma."}
+          ],
+          "excecoes": [
+            {"t": "Serviço de linguagem indisponível ou recusa um trecho", "d": "A plataforma guarda o progresso por trecho, informa qual trecho faltou e retoma dele quando o serviço voltar; o rascunho não se perde."},
+            {"t": "Resposta fora do formato esperado", "d": "A plataforma repete o trecho uma vez; persistindo, marca o trecho como \"a estruturar à mão\" e segue para o próximo."},
+            {"t": "Texto de origem mudou", "d": "Arquivo reimportado com outra impressão digital: a estruturação é refeita do zero e o rascunho antigo fica arquivado, nunca misturado."}
+          ],
+          "resultado": "Rascunho do módulo canônico salvo localmente, com página de origem por item e incertezas marcadas. Nada publicado ainda.",
+          "regras": ["RN-05", "RN-09", "RN-10"],
+          "sequencia": {
+            "colunas": ["Dono da mesa", "Plataforma", "Serviço de linguagem"],
+            "passos": [
+              {"de": 0, "para": 1, "t": "estruturar a aventura"},
+              {"de": 1, "para": 0, "t": "mostra o que será enviado e pede autorização", "tracejado": true},
+              {"de": 0, "para": 1, "t": "autoriza (registrado com data)"},
+              {"de": 1, "para": 2, "t": "trecho 1 de N, com páginas"},
+              {"de": 2, "para": 1, "t": "itens do trecho com página de origem", "tracejado": true},
+              {"de": 1, "para": 1, "t": "une itens repetidos, monta o grafo, marca incertezas"},
+              {"de": 1, "para": 0, "t": "rascunho salvo, abre a conferência", "tracejado": true}
+            ],
+            "legenda": "Estruturação com autorização explícita. O texto só sai da máquina depois do registro da autorização, e só trecho a trecho."
+          }
+        },
+        {
+          "codigo": "A03", "nome": "Conferir e publicar o módulo canônico", "ator": "Dono da mesa", "fase": 1, "prioridade": "Essencial",
+          "objetivo": "Garantir que o módulo canônico diz o que a aventura diz, com segredos e caminho crítico marcados, antes de qualquer mesa usar.",
+          "fluxo": [
+            {"t": "Abre a conferência", "tipo": "ator"},
+            {"t": "Revê item a item com a página ao lado", "tipo": "sistema"},
+            {"t": "Marca segredos e caminho crítico", "tipo": "sistema"},
+            {"t": "Plataforma valida o grafo", "tipo": "sistema", "desvio": {"rotulo": "cena solta", "t": "Bloqueia e aponta a cena", "tipo": "falha"}},
+            {"t": "Publica a versão 1, imutável", "tipo": "fim"}
+          ],
+          "pre": ["Rascunho do caso de uso A02, automático ou manual."],
+          "gatilho": "O dono da mesa abre a conferência de um rascunho.",
+          "apoio": [],
+          "principal": [
+            "A plataforma lista os itens, incertos primeiro, mostrando ao lado o trecho da página de origem.",
+            "O dono da mesa aceita, corrige ou remove cada item; itens novos podem ser criados apontando a página de origem.",
+            "O dono da mesa marca o que é segredo (o que o personagem só descobre jogando) e confirma o caminho crítico cena a cena.",
+            "A plataforma valida: toda cena do caminho crítico está ligada à seguinte, todo segredo pertence a uma cena ou personagem, toda criatura tem mapeamento do caso de uso A04 ou está marcada como pendente.",
+            "O dono da mesa publica; a plataforma grava a versão 1 do módulo canônico como imutável, com data e impressão digital do texto de origem."
+          ],
+          "alternativos": [
+            {"t": "Aceitar tudo de uma vez", "d": "Permitido só quando não há item incerto; havendo, a plataforma mostra os incertos primeiro e o restante pode ser aceito em bloco."},
+            {"t": "Conferência interrompida", "d": "O progresso fica salvo item a item e a conferência retoma de onde parou."}
+          ],
+          "excecoes": [
+            {"t": "Cena do caminho crítico sem ligação", "d": "Publicação bloqueada; a plataforma aponta a cena e o dono da mesa liga ou remove."},
+            {"t": "Criatura sem mapeamento e sem ficha própria", "d": "Publicação permitida com a criatura marcada pendente; a mesa não entra em combate com ela até o caso de uso A04 resolver, e o mestre recebe o aviso ao chegar na cena."}
+          ],
+          "resultado": "Módulo canônico versão 1 publicado, imutável, com segredos e caminho crítico marcados.",
+          "regras": ["RN-05", "RN-09"]
+        },
+        {
+          "codigo": "A04", "nome": "Mapear criaturas e itens para o SRD", "ator": "Dono da mesa", "fase": 1, "prioridade": "Essencial",
+          "objetivo": "Dar a cada criatura e item da aventura uma ficha de regras que o motor consiga usar, sem embutir no produto conteúdo que não é do SRD.",
+          "fluxo": [
+            {"t": "Lista criaturas e itens com a página", "tipo": "sistema"},
+            {"t": "Motor procura no SRD pelo nome", "tipo": "motor"},
+            {"t": "Dono confirma ou escolhe a ficha", "tipo": "ator", "desvio": {"rotulo": "sem equivalente", "t": "Ficha própria a partir de uma base do SRD", "tipo": "atencao"}},
+            {"t": "Grava o mapeamento com a versão do SRD", "tipo": "sistema"},
+            {"t": "Toda criatura com ficha utilizável", "tipo": "fim"}
+          ],
+          "pre": ["Rascunho ou módulo com criaturas e itens listados.", "SRD 5.2 carregado no motor (caso de uso E03)."],
+          "gatilho": "Durante a conferência, ou ao abrir uma criatura marcada pendente.",
+          "apoio": ["SRD 5.2"],
+          "principal": [
+            "A plataforma lista cada criatura e item do módulo com a página de origem e o nome como aparece na aventura.",
+            "O motor procura no SRD 5.2 por nome exato e por nome aproximado e propõe a ficha.",
+            "O dono da mesa confirma a proposta ou escolhe outra ficha do SRD.",
+            "Se não há equivalente no SRD, o dono da mesa escolhe uma ficha do SRD como base e ajusta nome, pontos de vida e ataques, ou cria a ficha do zero; a ficha própria fica no módulo do dono, fora do produto.",
+            "A plataforma grava o mapeamento no módulo canônico com a versão do SRD usada."
+          ],
+          "alternativos": [
+            {"t": "Aventura escrita para as regras de 2014", "d": "Nomes de criaturas e magias são procurados também na tabela de nomes antigos; a ficha usada é sempre a de 2024."},
+            {"t": "Mesma criatura em várias cenas", "d": "Mapeada uma única vez; as cenas apontam para o mesmo mapeamento."}
+          ],
+          "excecoes": [
+            {"t": "Nome ambíguo", "d": "Várias fichas possíveis: a plataforma mostra as candidatas com o resumo de cada uma; sem escolha, a criatura fica pendente."},
+            {"t": "Ficha própria fora da escala do SRD", "d": "Classe de armadura, pontos de vida ou dano fora da faixa esperada para o nível: o motor avisa, pede confirmação e grava com a marca \"fora da escala\"."}
+          ],
+          "resultado": "Toda criatura e item com ficha utilizável pelo motor, ou marcados pendentes.",
+          "regras": ["RN-06", "RN-08", "RN-09"]
+        },
+        {
+          "codigo": "A05", "nome": "Consultar o módulo canônico durante a mesa", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial",
+          "objetivo": "Dar ao mestre, a cada cena, exatamente o que o módulo diz sobre ela, com os segredos separados do que pode ser narrado.",
+          "fluxo": [
+            {"t": "Mestre pede a cena por identificador", "tipo": "llm"},
+            {"t": "Monta o recorte com o estado da campanha viva", "tipo": "sistema"},
+            {"t": "Separa segredos não descobertos", "tipo": "sistema"},
+            {"t": "Entrega marcado e registra a consulta", "tipo": "fim"}
+          ],
+          "pre": ["Módulo canônico publicado.", "Campanha viva apontando para a versão em uso."],
+          "gatilho": "O mestre entra numa cena ou precisa de um personagem, local ou item.",
+          "apoio": ["Serviço de linguagem"],
+          "principal": [
+            "O mestre, por meio do serviço de linguagem, pede a cena, local, personagem ou item por identificador.",
+            "A plataforma monta o recorte: descrição, ligações, criaturas com ficha mapeada, ganchos e o que a campanha viva já registrou sobre ele.",
+            "A plataforma separa os segredos ainda não descobertos e os entrega marcados como \"não narrar\", com a condição de descoberta de cada um.",
+            "O mestre narra com base no recorte; cada consulta fica registrada com cena, versão do módulo e sessão."
+          ],
+          "alternativos": [
+            {"t": "Cena fora do caminho crítico", "d": "Desvio do jogador: a plataforma entrega a cena mais próxima no grafo e sinaliza ao mestre que a mesa está fora do trilho; a abertura de caminho é do caso de uso F03."},
+            {"t": "Item já alterado pela campanha viva", "d": "Personagem morto, local destruído: o recorte mostra o estado atual por cima do canônico, com o desvio apontado."}
+          ],
+          "excecoes": [
+            {"t": "Identificador não existe no módulo", "d": "A plataforma devolve as cenas vizinhas e o mestre escolhe; nenhuma cena é inventada sem o registro do caso de uso F02."},
+            {"t": "Versão do módulo diferente da fixada pela campanha", "d": "A plataforma usa a versão fixada; atualizar é decisão do dono da mesa no caso de uso A06."}
+          ],
+          "resultado": "Mestre com o recorte certo da cena, segredos protegidos, consulta registrada.",
+          "regras": ["RN-01", "RN-05", "RN-07"]
+        },
+        {
+          "codigo": "A06", "nome": "Publicar nova versão do módulo canônico", "ator": "Dono da mesa", "fase": 1, "prioridade": "Importante",
+          "objetivo": "Corrigir a estruturação depois de publicada sem quebrar campanhas em andamento.",
+          "fluxo": [
+            {"t": "Edita um item publicado", "tipo": "ator"},
+            {"t": "Abre rascunho da versão seguinte", "tipo": "sistema"},
+            {"t": "Conferência só do que mudou (A03)", "tipo": "sistema"},
+            {"t": "Campanhas decidem migrar", "tipo": "atencao"},
+            {"t": "Versão nova publicada", "tipo": "fim"}
+          ],
+          "pre": ["Módulo canônico publicado."],
+          "gatilho": "O dono da mesa edita um módulo já publicado.",
+          "apoio": [],
+          "principal": [
+            "O dono da mesa altera, cria ou remove um item; a plataforma abre um rascunho da próxima versão sem tocar na publicada.",
+            "A conferência do caso de uso A03 roda apenas sobre o que mudou.",
+            "O dono da mesa publica; a versão anterior continua existindo e imutável.",
+            "Para cada campanha viva que usa a versão anterior, a plataforma mostra o resumo das mudanças e o dono da mesa decide migrar ou não.",
+            "Ao migrar, os fatos já estabelecidos prevalecem sobre o canônico novo e as diferenças entram como desvios registrados."
+          ],
+          "alternativos": [
+            {"t": "Mudança só em segredo ou texto de apoio", "d": "A plataforma sugere a migração automática das campanhas, ainda com confirmação do dono da mesa."}
+          ],
+          "excecoes": [
+            {"t": "Migração remove uma cena já visitada", "d": "A plataforma bloqueia a remoção para essa campanha e mantém a cena como \"fora do canônico atual\", visível no histórico."}
+          ],
+          "resultado": "Nova versão publicada; campanhas migradas só por decisão do dono da mesa.",
+          "regras": ["RN-01", "RN-07"]
+        },
+        {
+          "codigo": "A07", "nome": "Remover uma aventura", "ator": "Dono da mesa", "fase": 1, "prioridade": "Importante",
+          "objetivo": "Apagar da máquina o arquivo e tudo o que foi derivado dele, respeitando a licença da obra.",
+          "fluxo": [
+            {"t": "Pede a remoção", "tipo": "ator"},
+            {"t": "Lista o que será apagado e o que depende", "tipo": "sistema"},
+            {"t": "Confirma com o título", "tipo": "ator", "desvio": {"rotulo": "campanha em andamento", "t": "Arquiva a campanha como só leitura", "tipo": "atencao"}},
+            {"t": "Apaga arquivo, texto, rascunhos e versões", "tipo": "sistema"},
+            {"t": "Nada da aventura permanece", "tipo": "fim"}
+          ],
+          "pre": ["Aventura importada."],
+          "gatilho": "O dono da mesa escolhe remover uma aventura.",
+          "apoio": [],
+          "principal": [
+            "A plataforma lista o que será apagado: arquivo, texto extraído, rascunhos, versões do módulo canônico, mapeamentos e fichas próprias.",
+            "A plataforma lista as campanhas vivas que dependem do módulo.",
+            "O dono da mesa confirma digitando o título da aventura.",
+            "A plataforma apaga tudo e registra a remoção com título, impressão digital e data, sem guardar conteúdo."
+          ],
+          "alternativos": [
+            {"t": "Campanha viva em andamento", "d": "A campanha é arquivada e passa a ser só leitura (resumos e fatos), sem acesso ao canônico."}
+          ],
+          "excecoes": [
+            {"t": "Arquivo em uso ou sem permissão de escrita", "d": "A plataforma remove o que conseguir, deixa o módulo bloqueado e lista o que ficou para o dono da mesa remover à mão."}
+          ],
+          "resultado": "Nada da aventura permanece na máquina além do registro de que existiu.",
+          "regras": ["RN-09"]
+        }
+      ]
+    },
+    {
+      "letra": "B", "nome": "Personagem", "fase": 1, "detalhado": false,
+      "resumo": "Criar o personagem pelo SRD, manter a ficha, subir de nível e cuidar do equipamento.",
+      "casos": [
+        {"codigo": "B01", "nome": "Criar personagem pelo SRD", "ator": "Jogador", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "B02", "nome": "Usar personagem pré-gerado", "ator": "Jogador", "fase": 1, "prioridade": "Importante"},
+        {"codigo": "B03", "nome": "Consultar a ficha", "ator": "Jogador", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "B04", "nome": "Subir de nível", "ator": "Jogador", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "B05", "nome": "Gerir inventário e equipamento", "ator": "Jogador", "fase": 1, "prioridade": "Importante"}
+      ]
+    },
+    {
+      "letra": "C", "nome": "Mesa e narração", "fase": 1, "detalhado": false,
+      "resumo": "Abrir a sessão, narrar a cena, dar veredito a cada tentativa, conversar com personagens, explorar, descansar, encerrar.",
+      "casos": [
+        {"codigo": "C01", "nome": "Criar campanha a partir de um módulo", "ator": "Dono da mesa", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "C02", "nome": "Abrir ou retomar a sessão", "ator": "Jogador", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "C03", "nome": "Narrar a cena", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "C04", "nome": "Perguntar ao mestre \"e se eu fizer?\"", "ator": "Jogador", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "C05", "nome": "Tentar uma ação e receber o veredito", "ator": "Jogador", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "C06", "nome": "Conversar com personagem do mestre", "ator": "Jogador", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "C07", "nome": "Explorar e viajar", "ator": "Jogador", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "C08", "nome": "Descansar", "ator": "Jogador", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "C09", "nome": "Encerrar a sessão", "ator": "Jogador", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "C10", "nome": "Configurar classificação de conteúdo e tom da mesa", "ator": "Dono da mesa", "fase": 1, "prioridade": "Importante"}
+      ]
+    },
+    {
+      "letra": "D", "nome": "Combate", "fase": 1, "detalhado": false,
+      "resumo": "Iniciativa, turnos, ataques, magias, condições e morte, sempre arbitrados pelo motor.",
+      "casos": [
+        {"codigo": "D01", "nome": "Iniciar combate e rolar iniciativa", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "D02", "nome": "Jogar o turno do personagem", "ator": "Jogador", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "D03", "nome": "Jogar o turno das criaturas", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "D04", "nome": "Resolver ataque e dano", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "D05", "nome": "Conjurar magia", "ator": "Jogador", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "D06", "nome": "Aplicar e remover condições", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "D07", "nome": "Cair a zero pontos de vida", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "D08", "nome": "Encerrar o combate e dar a recompensa", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"}
+      ]
+    },
+    {
+      "letra": "E", "nome": "Regras e dados", "fase": 1, "detalhado": false,
+      "resumo": "O motor determinístico: rolagens, testes, cálculos e o SRD 5.2 como dado consultável.",
+      "casos": [
+        {"codigo": "E01", "nome": "Rolar dado com registro", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "E02", "nome": "Resolver teste contra dificuldade", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "E03", "nome": "Consultar o SRD", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "E04", "nome": "Recusar pedido fora das regras", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "E05", "nome": "Calcular valores derivados da ficha", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "E06", "nome": "Reproduzir uma rolagem pelo registro", "ator": "Dono da mesa", "fase": 1, "prioridade": "Importante"}
+      ]
+    },
+    {
+      "letra": "F", "nome": "Campanha viva", "fase": 1, "detalhado": false,
+      "resumo": "Memória da mesa, desvios registrados com motivo e continuidade entre sessões.",
+      "casos": [
+        {"codigo": "F01", "nome": "Registrar fato estabelecido", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "F02", "nome": "Registrar desvio do canônico com motivo", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "F03", "nome": "Abrir caminho alternativo", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "F04", "nome": "Consultar o que o personagem sabe", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "F05", "nome": "Retomar de interrupção", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "F06", "nome": "Revisar desvios e vereditos", "ator": "Dono da mesa", "fase": 1, "prioridade": "Importante"},
+        {"codigo": "F07", "nome": "Manter memória de campanha longa", "ator": "Plataforma", "fase": 2, "prioridade": "Importante"}
+      ]
+    },
+    {
+      "letra": "G", "nome": "Processos automáticos", "fase": 1, "detalhado": false,
+      "resumo": "Resumo de sessão, verificação de consistência, salvamento e atribuição de licença.",
+      "casos": [
+        {"codigo": "G01", "nome": "Salvar a campanha viva a cada fato", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "G02", "nome": "Resumir a sessão", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "G03", "nome": "Verificar consistência e vazamento de segredo", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "G04", "nome": "Verificar consistência de vereditos", "ator": "Plataforma", "fase": 1, "prioridade": "Importante"},
+        {"codigo": "G05", "nome": "Tratar recusa ou falha do serviço de linguagem", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "G06", "nome": "Exibir a atribuição do SRD", "ator": "Plataforma", "fase": 1, "prioridade": "Essencial"},
+        {"codigo": "G07", "nome": "Medir custo e latência por sessão", "ator": "Plataforma", "fase": 1, "prioridade": "Importante"}
+      ]
+    },
+    {
+      "letra": "H", "nome": "Grupo", "fase": 2, "detalhado": false,
+      "resumo": "Vários jogadores na mesma mesa, com turnos e falas coordenados.",
+      "casos": [
+        {"codigo": "H01", "nome": "Convidar jogadores para a mesa", "ator": "Dono da mesa", "fase": 2, "prioridade": "Importante"},
+        {"codigo": "H02", "nome": "Coordenar falas e turnos do grupo", "ator": "Plataforma", "fase": 2, "prioridade": "Importante"},
+        {"codigo": "H03", "nome": "Seguir com jogador ausente", "ator": "Plataforma", "fase": 2, "prioridade": "Desejável"}
+      ]
+    },
+    {
+      "letra": "I", "nome": "Campanha livre", "fase": 3, "detalhado": false,
+      "resumo": "Gerador que preenche o mesmo formato do módulo canônico com uma história nova.",
+      "casos": [
+        {"codigo": "I01", "nome": "Gerar módulo canônico a partir de uma premissa", "ator": "Dono da mesa", "fase": 3, "prioridade": "Importante"},
+        {"codigo": "I02", "nome": "Revisar o módulo gerado", "ator": "Dono da mesa", "fase": 3, "prioridade": "Importante"},
+        {"codigo": "I03", "nome": "Jogar o módulo gerado como campanha pronta", "ator": "Jogador", "fase": 3, "prioridade": "Importante"}
+      ]
+    }
+  ],
+  "pendencias": [
+    {"codigo": "LC-05", "estado": "resolvida", "texto": "Como um PDF vira módulo canônico: semiautomático com conferência, pelos casos de uso A01, A02 e A03. Entradas aceitas na primeira versão: PDF com camada de texto, Markdown e texto puro."},
+    {"codigo": "DC-12", "estado": "candidata", "texto": "Envio do texto da aventura ao serviço de linguagem só com autorização explícita do dono da mesa, registrada por importação, com estruturação manual assistida como alternativa sem envio. Escrita como pré-condição do caso de uso A02; o cliente decide se vira decisão do Mapa."}
+  ]
+}
