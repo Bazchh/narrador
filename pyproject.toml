@@ -30,7 +30,7 @@ narrador = "narrador.cli:principal"
 where = ["src"]
 
 [tool.setuptools.package-data]
-narrador = ["py.typed"]
+narrador = ["py.typed", "**/*.sql"]
 
 [tool.ruff]
 line-length = 110
@@ -40,7 +40,7 @@ extend-exclude = ["docs/fonte"]  # geradores dos documentos, fora do produto
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "N", "SIM", "RUF"]
-ignore = ["RUF001", "RUF002", "RUF003"]  # letras acentuadas em português não são ambiguidade
+ignore = ["RUF001", "RUF002", "RUF003", "E501"]  # acentos não são ambiguidade; o formatador cuida da largura
 
 [tool.ruff.format]
 quote-style = "double"
