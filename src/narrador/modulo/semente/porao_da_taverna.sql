@@ -37,8 +37,8 @@ insert into ligacao (aventura_id, versao, de_item, para_item, tipo, caminho_crit
  ('av-porao', 1, 'cena-tunel',   'it-anel', 'contem', 0);
 
 insert into mapeamento_srd (aventura_id, versao, item_id, srd_id, srd_versao) values
- ('av-porao', 1, 'cri-rato-1', 'srd:creature:giant-rat', '5.2.1'),
- ('av-porao', 1, 'cri-rato-2', 'srd:creature:giant-rat', '5.2.1');
+ ('av-porao', 1, 'cri-rato-1', 'srd:criatura:giant-rat', '5.2.1'),
+ ('av-porao', 1, 'cri-rato-2', 'srd:criatura:giant-rat', '5.2.1');
 
 -- Conferida: publica a versão 1.
 update modulo_versao set publicada_em = strftime('%Y-%m-%dT%H:%M:%fZ','now') where aventura_id = 'av-porao' and versao = 1;

@@ -33,7 +33,7 @@ def test_recorte_do_porao(modulo: canonico.ModuloCanonico) -> None:
     r = canonico.recortar(modulo, "cena-porao")
     assert "barris roídos" in r.cena.dados["descricao"]
     assert [p.item.nome for p in r.presentes] == ["Rato gigante", "Rato gigante"]
-    assert all(p.mapeamento and p.mapeamento.srd_id == "srd:creature:giant-rat" for p in r.presentes)
+    assert all(p.mapeamento and p.mapeamento.srd_id == "srd:criatura:giant-rat" for p in r.presentes)
     assert [li.para for li in r.ligacoes_saida if li.tipo == "leva_a"] == ["cena-tunel"]
     assert r.no_caminho_critico
     assert [s.item.id for s in r.segredos] == ["seg-anel"]
