@@ -64,10 +64,13 @@ def _processo_vivo(pid: int) -> bool:
     if _WINDOWS:
         import ctypes
 
-        handle = ctypes.windll.kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
+        kernel32 = ctypes.CDLL(
+            "kernel32"
+        )  # CDLL existe em toda plataforma para o verificador; em x64 a convenção é a mesma
+        handle = kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
         if not handle:
             return False
-        ctypes.windll.kernel32.CloseHandle(handle)
+        kernel32.CloseHandle(handle)
         return True
     return _vivo_posix(pid)
 
