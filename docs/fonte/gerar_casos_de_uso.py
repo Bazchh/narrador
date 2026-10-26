@@ -115,7 +115,7 @@ CSS = """
   .none { font-size:8.8pt; color:var(--muted); font-style:italic; }
   .res { border-top:1px solid var(--line); margin-top:8px; padding-top:6px; display:flex; align-items:baseline; gap:8px; font-size:9pt; }
   .res .lbl { margin:0; white-space:nowrap; } .res .txt { flex:1; }
-  .seq { background:var(--bg-soft); border-top:1px solid var(--line); padding:8px 12px; }
+  .seq { background:var(--bg-soft); border:1px solid var(--line); border-radius:10px; padding:8px 12px; margin:-6px 0 14px; break-inside:avoid; }
   .seq .cap-txt { font-size:8.8pt; color:var(--muted); margin-top:2px; }
   .phase { border:1px solid var(--line); border-left:4px solid var(--line); border-radius:8px; padding:9px 12px; margin-bottom:8px; break-inside:avoid; }
   .phase.p1 { border-left-color:var(--f1); } .phase.p2 { border-left-color:var(--f2); } .phase.p3 { border-left-color:var(--f3); }
@@ -337,10 +337,9 @@ def ficha(c):
     h.append('</div></div>')
     rns = "".join(f'<span class="pill rn">{e(r)}</span>' for r in c.get("regras", []))
     h.append(f'<div class="res"><span class="lbl">Resultado</span><span class="txt">{e(c["resultado"])}</span><span>{rns}</span></div>')
-    h.append('</div>')
+    h.append('</div></div>')
     if c.get("sequencia"):
-        h.append(f'<div class="seq">{sequencia_svg(c["sequencia"])}<div class="cap-txt">{e(c["sequencia"]["legenda"])}</div></div>')
-    h.append('</div>')
+        h.append(f'<div class="seq"><div class="lbl">Sequência do caso de uso {e(c["codigo"])}</div>{sequencia_svg(c["sequencia"])}<div class="cap-txt">{e(c["sequencia"]["legenda"])}</div></div>')
     return "".join(h)
 
 

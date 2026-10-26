@@ -2,7 +2,7 @@
   "produto": "Narrador",
   "titulo": "Casos de Uso",
   "kicker": "Especificação funcional · outubro de 2026",
-  "entrega": "Entrega 2: módulos A e B detalhados. Os demais módulos estão no índice com código fixo e serão detalhados nas próximas entregas, módulo a módulo.",
+  "entrega": "Entrega 3: módulos A, B e C detalhados. Os demais módulos estão no índice com código fixo e serão detalhados nas próximas entregas, módulo a módulo.",
   "intro": "Tudo o que a mesa com mestre por inteligência artificial precisa fazer, descrito um a um: quem usa, o que acontece passo a passo, o que fazer quando algo dá errado e o que ganhamos com cada um. Documento complementar ao Mapa do Projeto e ao Blueprint Técnico.",
   "rodape": "Casos de uso · Narrador",
   "fases": {
@@ -1035,7 +1035,7 @@
       "letra": "C",
       "nome": "Mesa e narração",
       "fase": 1,
-      "detalhado": false,
+      "detalhado": true,
       "resumo": "Abrir a sessão, narrar a cena, dar veredito a cada tentativa, conversar com personagens, explorar, descansar, encerrar.",
       "casos": [
         {
@@ -1043,70 +1043,762 @@
           "nome": "Criar campanha a partir de um módulo",
           "ator": "Dono da mesa",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Abrir uma campanha viva sobre um módulo canônico publicado, com personagem, classificação de conteúdo e idioma definidos.",
+          "fluxo": [
+            {
+              "t": "Escolhe o módulo publicado",
+              "tipo": "ator"
+            },
+            {
+              "t": "Define a configuração da mesa",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Vincula o personagem",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Cria a campanha viva com a versão do módulo fixada",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Campanha pronta para a primeira sessão",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Módulo canônico publicado (caso de uso A03).",
+            "Personagem gravado (casos de uso B01 ou B02), ou a criar na hora."
+          ],
+          "gatilho": "O dono da mesa escolhe criar uma campanha nova.",
+          "apoio": [],
+          "principal": [
+            "O dono da mesa escolhe o módulo e a versão; a última publicada é a sugerida.",
+            "O dono da mesa dá nome à campanha e define classificação de conteúdo, tom e preferências (caso de uso C10).",
+            "O dono da mesa vincula um personagem existente ou cria um na hora pelos casos de uso B01 ou B02.",
+            "A plataforma cria a campanha viva vazia: ponteiro para a versão do módulo, personagem, configuração, relógio zerado e nenhum fato.",
+            "A plataforma registra o primeiro fato, \"campanha criada\", com data e versão do módulo."
+          ],
+          "alternativos": [
+            {
+              "t": "Personagem já usado em outra campanha",
+              "d": "A plataforma cria uma cópia do personagem para esta campanha; os estados nunca se misturam."
+            },
+            {
+              "t": "Módulo com criaturas pendentes",
+              "d": "A campanha é criada com aviso; o mestre não entra em combate com essas criaturas até o caso de uso A04 resolver."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Módulo só em rascunho",
+              "d": "A plataforma bloqueia e aponta a conferência do caso de uso A03."
+            },
+            {
+              "t": "Serviço de linguagem não configurado",
+              "d": "A campanha é criada mesmo assim; é a abertura da sessão (caso de uso C02) que exige o serviço."
+            }
+          ],
+          "resultado": "Campanha viva criada, apontando para uma versão fixa do módulo, pronta para a primeira sessão.",
+          "regras": [
+            "RN-01"
+          ]
         },
         {
           "codigo": "C02",
           "nome": "Abrir ou retomar a sessão",
           "ator": "Jogador",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Começar a jogar, do zero ou de onde parou, com o mestre sabendo exatamente o estado da mesa.",
+          "fluxo": [
+            {
+              "t": "Abre a campanha",
+              "tipo": "ator"
+            },
+            {
+              "t": "Carrega a campanha viva e o recorte da cena",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Mestre recebe o estado e o resumo",
+              "tipo": "llm",
+              "desvio": {
+                "rotulo": "serviço fora do ar",
+                "t": "Sessão não abre; nada se perde",
+                "tipo": "falha"
+              }
+            },
+            {
+              "t": "Mestre recapitula e abre a cena",
+              "tipo": "llm"
+            },
+            {
+              "t": "Sessão aberta",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Campanha criada (caso de uso C01).",
+            "Serviço de linguagem configurado e acessível."
+          ],
+          "gatilho": "O jogador abre a campanha.",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma carrega a campanha viva: fatos, estado do personagem, cena atual, relógio e desvios registrados.",
+            "A plataforma monta o contexto do mestre: regras de mesa, classificação e tom, resumo das sessões anteriores (caso de uso G02), o que o personagem sabe (caso de uso F04) e o recorte da cena atual (caso de uso A05).",
+            "O mestre recapitula em poucas linhas o que aconteceu, sem segredos, e descreve a cena atual.",
+            "A plataforma registra o fato \"sessão N aberta\" com data.",
+            "O jogador passa a agir pelos casos de uso C04 a C08."
+          ],
+          "alternativos": [
+            {
+              "t": "Primeira sessão",
+              "d": "Sem recapitulação; o mestre abre com a cena inicial do caminho crítico do módulo."
+            },
+            {
+              "t": "Retomada após interrupção",
+              "d": "A sessão abre exatamente no último fato registrado, inclusive no meio de um combate (módulo D), pelo caso de uso F05."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Serviço de linguagem indisponível",
+              "d": "A sessão não abre; a plataforma informa o motivo e nada se perde, porque a campanha viva já estava salva."
+            },
+            {
+              "t": "Campanha viva inconsistente",
+              "d": "Apontada pelo caso de uso G03: a plataforma abre em modo só leitura e mostra o problema ao dono da mesa, que decide a correção."
+            }
+          ],
+          "resultado": "Sessão aberta, mestre ciente do estado da mesa, jogador situado.",
+          "regras": [
+            "RN-05",
+            "RN-10"
+          ]
         },
         {
           "codigo": "C03",
           "nome": "Narrar a cena",
           "ator": "Plataforma",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Descrever o que o personagem percebe, com base no módulo e na campanha viva, sem vazar segredo nem contradizer fato.",
+          "fluxo": [
+            {
+              "t": "Mestre recebe o recorte da cena",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Serviço de linguagem narra em português",
+              "tipo": "llm"
+            },
+            {
+              "t": "Plataforma confere segredos e fatos",
+              "tipo": "sistema",
+              "desvio": {
+                "rotulo": "vazamento ou contradição",
+                "t": "Descarta, pede nova narração, registra",
+                "tipo": "atencao"
+              }
+            },
+            {
+              "t": "Narração entregue e fatos novos registrados",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Sessão aberta.",
+            "Recorte da cena disponível (caso de uso A05)."
+          ],
+          "gatilho": "O personagem entra numa cena, a cena muda por ação do jogador, ou o tempo passa.",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma entrega ao mestre o recorte da cena com os segredos marcados \"não narrar\" e o estado atual da campanha viva.",
+            "O mestre narra em português, no tom configurado: o que o personagem vê, ouve e sente, quem está presente e o que é evidente.",
+            "A plataforma confere a narração contra os segredos não descobertos e contra os fatos estabelecidos (caso de uso G03).",
+            "A narração é entregue ao jogador; os fatos novos que ela estabelece (por exemplo, \"a porta está trancada\") entram na campanha viva pelo caso de uso F01.",
+            "Se o mestre adaptou algo do módulo, o desvio é registrado com motivo pelo caso de uso F02."
+          ],
+          "alternativos": [
+            {
+              "t": "Cena fora do módulo",
+              "d": "O jogador foi aonde o módulo não cobre: o mestre improvisa dentro do mundo do módulo, e tudo o que inventa entra como desvio registrado, nunca como canônico."
+            },
+            {
+              "t": "Jogador pede mais detalhe",
+              "d": "O mestre amplia a descrição sem criar fato que contradiga os existentes."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Narração vaza segredo ou contradiz fato",
+              "d": "A plataforma descarta a narração, pede outra ao mestre informando o motivo e registra a ocorrência; se repetir, usa a descrição literal do módulo e avisa o jogador."
+            },
+            {
+              "t": "Serviço recusa ou falha",
+              "d": "Caso de uso G05: repete uma vez; persistindo, a plataforma entrega a descrição literal do módulo e avisa o jogador de que o mestre está indisponível."
+            }
+          ],
+          "resultado": "Jogador situado; fatos novos registrados; segredos intactos.",
+          "regras": [
+            "RN-01",
+            "RN-05",
+            "RN-07"
+          ]
         },
         {
           "codigo": "C04",
           "nome": "Perguntar ao mestre \"e se eu fizer?\"",
           "ator": "Jogador",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Saber o que o mestre pediria, ou como a cena reagiria, sem que nada aconteça.",
+          "fluxo": [
+            {
+              "t": "Pergunta \"e se\" ou \"posso\"",
+              "tipo": "ator"
+            },
+            {
+              "t": "Classifica como pergunta, não ação",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Mestre responde o veredito provável sem executar",
+              "tipo": "llm"
+            },
+            {
+              "t": "Nada muda; consulta registrada",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Sessão aberta."
+          ],
+          "gatilho": "O jogador pergunta em forma hipotética: \"e se eu...\", \"posso tentar...\", \"o que acontece se...\".",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma classifica a entrada como pergunta, não ação; em dúvida, pergunta ao jogador qual das duas é.",
+            "O mestre responde o que pediria: \"de cara\", \"impossível aqui, porque...\" ou \"teste de tal perícia contra tal dificuldade\", com a razão visível na cena.",
+            "Nenhum dado é rolado, nenhum fato é registrado, nenhum turno é gasto.",
+            "A consulta fica registrada, pergunta e resposta, para a verificação de consistência de vereditos do caso de uso G04.",
+            "O jogador decide agir (caso de uso C05) ou não."
+          ],
+          "alternativos": [
+            {
+              "t": "Pergunta sobre regra",
+              "d": "\"Quanto é meu bônus de Atletismo?\": a plataforma responde pelo motor e pelo SRD (caso de uso E03), sem passar pelo mestre."
+            },
+            {
+              "t": "Pergunta que revelaria segredo",
+              "d": "\"Tem armadilha aqui?\": o mestre responde só o que o personagem perceberia sem teste; descobrir exige uma ação do caso de uso C05."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Ambiguidade entre pergunta e ação não resolvida",
+              "d": "A plataforma trata como pergunta, que é o lado seguro, e diz isso ao jogador."
+            },
+            {
+              "t": "Resposta contradiz veredito anterior para a mesma situação",
+              "d": "O caso de uso G04 mostra o veredito anterior ao mestre, que mantém a coerência ou registra o motivo da diferença."
+            }
+          ],
+          "resultado": "Jogador informado; mesa inalterada; consulta registrada.",
+          "regras": [
+            "RN-02",
+            "RN-05",
+            "RN-11"
+          ]
         },
         {
           "codigo": "C05",
           "nome": "Tentar uma ação e receber o veredito",
           "ator": "Jogador",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Agir na cena e ter o resultado decidido com justiça: de cara, impossível, ou teste rolado pelo motor.",
+          "fluxo": [
+            {
+              "t": "Declara a ação",
+              "tipo": "ator"
+            },
+            {
+              "t": "Mestre dá o veredito",
+              "tipo": "llm"
+            },
+            {
+              "t": "Motor valida o veredito e rola se for teste",
+              "tipo": "motor",
+              "desvio": {
+                "rotulo": "veredito fora das regras",
+                "t": "Motor recusa; mestre refaz",
+                "tipo": "falha"
+              }
+            },
+            {
+              "t": "Mestre narra a consequência",
+              "tipo": "llm"
+            },
+            {
+              "t": "Fato, veredito e rolagem registrados",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Sessão aberta.",
+            "Fora de combate; em combate, o turno é do caso de uso D02."
+          ],
+          "gatilho": "O jogador declara o que faz: \"eu faço\", \"eu tento\", ou um imperativo.",
+          "apoio": [
+            "Serviço de linguagem",
+            "SRD 5.2"
+          ],
+          "principal": [
+            "A plataforma classifica a entrada como ação.",
+            "O mestre dá um de três vereditos: consegue de cara; impossível, com o motivo na cena; ou teste, nomeando atributo ou perícia, a dificuldade na escala do SRD e o que acontece no sucesso e na falha.",
+            "O motor valida o veredito: a perícia existe, a dificuldade está na escala, o personagem pode tentar (condições, equipamento, posição).",
+            "Se for teste, o motor rola com os modificadores da ficha e a vantagem ou desvantagem declaradas, e registra semente, motivo e resultado (casos de uso E01 e E02).",
+            "O mestre narra a consequência conforme o resultado.",
+            "A plataforma registra o fato (caso de uso F01), o veredito (para o caso de uso G04) e o desvio do módulo, se houver (caso de uso F02)."
+          ],
+          "alternativos": [
+            {
+              "t": "Ação com efeito direto de regra",
+              "d": "Abrir porta destrancada, pegar um item: veredito \"de cara\" e o efeito entra pelo motor (caso de uso B05)."
+            },
+            {
+              "t": "Jogador discorda do veredito",
+              "d": "Pode pedir a razão; o mestre explica pela cena. O veredito só muda se o motor apontar erro de regra."
+            },
+            {
+              "t": "Ação que inicia combate",
+              "d": "Segue para o caso de uso D01."
+            },
+            {
+              "t": "Jogador quer rolar dado físico",
+              "d": "Aceito só se a mesa foi configurada assim (caso de uso C10); o valor informado é registrado como \"informado\", sem semente."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Dificuldade fora da escala ou perícia inexistente",
+              "d": "O motor recusa o veredito, o mestre refaz, e a recusa fica registrada para auditoria."
+            },
+            {
+              "t": "Veredito contradiz um anterior para situação igual",
+              "d": "O caso de uso G04 mostra o anterior; o mestre mantém a coerência ou registra o motivo da diferença."
+            },
+            {
+              "t": "Ação impossível pela regra",
+              "d": "Voar sem meio, por exemplo: veredito \"impossível\" com a razão; não entra como falha do jogador."
+            },
+            {
+              "t": "Serviço de linguagem falha no meio",
+              "d": "Caso de uso G05: a ação fica pendente e retoma do veredito já dado, se houver; nada é rolado duas vezes."
+            }
+          ],
+          "resultado": "Ação resolvida com veredito e rolagem auditáveis; consequência narrada; fatos registrados.",
+          "regras": [
+            "RN-02",
+            "RN-06",
+            "RN-07",
+            "RN-11"
+          ],
+          "sequencia": {
+            "colunas": [
+              "Jogador",
+              "Plataforma",
+              "Mestre (serviço de linguagem)",
+              "Motor de regras"
+            ],
+            "passos": [
+              {
+                "de": 0,
+                "para": 1,
+                "t": "\"eu tento escalar o muro\""
+              },
+              {
+                "de": 1,
+                "para": 2,
+                "t": "ação + recorte da cena + ficha do personagem"
+              },
+              {
+                "de": 2,
+                "para": 1,
+                "t": "veredito: teste de Atletismo, dificuldade 15",
+                "tracejado": true
+              },
+              {
+                "de": 1,
+                "para": 3,
+                "t": "valida o veredito"
+              },
+              {
+                "de": 3,
+                "para": 1,
+                "t": "válido; d20 (14) + 3 = 17: sucesso, semente registrada",
+                "tracejado": true
+              },
+              {
+                "de": 1,
+                "para": 2,
+                "t": "resultado: sucesso por 2"
+              },
+              {
+                "de": 2,
+                "para": 1,
+                "t": "narração da consequência",
+                "tracejado": true
+              },
+              {
+                "de": 1,
+                "para": 1,
+                "t": "registra fato, veredito e rolagem"
+              },
+              {
+                "de": 1,
+                "para": 0,
+                "t": "narração + \"Atletismo 17 contra 15: sucesso\"",
+                "tracejado": true
+              }
+            ],
+            "legenda": "Uma tentativa de ponta a ponta. O mestre decide o que pedir; o motor confere e rola; o jogador vê o número e a narração."
+          }
         },
         {
           "codigo": "C06",
           "nome": "Conversar com personagem do mestre",
           "ator": "Jogador",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Falar com um personagem do módulo e obter reações coerentes com quem ele é, o que sabe e o que já aconteceu.",
+          "fluxo": [
+            {
+              "t": "Fala com o personagem",
+              "tipo": "ator"
+            },
+            {
+              "t": "Entrega ao mestre a ficha do personagem e o que ele sabe",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Mestre responde na voz do personagem",
+              "tipo": "llm"
+            },
+            {
+              "t": "Confere segredo e coerência",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Diálogo registrado; atitude atualizada",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Personagem do mestre presente na cena, pelo módulo ou por desvio registrado."
+          ],
+          "gatilho": "O jogador se dirige a um personagem do mestre.",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma entrega ao mestre a ficha do personagem no módulo canônico (personalidade, objetivo, o que sabe, segredos marcados), o estado dele na campanha viva (atitude, o que já disse) e o histórico de diálogo.",
+            "O mestre responde na voz do personagem, em português, no tom da mesa.",
+            "A plataforma confere: o personagem só revela o que sabe e o que a regra de segredo permite.",
+            "Se o jogador tenta persuadir, enganar ou intimidar, a fala vira ação do caso de uso C05, com veredito e teste.",
+            "O que o personagem disse entra como fato (caso de uso F01) e a atitude dele é atualizada na campanha viva."
+          ],
+          "alternativos": [
+            {
+              "t": "Personagem inventado pelo mestre",
+              "d": "Não está no módulo: é criado como desvio registrado (caso de uso F02), com ficha mínima, e passa a existir na campanha viva."
+            },
+            {
+              "t": "Personagem morto ou ausente pela campanha viva",
+              "d": "O mestre não o traz de volta; informa pela cena. Fato estabelecido vale."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Resposta revela segredo não permitido",
+              "d": "Descartada, nova resposta pedida com o motivo, ocorrência registrada."
+            },
+            {
+              "t": "Resposta contradiz o que o personagem já disse",
+              "d": "A plataforma mostra o histórico ao mestre e pede coerência; a contradição só fica se for mentira intencional do personagem, registrada como tal."
+            }
+          ],
+          "resultado": "Diálogo coerente e registrado; atitude do personagem atualizada.",
+          "regras": [
+            "RN-01",
+            "RN-05",
+            "RN-07"
+          ]
         },
         {
           "codigo": "C07",
           "nome": "Explorar e viajar",
           "ator": "Jogador",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Mover-se pelo mundo do módulo, entre locais e cenas, com tempo, distâncias e encontros tratados pelas regras.",
+          "fluxo": [
+            {
+              "t": "Diz para onde vai",
+              "tipo": "ator"
+            },
+            {
+              "t": "Localiza o destino no grafo do módulo",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Motor aplica tempo, ritmo e encontros",
+              "tipo": "motor"
+            },
+            {
+              "t": "Mestre narra a chegada (C03)",
+              "tipo": "llm"
+            },
+            {
+              "t": "Cena atual e relógio atualizados",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Sessão aberta.",
+            "Locais do módulo com ligações conferidas (caso de uso A03)."
+          ],
+          "gatilho": "O jogador declara deslocamento ou exploração: \"vou para\", \"exploro a sala\", \"sigo o corredor\".",
+          "apoio": [
+            "Serviço de linguagem",
+            "SRD 5.2"
+          ],
+          "principal": [
+            "A plataforma identifica o destino no grafo de locais e cenas do módulo.",
+            "O motor aplica as regras de viagem do SRD: distância, ritmo, tempo decorrido, luz e recursos consumidos.",
+            "Se o módulo prevê encontro no trajeto, ou o motor sorteia pela tabela do módulo, o encontro acontece (casos de uso C03 ou D01).",
+            "O mestre narra a chegada pelo caso de uso C03.",
+            "A plataforma atualiza a cena atual e o relógio da campanha viva."
+          ],
+          "alternativos": [
+            {
+              "t": "Destino não existe no módulo",
+              "d": "O mestre improvisa como desvio registrado (caso de uso F02) e a plataforma cria o local na campanha viva, ligado ao mais próximo do grafo."
+            },
+            {
+              "t": "Exploração de detalhe",
+              "d": "\"Examino a estante\": tratada como ação do caso de uso C05, com veredito."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Caminho bloqueado por fato estabelecido",
+              "d": "Ponte destruída, por exemplo: o mestre informa pela cena e o jogador escolhe outro caminho; se não há outro, o caso de uso F03 abre um."
+            },
+            {
+              "t": "Tempo decorrido dispara evento do módulo",
+              "d": "Um prazo vence: o evento é aplicado e narrado; se o jogador não tinha como saber, o mestre deixa pistas que entram como fato."
+            }
+          ],
+          "resultado": "Personagem em novo local ou cena; tempo e recursos atualizados.",
+          "regras": [
+            "RN-01",
+            "RN-03",
+            "RN-06"
+          ]
         },
         {
           "codigo": "C08",
           "nome": "Descansar",
           "ator": "Jogador",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Recuperar recursos exatamente como o SRD define para descanso curto e longo, com o mundo seguindo em frente.",
+          "fluxo": [
+            {
+              "t": "Declara descanso curto ou longo",
+              "tipo": "ator"
+            },
+            {
+              "t": "Motor confere condições e duração",
+              "tipo": "motor"
+            },
+            {
+              "t": "Mestre verifica eventos do período no módulo",
+              "tipo": "llm",
+              "desvio": {
+                "rotulo": "interrupção",
+                "t": "Encontro acontece; recuperação parcial pela regra",
+                "tipo": "atencao"
+              }
+            },
+            {
+              "t": "Motor aplica a recuperação",
+              "tipo": "motor"
+            },
+            {
+              "t": "Estado e relógio atualizados",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Fora de combate."
+          ],
+          "gatilho": "O jogador declara descanso curto ou longo.",
+          "apoio": [
+            "SRD 5.2",
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "O motor confere se o descanso é possível pelas regras do SRD: duração, atividade permitida, limite de descansos longos por dia.",
+            "O mestre consulta o módulo e a campanha viva: há encontro ou evento previsto no período? Se há, aplica pelos casos de uso C03 ou D01, e o descanso é interrompido conforme a regra.",
+            "O motor aplica a recuperação: dados de vida no descanso curto; pontos de vida, espaços de magia e usos de características no longo; exaustão conforme a regra.",
+            "A plataforma avança o relógio da campanha viva.",
+            "O mestre narra a passagem do tempo em uma ou duas frases."
+          ],
+          "alternativos": [
+            {
+              "t": "Descanso longo em local inseguro",
+              "d": "O mestre pode exigir vigília; o motor aplica a regra de interrupção se algo acontecer."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Descanso interrompido por combate",
+              "d": "Recuperação parcial conforme o SRD, calculada pelo motor."
+            },
+            {
+              "t": "Descanso longo logo após outro",
+              "d": "O motor recusa pela regra do limite diário e informa quando será possível."
+            }
+          ],
+          "resultado": "Recursos recuperados pela regra; tempo avançado; eventos do período aplicados.",
+          "regras": [
+            "RN-06"
+          ]
         },
         {
           "codigo": "C09",
           "nome": "Encerrar a sessão",
           "ator": "Jogador",
           "fase": 1,
-          "prioridade": "Essencial"
+          "prioridade": "Essencial",
+          "objetivo": "Parar de jogar com tudo salvo e um resumo que permita retomar depois sem perder o fio.",
+          "fluxo": [
+            {
+              "t": "Encerra a sessão",
+              "tipo": "ator"
+            },
+            {
+              "t": "Grava o ponto de parada e as pendências",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Gera o resumo da sessão (G02)",
+              "tipo": "llm"
+            },
+            {
+              "t": "Sessão fechada",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Sessão aberta."
+          ],
+          "gatilho": "O jogador pede para encerrar, ou fecha o programa.",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma conclui a ação em andamento ou a marca como pendente.",
+            "A plataforma grava o fato \"sessão N encerrada\" com a cena atual, o estado do personagem e o relógio.",
+            "A plataforma gera o resumo da sessão pelo caso de uso G02, sem segredos.",
+            "A plataforma mostra ao jogador o resumo e as pendências: subida de nível, itens sem regra, desvios para o dono da mesa revisar.",
+            "A sessão fecha."
+          ],
+          "alternativos": [
+            {
+              "t": "Fechamento abrupto",
+              "d": "Programa fechado ou queda: nada a fazer, porque a campanha viva já está salva a cada fato (caso de uso G01); o resumo é gerado na próxima abertura."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Resumo falha",
+              "d": "Serviço fora do ar: a sessão fecha mesmo assim; o resumo fica pendente e é gerado na abertura seguinte."
+            }
+          ],
+          "resultado": "Campanha viva íntegra; resumo pronto para a próxima abertura.",
+          "regras": [
+            "RN-10"
+          ]
         },
         {
           "codigo": "C10",
           "nome": "Configurar classificação de conteúdo e tom da mesa",
           "ator": "Dono da mesa",
           "fase": 1,
-          "prioridade": "Importante"
+          "prioridade": "Importante",
+          "objetivo": "Definir até onde a narração pode ir e como o mestre fala, e ter isso obedecido.",
+          "fluxo": [
+            {
+              "t": "Abre a configuração da mesa",
+              "tipo": "ator"
+            },
+            {
+              "t": "Escolhe classificação, tom e preferências",
+              "tipo": "ator"
+            },
+            {
+              "t": "Grava e aplica ao mestre",
+              "tipo": "sistema",
+              "desvio": {
+                "rotulo": "serviço não aceita o nível",
+                "t": "Avisa na hora, antes da mesa",
+                "tipo": "atencao"
+              }
+            },
+            {
+              "t": "Mesa configurada",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Campanha criada, ou em criação pelo caso de uso C01."
+          ],
+          "gatilho": "O dono da mesa abre a configuração, na criação da campanha ou a qualquer momento entre sessões.",
+          "apoio": [],
+          "principal": [
+            "O dono da mesa escolhe a classificação de conteúdo: livre, 14, 16 ou adulto, com a descrição do que cada nível permite, conforme a decisão DC-11 do Mapa.",
+            "O dono da mesa escolhe o tom (sério, leve, sombrio, humor) e as preferências: dado físico permitido ou não, nível de detalhe das descrições, ritmo.",
+            "A plataforma grava a configuração na campanha viva, com data.",
+            "A plataforma aplica a configuração ao mestre a partir da próxima narração.",
+            "A mudança fica registrada como fato de mesa, para que o histórico mostre sob qual configuração cada cena foi narrada."
+          ],
+          "alternativos": [
+            {
+              "t": "Mudança no meio da sessão",
+              "d": "Aplica a partir da próxima cena; não retroage."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Classificação acima do que o serviço de linguagem configurado aceita",
+              "d": "A plataforma avisa na hora, com a alternativa (outro serviço ou classificação menor), em vez de esperar a recusa acontecer na mesa (caso de uso G05)."
+            }
+          ],
+          "resultado": "Mesa configurada; o mestre obedece a partir da próxima cena.",
+          "regras": [
+            "RN-07"
+          ]
         }
       ]
     },
