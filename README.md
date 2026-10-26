@@ -18,6 +18,19 @@ narrador --versao
 Nenhum teste chama a rede: o provedor falso cobre tudo. Nenhuma chave entra no repositório;
 veja `.env.example`.
 
+## Jogar
+
+Um comando cria a aventura semente ("O Porão da Taverna"), a campanha com a personagem
+pré-gerada e abre a tela de jogo. Na fase 1 o mestre é o roteiro embutido, sem custo:
+
+```
+narrador demo C:\jogos\narrador
+```
+
+Na tela: escreva o que a personagem faz ou pergunta; `/ficha`, `/cena`, `/ir <lugar>`, `/ajuda`,
+`/sair`. Em combate: `ataco <alvo>`, `me aproximo de <alvo>`, `esquivo`, `fujo`, `passo`.
+Rodar o mesmo comando de novo retoma a campanha de onde parou. Para começar do zero, apague a pasta.
+
 ## Licença de conteúdo
 
 O único conteúdo de regras embutido é o System Reference Document 5.2, da Wizards of the Coast,

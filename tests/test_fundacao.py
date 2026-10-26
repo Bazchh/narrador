@@ -29,6 +29,14 @@ def test_os_cinco_pacotes_existem(nome: str) -> None:
     assert pacote.__doc__, f"o pacote {nome} precisa dizer para que serve"
 
 
-def test_a_trava_de_rede_derruba_qualquer_socket() -> None:
+def test_a_trava_de_rede_derruba_qualquer_conexao() -> None:
+    """A classe socket continua existindo (o laço de eventos precisa dela); conectar é que não dá,
+    nem para localhost, nem por nome, nem por datagrama."""
+    with socket.socket() as s, pytest.raises(RedeProibidaError):
+        s.connect(("127.0.0.1", 9))
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s, pytest.raises(RedeProibidaError):
+        s.sendto(b"x", ("127.0.0.1", 9))
     with pytest.raises(RedeProibidaError):
-        socket.socket()
+        socket.create_connection(("localhost", 11434))
+    with pytest.raises(RedeProibidaError):
+        socket.getaddrinfo("example.com", 443)
