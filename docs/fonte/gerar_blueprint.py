@@ -335,7 +335,7 @@ def capa():
 <div class="stats">{st}</div>
 <div class="box"><h3>Para quem escrevemos isto</h3><p>{e(D["para_quem"])}</p></div>
 <div class="box"><h3>A regra que organiza todo o documento</h3><p>{e(D["regra"])}</p></div>
-<p style="font-size:8.8pt;color:var(--muted);margin-top:12px;border-top:1px solid var(--line);padding-top:8px">{e(D["produto"])} · mestre por inteligência artificial para D&amp;D 5e, regras de 2024, SRD 5.2 em CC-BY-4.0 · acompanha o Mapa do Projeto (revisão 4) e os Casos de Uso (56 fichas)</p>
+<p style="font-size:8.8pt;color:var(--muted);margin-top:12px;border-top:1px solid var(--line);padding-top:8px">{e(D["produto"])} · mestre por inteligência artificial para D&amp;D 5e, regras de 2024, SRD 5.2 em CC-BY-4.0 · acompanha o Mapa do Projeto (revisão 5) e os Casos de Uso (56 fichas)</p>
 </section>'''
 
 
