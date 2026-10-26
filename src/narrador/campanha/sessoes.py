@@ -13,6 +13,7 @@ import os
 import re
 import sqlite3
 import sys
+import unicodedata
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -36,7 +37,8 @@ class CampanhaInconsistenteError(RuntimeError):
 
 
 def _slug(nome: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "-", nome.lower()).strip("-") or "campanha"
+    sem_acento = unicodedata.normalize("NFKD", nome).encode("ascii", "ignore").decode()
+    return re.sub(r"[^a-z0-9]+", "-", sem_acento.lower()).strip("-") or "campanha"
 
 
 @dataclass(frozen=True)
@@ -127,8 +129,11 @@ def criar_campanha(
     classificacao: str = "adulto",
     tom: str = "serio",
     configuracao: dict[str, Any] | None = None,
+    semente: str | None = None,
 ) -> CampanhaCriada:
-    """C01: arquivo novo, semente de rolagens gerada e gravada, personagem vinculado, primeiro registro."""
+    """C01: arquivo novo, semente de rolagens gerada e gravada, personagem vinculado, primeiro registro.
+
+    `semente` fixa o gerador de dados (roteiros de aceite); vazia, é sorteada."""
     pasta.mkdir(parents=True, exist_ok=True)
     caminho = pasta / f"{_slug(nome)}.sqlite"
     if caminho.exists():
@@ -142,7 +147,7 @@ def criar_campanha(
             nome,
             aventura_id,
             modulo_versao,
-            uuid.uuid4().hex,
+            semente or uuid.uuid4().hex,
             classificacao,
             tom,
             json.dumps(configuracao or {}, ensure_ascii=False),

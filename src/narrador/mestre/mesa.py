@@ -9,11 +9,13 @@ from pathlib import Path
 from typing import Any
 
 from narrador.campanha import banco as campanha_banco
+from narrador.campanha import combate as campanha_combate
 from narrador.campanha import personagens, sessoes
 from narrador.mestre import registro, servico, tratadores_narracao
 from narrador.mestre.protocolo import Contexto, Executor
 from narrador.modulo import banco as modulo_banco
 from narrador.modulo import canonico
+from narrador.motor import combate as motor_combate
 from narrador.motor import entrada as motor_entrada
 from narrador.motor import sessao as motor_sessao
 from narrador.motor.combate import EstadoCombate
@@ -130,7 +132,9 @@ class Mesa:
                 "nome": gravada.ficha.nome,
                 "classe": d.classe.nome_pt,
                 "nivel": gravada.ficha.nivel,
-                "pv": inst.pontos_de_vida or d.pontos_de_vida_maximos.total,
+                "pv": inst.pontos_de_vida
+                if inst.pontos_de_vida is not None
+                else d.pontos_de_vida_maximos.total,  # zero é zero: "or" escondia a queda
                 "pv_max": d.pontos_de_vida_maximos.total,
                 "ca": d.classe_armadura.total,
             }
@@ -203,6 +207,7 @@ class Mesa:
         combate = self.contexto.extras.get("combate")
         if combate is not None and self.sessao is not None:
             pv = combate.jogador.pontos_de_vida
+            self.contexto.extras["pv_atual"] = pv  # o próximo combate parte da vida real
             inst = self.sessao.instantaneo
             if pv != inst.pontos_de_vida:
                 novo = sessoes.Instantaneo(
@@ -243,6 +248,45 @@ class Mesa:
 
     def combate_atual(self) -> EstadoCombate | None:
         return self.contexto.extras.get("combate")
+
+    # ---------------------------------------------------------------- combate pelo lado da plataforma
+
+    def _combate_vivo(self) -> EstadoCombate:
+        combate = self.combate_atual()
+        if combate is None or combate.estado == "encerrado":
+            raise motor_combate.AcaoNaoPermitidaError("não há combate em andamento")
+        return combate
+
+    def _guardar_combate(self, estado: EstadoCombate, origem: str) -> None:
+        self.contexto.extras["combate"] = estado
+        assert self.sessao is not None
+        campanha_combate.gravar(self.con, self.campanha_id, self.sessao.sessao_id, estado, origem)
+        self._sincronizar_estado()
+
+    def agir_pelo_jogador(self, decl: motor_combate.Declaracao) -> EstadoCombate:
+        """D02: a declaração do jogador no turno dele, resolvida pelo motor e gravada.
+        Gasta a ação? O turno encerra sozinho, como no turno das criaturas."""
+        combate = self._combate_vivo()
+        assert self.sessao is not None
+        pj_id = self.sessao.instantaneo.personagem_id or ""
+        rolar = campanha_combate.rolador(self.con, self.campanha_id, self.sessao.sessao_id, "D02")
+        estado = motor_combate.agir(combate, pj_id, decl, rolar)
+        ainda_dele = estado.estado == "turno_pj" and estado.atual is not None and estado.atual.id == pj_id
+        if ainda_dele and not estado.economia.acao:
+            estado = motor_combate.encerrar_turno(estado)
+        self._guardar_combate(estado, "D02")
+        return estado
+
+    def agir_padrao_da_criatura(self, criatura_id: str) -> EstadoCombate:
+        """D03 E1: o mestre falhou no turno da criatura; a ficha age por ela e o turno encerra."""
+        combate = self._combate_vivo()
+        assert self.sessao is not None
+        rolar = campanha_combate.rolador(self.con, self.campanha_id, self.sessao.sessao_id, "D03")
+        estado = motor_combate.acao_padrao(combate, criatura_id, rolar)
+        if estado.estado == "turno_cri" and estado.atual is not None and estado.atual.id == criatura_id:
+            estado = motor_combate.encerrar_turno(estado)
+        self._guardar_combate(estado, "D03")
+        return estado
 
 
 def ctx_sessao(mesa: Mesa) -> str | None:
