@@ -117,12 +117,12 @@ CSS = """
   .res .lbl { margin:0; white-space:nowrap; } .res .txt { flex:1; }
   .seq { background:var(--bg-soft); border:1px solid var(--line); border-radius:10px; padding:8px 12px; margin:-6px 0 14px; break-inside:avoid; }
   .seq .cap-txt { font-size:8.8pt; color:var(--muted); margin-top:2px; }
-  .phase { border:1px solid var(--line); border-left:4px solid var(--line); border-radius:8px; padding:9px 12px; margin-bottom:8px; break-inside:avoid; }
+  .phase { border:1px solid var(--line); border-left:4px solid var(--line); border-radius:8px; padding:7px 11px; margin-bottom:6px; break-inside:avoid; }
   .phase.p1 { border-left-color:var(--f1); } .phase.p2 { border-left-color:var(--f2); } .phase.p3 { border-left-color:var(--f3); }
   .phase h3 { display:flex; justify-content:space-between; }
   .phase h3 span { font-family:Consolas, monospace; font-size:8pt; color:var(--accent); font-weight:normal; }
   .phase p { font-size:9.2pt; margin:2px 0 4px; }
-  .chip { display:inline-block; font-size:8.2pt; border:1px solid var(--line); border-radius:10px; padding:1px 8px; margin:2px 2px 0 0; background:#fff; }
+  .chip { display:inline-block; font-size:7.8pt; border:1px solid var(--line); border-radius:10px; padding:0 7px; margin:1px 2px 0 0; background:#fff; }
   .chip .mono { color:var(--accent); font-size:7.6pt; }
   .callout { background:var(--ink); color:#fff; border-radius:8px; padding:12px 14px; font-size:9.6pt; break-inside:avoid; }
   .note { background:var(--bg-soft); border-radius:8px; padding:10px 12px; font-size:9.2pt; break-inside:avoid; }
@@ -352,7 +352,7 @@ def capa():
     return f'''<section class="capa"><div class="kicker">{e(D["kicker"])}</div><h1>{e(D["titulo"])}</h1>
 <p class="lead">{e(D["intro"])}</p>
 <div class="note" style="max-width:150mm"><b>{e(D["entrega"].split(":")[0])}:</b>{e(D["entrega"].split(":",1)[1])}</div>
-<div class="stats"><div class="stat"><div class="big">{total_casos}</div><div class="stl">casos de uso no índice</div></div>
+<div class="stats"><div class="stat"><div class="big">{total_casos}</div><div class="stl">{"casos de uso especificados" if len(casos_detalhados) == total_casos else "casos de uso no índice"}</div></div>
 <div class="stat"><div class="big">{len(D["modulos"])}</div><div class="stl">módulos funcionais</div></div>
 <div class="stat"><div class="big">{len(atores)}</div><div class="stl">atores identificados</div></div>
 <div class="stat"><div class="big">{len(regras)}</div><div class="stl">regras de negócio</div></div></div>
@@ -431,7 +431,7 @@ def pag_regras():
                 if n else "ainda sem caso detalhado que a aplique")
         cards.append(f'<div class="rule"><span class="tag">{e(r["codigo"])}</span><div><b>{e(r["titulo"])}</b><p>{e(r["texto"])} Obtemos: {e(r["obtemos"])}</p><div class="where">{e(onde)}</div></div></div>')
     return f'''<section class="cap"><div class="kicker">Regras de negócio</div><h2>{len(regras)} regras que valem em todos os casos de uso</h2>
-<p class="lead">São as decisões que não se repetem em cada ficha, as mesmas do Mapa do Projeto, com a numeração preservada. Quando uma regra aparece listada em um caso de uso, é aqui que ela está explicada. A contagem considera só os casos detalhados nesta entrega.</p>
+<p class="lead">São as decisões que não se repetem em cada ficha, as mesmas do Mapa do Projeto, com a numeração preservada. Quando uma regra aparece listada em um caso de uso, é aqui que ela está explicada. {"A contagem considera todos os casos de uso." if len(casos_detalhados) == total_casos else "A contagem considera só os casos detalhados nesta entrega."}</p>
 <div class="rules">{"".join(cards)}</div></section>'''
 
 

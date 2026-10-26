@@ -2,7 +2,7 @@
   "produto": "Narrador",
   "titulo": "Casos de Uso",
   "kicker": "Especificação funcional · outubro de 2026",
-  "entrega": "Entrega 7: módulos A a G detalhados. Os módulos H e I estão no índice com código fixo e serão detalhados na última entrega.",
+  "entrega": "Entrega 8, final: todos os módulos detalhados. Cada caso de uso tem ficha completa; o documento está pronto para o portão de aprovação e para servir de base ao Blueprint Técnico.",
   "intro": "Tudo o que a mesa com mestre por inteligência artificial precisa fazer, descrito um a um: quem usa, o que acontece passo a passo, o que fazer quando algo dá errado e o que ganhamos com cada um. Documento complementar ao Mapa do Projeto e ao Blueprint Técnico.",
   "rodape": "Casos de uso · Narrador",
   "fases": {
@@ -1077,7 +1077,7 @@
             "O dono da mesa escolhe o módulo e a versão; a última publicada é a sugerida.",
             "O dono da mesa dá nome à campanha e define classificação de conteúdo, tom e preferências (caso de uso C10).",
             "O dono da mesa vincula um personagem existente ou cria um na hora pelos casos de uso B01 ou B02.",
-            "A plataforma cria a campanha viva vazia: ponteiro para a versão do módulo, personagem, configuração, relógio zerado e nenhum fato.",
+            "A plataforma cria a campanha viva vazia: ponteiro para a versão do módulo, personagem, configuração, relógio zerado, semente de rolagens gerada e gravada (caso de uso E01) e nenhum fato.",
             "A plataforma registra o primeiro fato, \"campanha criada\", com data e versão do módulo."
           ],
           "alternativos": [
@@ -1747,7 +1747,7 @@
           "ator": "Dono da mesa",
           "fase": 1,
           "prioridade": "Importante",
-          "objetivo": "Definir até onde a narração pode ir e como o mestre fala, e ter isso obedecido.",
+          "objetivo": "Definir até onde a narração pode ir, como o mestre fala e quais opções de regra e de custo valem na mesa, e ter isso obedecido.",
           "fluxo": [
             {
               "t": "Abre a configuração da mesa",
@@ -1778,7 +1778,7 @@
           "apoio": [],
           "principal": [
             "O dono da mesa escolhe a classificação de conteúdo: livre, 14, 16 ou adulto, com a descrição do que cada nível permite, conforme a decisão DC-11 do Mapa.",
-            "O dono da mesa escolhe o tom (sério, leve, sombrio, humor) e as preferências: dado físico permitido ou não, nível de detalhe das descrições, ritmo.",
+            "O dono da mesa escolhe o tom (sério, leve, sombrio, humor) e as preferências: dado físico permitido ou não, nível de detalhe das descrições, ritmo, progressão por experiência ou por marco, regras opcionais do SRD habilitadas, e limite de custo por sessão.",
             "A plataforma grava a configuração na campanha viva, com data.",
             "A plataforma aplica a configuração ao mestre a partir da próxima narração.",
             "A mudança fica registrada como fato de mesa, para que o histórico mostre sob qual configuração cada cena foi narrada."
@@ -3825,7 +3825,7 @@
       "letra": "H",
       "nome": "Grupo",
       "fase": 2,
-      "detalhado": false,
+      "detalhado": true,
       "resumo": "Vários jogadores na mesma mesa, com turnos e falas coordenados.",
       "casos": [
         {
@@ -3833,21 +3833,208 @@
           "nome": "Convidar jogadores para a mesa",
           "ator": "Dono da mesa",
           "fase": 2,
-          "prioridade": "Importante"
+          "prioridade": "Importante",
+          "objetivo": "Trazer outros jogadores para a mesma campanha, cada um com seu personagem, sem que ninguém veja o que não deveria.",
+          "fluxo": [
+            {
+              "t": "Gera o convite com validade",
+              "tipo": "ator"
+            },
+            {
+              "t": "Jogador aceita e entra",
+              "tipo": "ator"
+            },
+            {
+              "t": "Vincula o personagem (B01 ou B02)",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Define o que cada jogador vê",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Jogador na mesa",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Campanha criada (caso de uso C01).",
+            "Interface da fase 2, com acesso de mais de uma pessoa."
+          ],
+          "gatilho": "O dono da mesa escolhe convidar jogadores.",
+          "apoio": [
+            "Jogador"
+          ],
+          "principal": [
+            "O dono da mesa gera um convite ligado à campanha, com validade e número de usos.",
+            "O jogador aceita, informa como quer ser chamado e entra na mesa.",
+            "O jogador vincula um personagem existente ou cria um pelos casos de uso B01 ou B02.",
+            "A plataforma define o que cada jogador vê: a própria ficha, a cena e as falas públicas; nunca a ficha dos outros sem permissão, nunca os segredos, nunca o módulo canônico.",
+            "A plataforma registra o fato \"jogador entrou com o personagem\"."
+          ],
+          "alternativos": [
+            {
+              "t": "Jogador sai da mesa",
+              "d": "O personagem fica na campanha viva como personagem do mestre ou como ausente, a critério do dono da mesa (caso de uso H03)."
+            },
+            {
+              "t": "Dono da mesa também joga",
+              "d": "A visão de dono (módulo canônico, revisão) fica separada da visão de jogador, e ele escolhe qual usa em cada sessão."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Convite expirado ou já usado",
+              "d": "Recusa com o motivo; o dono da mesa gera outro."
+            },
+            {
+              "t": "Limite de jogadores atingido",
+              "d": "Recusa; o dono da mesa ajusta o limite da configuração ou remove alguém."
+            }
+          ],
+          "resultado": "Jogadores na mesa, cada um vendo só o que lhe cabe.",
+          "regras": [
+            "RN-05",
+            "RN-09"
+          ]
         },
         {
           "codigo": "H02",
           "nome": "Coordenar falas e turnos do grupo",
           "ator": "Plataforma",
           "fase": 2,
-          "prioridade": "Importante"
+          "prioridade": "Importante",
+          "objetivo": "Deixar vários jogadores agirem na mesma cena sem atropelo: falas fora de combate em ordem justa, turnos de combate pela iniciativa.",
+          "fluxo": [
+            {
+              "t": "Vários jogadores na cena",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Fora de combate: fila de falas por rodada",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Em combate: turnos pela iniciativa (D02)",
+              "tipo": "motor"
+            },
+            {
+              "t": "Mestre narra ao grupo, com mensagens privadas quando a cena exige",
+              "tipo": "llm"
+            },
+            {
+              "t": "Cena coordenada e registrada por jogador",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Mais de um jogador na mesa (caso de uso H01)."
+          ],
+          "gatilho": "Dois ou mais jogadores enviam ação ou fala na mesma cena.",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "Fora de combate, a plataforma recebe as entradas numa fila e as entrega ao mestre em lote por rodada de fala: cada jogador declara, o mestre responde a todos numa narração.",
+            "Ações que exigem veredito (caso de uso C05) são resolvidas uma a uma, cada qual com seu registro, na ordem de chegada ou na ordem que o mestre declarar por razão de cena.",
+            "Em combate, o caso de uso D01 rola iniciativa para todos os personagens; cada jogador joga o seu turno (D02) e os demais veem o resultado.",
+            "O que um personagem sabe e outro não (caso de uso F04) é narrado só a quem sabe: a plataforma entrega mensagens privadas por jogador quando a cena exige, como um sussurro ou uma percepção individual.",
+            "Tudo é registrado por jogador e por personagem."
+          ],
+          "alternativos": [
+            {
+              "t": "Grupo dividido",
+              "d": "Jogadores em locais diferentes: o mestre alterna entre cenas, cada cena tem sua fila e cada jogador vê só a cena dele."
+            },
+            {
+              "t": "Conversa entre jogadores fora do personagem",
+              "d": "Canal separado; não vira fato."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Jogador demora no turno",
+              "d": "Após o tempo configurado, a plataforma pergunta ao grupo: esperar ou pular (o personagem esquiva, como o SRD permite). Nada é decidido pelo mestre sozinho."
+            },
+            {
+              "t": "Ações contraditórias ao mesmo tempo",
+              "d": "Um abre a porta, outro a tranca: o mestre decide a ordem pela cena, com registro; se preciso, a iniciativa é rolada fora de combate."
+            }
+          ],
+          "resultado": "Cena com vários jogadores, ordem justa, segredos por jogador.",
+          "regras": [
+            "RN-02",
+            "RN-05",
+            "RN-06",
+            "RN-11"
+          ]
         },
         {
           "codigo": "H03",
           "nome": "Seguir com jogador ausente",
           "ator": "Plataforma",
           "fase": 2,
-          "prioridade": "Desejável"
+          "prioridade": "Desejável",
+          "objetivo": "Não travar a mesa quando um jogador falta: o personagem dele fica coerente na história sem ser jogado contra a vontade do dono.",
+          "fluxo": [
+            {
+              "t": "Sessão abre sem um jogador",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Dono escolhe o modo do personagem ausente",
+              "tipo": "ator"
+            },
+            {
+              "t": "Aplica: fora da cena, em silêncio, ou guiado com limites",
+              "tipo": "sistema"
+            },
+            {
+              "t": "No retorno, o jogador recebe o resumo do personagem",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Mais de um jogador na mesa.",
+            "Sessão aberta sem todos presentes."
+          ],
+          "gatilho": "O caso de uso C02 abre a sessão e um jogador não está.",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A plataforma lista quem falta.",
+            "O dono da mesa escolhe por personagem: fora da cena (motivo narrado pelo mestre, registrado como desvio); acompanha em silêncio (presente, não age, não corre risco que a regra não force); ou guiado pelo mestre com limites (age de forma conservadora: defende, segue o grupo, não gasta recursos permanentes, não toma decisões de história).",
+            "A plataforma aplica o modo e registra como fato de mesa.",
+            "Decisões de história que envolveriam o personagem ausente ficam adiadas quando possível; o mestre narra em volta.",
+            "No retorno, o jogador recebe o resumo do que o personagem viveu, filtrado para o personagem, e qualquer mudança na ficha."
+          ],
+          "alternativos": [
+            {
+              "t": "Ausência avisada com instruções",
+              "d": "\"Fujo se a coisa apertar\": as instruções do jogador limitam o modo guiado."
+            },
+            {
+              "t": "Jogador volta no meio da sessão",
+              "d": "Entra na próxima cena ou turno, com o resumo na hora."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Combate com personagem guiado",
+              "d": "O motor aplica só ações conservadoras (esquivar, ataque básico, ajudar); se cair a zero, as salvaguardas seguem pelo motor, e a morte de personagem guiado exige confirmação do dono da mesa antes da terceira falha."
+            },
+            {
+              "t": "Modo não escolhido",
+              "d": "Padrão \"acompanha em silêncio\"."
+            }
+          ],
+          "resultado": "Mesa segue; personagem ausente coerente; jogador informado ao voltar.",
+          "regras": [
+            "RN-01",
+            "RN-02",
+            "RN-06"
+          ]
         }
       ]
     },
@@ -3855,7 +4042,7 @@
       "letra": "I",
       "nome": "Campanha livre",
       "fase": 3,
-      "detalhado": false,
+      "detalhado": true,
       "resumo": "Gerador que preenche o mesmo formato do módulo canônico com uma história nova.",
       "casos": [
         {
@@ -3863,21 +4050,207 @@
           "nome": "Gerar módulo canônico a partir de uma premissa",
           "ator": "Dono da mesa",
           "fase": 3,
-          "prioridade": "Importante"
+          "prioridade": "Importante",
+          "objetivo": "Criar uma aventura nova no formato exato do módulo canônico, a partir de uma premissa curta, com o mesmo rigor de um módulo importado.",
+          "fluxo": [
+            {
+              "t": "Dá a premissa: tema, tom, nível, duração",
+              "tipo": "ator"
+            },
+            {
+              "t": "Serviço de linguagem gera no formato canônico",
+              "tipo": "llm"
+            },
+            {
+              "t": "Motor valida: SRD, caminho crítico, segredos, dificuldade",
+              "tipo": "motor",
+              "desvio": {
+                "rotulo": "inválido",
+                "t": "Regenera a parte inválida, até um limite",
+                "tipo": "atencao"
+              }
+            },
+            {
+              "t": "Rascunho salvo, marcado \"gerado\"",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Pronto para a revisão (I02)",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Fases 1 e 2 provadas; formato do módulo canônico estável.",
+            "SRD 5.2 carregado (caso de uso E03)."
+          ],
+          "gatilho": "O dono da mesa escolhe gerar uma aventura.",
+          "apoio": [
+            "Serviço de linguagem",
+            "SRD 5.2"
+          ],
+          "principal": [
+            "O dono da mesa descreve a premissa: tema, tom, nível dos personagens, duração estimada em sessões, elementos obrigatórios e proibidos, e a classificação de conteúdo (caso de uso C10).",
+            "O serviço de linguagem gera o módulo diretamente no formato canônico: cenas com ligações, locais, personagens do mestre com objetivo e o que sabem, criaturas por nome do SRD, itens, ganchos, segredos com condição de descoberta e caminho crítico.",
+            "O motor valida: toda criatura e item existem no SRD (ou ficam pendentes para o caso de uso A04); o grafo tem caminho crítico do início ao fim; cada segredo tem condição de descoberta; a dificuldade dos encontros está na faixa do nível pela tabela do SRD.",
+            "Partes inválidas são regeneradas com a lista de problemas, até um limite de tentativas.",
+            "A plataforma salva o rascunho como módulo canônico em rascunho, com a marca \"gerado\" e a premissa registrada."
+          ],
+          "alternativos": [
+            {
+              "t": "Continuação de uma campanha",
+              "d": "A premissa inclui o resumo da campanha anterior (caso de uso F07) e os fatos finais; personagens e locais podem voltar."
+            },
+            {
+              "t": "Gerar só uma cena ou um encontro",
+              "d": "Para inserir num módulo importado: mesma validação, inserido como desvio planejado pelo dono da mesa."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Geração não converge",
+              "d": "Limite de regenerações atingido: o rascunho é salvo com as partes inválidas marcadas e o dono da mesa corrige na revisão (I02)."
+            },
+            {
+              "t": "Conteúdo fora da classificação",
+              "d": "Bloqueado pela verificação do caso de uso G03 e regenerado."
+            }
+          ],
+          "resultado": "Rascunho de módulo canônico gerado, validado pelo motor, pronto para revisão.",
+          "regras": [
+            "RN-05",
+            "RN-06",
+            "RN-08"
+          ]
         },
         {
           "codigo": "I02",
           "nome": "Revisar o módulo gerado",
           "ator": "Dono da mesa",
           "fase": 3,
-          "prioridade": "Importante"
+          "prioridade": "Importante",
+          "objetivo": "Dar ao dono da mesa o controle editorial sobre a aventura gerada antes de qualquer mesa usá-la, com a mesma conferência de um módulo importado.",
+          "fluxo": [
+            {
+              "t": "Abre a conferência do rascunho gerado (A03)",
+              "tipo": "ator"
+            },
+            {
+              "t": "Revê cenas, personagens, segredos, caminho crítico",
+              "tipo": "ator"
+            },
+            {
+              "t": "Pede regeneração pontual ou edita à mão",
+              "tipo": "ator",
+              "desvio": {
+                "rotulo": "quebra ligação",
+                "t": "Motor aponta; dono resolve antes de publicar",
+                "tipo": "atencao"
+              }
+            },
+            {
+              "t": "Validação do A03",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Publica a versão 1, marcada \"gerado e revisado\"",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Rascunho gerado (caso de uso I01)."
+          ],
+          "gatilho": "O dono da mesa abre o rascunho gerado.",
+          "apoio": [
+            "Serviço de linguagem"
+          ],
+          "principal": [
+            "A conferência do caso de uso A03 roda sobre o rascunho; a diferença é que não há página de origem: a referência é a premissa e a parte do módulo.",
+            "O dono da mesa aceita, edita ou remove itens, e pode pedir regeneração pontual de uma cena ou personagem mantendo o resto.",
+            "O dono da mesa confirma segredos e caminho crítico.",
+            "A validação do caso de uso A03 roda.",
+            "O dono da mesa publica; a versão 1 fica imutável, com a marca \"gerado e revisado\"."
+          ],
+          "alternativos": [
+            {
+              "t": "Aceitar tudo de uma vez",
+              "d": "Permitido só sem itens inválidos pendentes."
+            },
+            {
+              "t": "Jogar sem revisar",
+              "d": "Não permitido no início da fase 3: a revisão é obrigatória até a medição de fidelidade (lacuna LC-06) mostrar que pode ser dispensada."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Regeneração pontual quebra ligação com outras cenas",
+              "d": "O motor aponta e o dono da mesa resolve antes de publicar."
+            },
+            {
+              "t": "Conteúdo gerado reproduz material protegido",
+              "d": "Nome de criatura oficial fora do SRD ou cenário protegido reconhecido: o motor sinaliza e o dono da mesa substitui; o produto não publica módulo gerado com conteúdo protegido reconhecido."
+            }
+          ],
+          "resultado": "Módulo gerado publicado com o mesmo rigor de um importado.",
+          "regras": [
+            "RN-05",
+            "RN-08"
+          ]
         },
         {
           "codigo": "I03",
           "nome": "Jogar o módulo gerado como campanha pronta",
           "ator": "Jogador",
           "fase": 3,
-          "prioridade": "Importante"
+          "prioridade": "Importante",
+          "objetivo": "Rodar a aventura gerada com exatamente o mesmo mestre, motor e regras da campanha importada, sem caminho especial.",
+          "fluxo": [
+            {
+              "t": "Campanha criada sobre o módulo gerado (C01)",
+              "tipo": "ator"
+            },
+            {
+              "t": "Sessões pelos módulos C a G, sem atalho",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Mesma auditoria: desvios, vereditos, consistência",
+              "tipo": "sistema"
+            },
+            {
+              "t": "Indicadores comparados com módulos importados",
+              "tipo": "fim"
+            }
+          ],
+          "pre": [
+            "Módulo gerado publicado (caso de uso I02)."
+          ],
+          "gatilho": "O caso de uso C01 com um módulo gerado.",
+          "apoio": [],
+          "principal": [
+            "A campanha é criada pelo caso de uso C01 sem nenhuma diferença, apontando para a versão do módulo gerado.",
+            "As sessões rodam pelos casos de uso dos módulos C a G, sem exceção nem atalho.",
+            "A plataforma aplica a mesma auditoria: desvios (F02), vereditos (G04) e consistência (G03).",
+            "Os indicadores (G07) ficam marcados \"módulo gerado\" para comparar com campanhas de módulos importados: taxa de desvio, de caminho fechado, de recusa e de inconsistência.",
+            "Diferenças sistemáticas viram defeitos do gerador (I01), não do mestre."
+          ],
+          "alternativos": [
+            {
+              "t": "Módulo importado com cenas geradas",
+              "d": "Cada cena leva a marca de origem e os indicadores separam as duas."
+            }
+          ],
+          "excecoes": [
+            {
+              "t": "Módulo gerado injogável na mesa",
+              "d": "Caminho crítico quebrando toda sessão: a plataforma avisa o dono da mesa e sugere nova versão pela revisão (I02 e A06); não é problema do mestre."
+            }
+          ],
+          "resultado": "Campanha livre jogada com a mesma qualidade e auditoria da campanha pronta.",
+          "regras": [
+            "RN-01",
+            "RN-06",
+            "RN-07"
+          ]
         }
       ]
     }
