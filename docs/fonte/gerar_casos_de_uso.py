@@ -353,7 +353,7 @@ def capa():
     return f'''<section class="capa"><div class="kicker">{e(D["kicker"])}</div><h1>{e(D["titulo"])}</h1>
 <p class="lead">{e(D["intro"])}</p>
 <div class="note" style="max-width:150mm"><b>{e(D["entrega"].split(":")[0])}:</b>{e(D["entrega"].split(":",1)[1])}</div>
-<div class="stats"><div class="stat"><div class="big">{total_casos}</div><div class="stl">casos de uso especificados</div></div>
+<div class="stats"><div class="stat"><div class="big">{total_casos}</div><div class="stl">casos de uso no índice</div></div>
 <div class="stat"><div class="big">{len(D["modulos"])}</div><div class="stl">módulos funcionais</div></div>
 <div class="stat"><div class="big">{len(atores)}</div><div class="stl">atores identificados</div></div>
 <div class="stat"><div class="big">{len(regras)}</div><div class="stl">regras de negócio</div></div></div>

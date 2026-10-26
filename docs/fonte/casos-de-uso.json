@@ -79,7 +79,7 @@
             {"t": "Monta o rascunho e marca incertezas", "tipo": "sistema"},
             {"t": "Rascunho pronto para conferência", "tipo": "fim"}
           ],
-          "pre": ["Caso de uso A01 concluído.", "Dono da mesa autorizou, nesta importação, o envio do texto da aventura ao serviço de linguagem, com a autorização registrada."],
+          "pre": ["Caso de uso A01 concluído.", "Serviço de linguagem configurado, ou estruturação manual assistida escolhida pelo dono da mesa."],
           "gatilho": "O dono da mesa escolhe estruturar uma aventura importada.",
           "apoio": ["Serviço de linguagem", "Dono da mesa"],
           "principal": [
