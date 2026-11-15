@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crônica RPG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/*CSS*/
+</style>
+</head>
+<body>
+
+<!-- ============================ site ============================ -->
+<div id="site" class="site">
+  <header class="nav">
+    <a class="marca" href="#inicio">Crônica</a>
+    <nav class="nav-links" aria-label="Seções">
+      <a href="#inicio" data-rota="inicio">Início</a>
+      <a href="#herois" data-rota="herois">Personagens</a>
+      <a href="#aventuras" data-rota="aventuras">Aventuras</a>
+      <a href="#jogar" data-rota="jogar">Jogar</a>
+      <a href="#regras" data-rota="regras">Regras</a>
+      <a href="#jogar" class="botao primario nav-cta">Jogar agora</a>
+    </nav>
+  </header>
+  <main id="pagina" class="pagina"></main>
+  <footer class="rodape">
+    <p>Crônica é uma mesa de RPG para jogar sozinho ou em grupo. Inclui material do SRD 5.2.1 da Wizards of the Coast LLC, sob licença CC-BY-4.0; o texto completo de atribuição está em <a href="#regras">Regras</a>.</p>
+  </footer>
+</div>
+
+<!-- ============================ mesa de jogo ============================ -->
+<div id="jogo" class="jogo" hidden>
+  <header class="topo">
+    <div class="topo-titulo">
+      <button type="button" id="btn-sair" class="botao discreto pequeno" title="Voltar ao site. A mesa fica salva." aria-label="Sair da mesa">←</button>
+      <span id="topo-cena" class="topo-cena"></span>
+    </div>
+    <div class="topo-estado">
+      <div id="grupo" class="grupo-barra" aria-label="Heróis da mesa"></div>
+      <span id="selo-ia" class="selo"></span>
+      <button type="button" id="btn-ficha" class="botao discreto pequeno">Ficha</button>
+      <button type="button" id="btn-painel" class="botao discreto pequeno so-estreito">Mapa</button>
+    </div>
+  </header>
+
+  <div class="mesa">
+    <main class="coluna">
+      <div id="log" class="log" aria-live="polite"></div>
+      <div id="dados" class="dados" hidden><canvas id="dado-cv" aria-hidden="true"></canvas><div id="dado-veredito" class="dado-veredito"></div><div id="dado-conta" class="dado-conta"></div><div id="dado-motivo" class="dado-motivo"></div><div id="dado-fila" class="dado-fila"></div></div>
+      <div id="opcoes" class="opcoes"></div>
+      <form id="entrada" class="entrada" autocomplete="off">
+        <div class="entrada-miolo">
+          <label for="texto" class="oculto">O que seu personagem faz?</label>
+          <label for="modo" class="oculto">Tipo de mensagem</label>
+          <select id="modo" title="Seu personagem age, fala, ou você pergunta ao mestre"><option value="agir">Agir</option><option value="falar">Falar</option><option value="perguntar">Perguntar ao mestre</option></select>
+          <input type="text" id="texto" maxlength="300" placeholder="O que você faz?">
+          <button type="submit" id="btn-enviar" class="botao primario">Enviar</button>
+        </div>
+      </form>
+    </main>
+
+    <aside id="painel" class="painel">
+      <div class="mapa-caixa">
+        <div class="mapa-topo">
+          <span id="mapa-titulo" class="mapa-titulo">Mapa da cena</span>
+          <button type="button" id="btn-mapa" class="botao discreto pequeno">Esconder</button>
+        </div>
+        <canvas id="mapa" role="img" aria-label="Mapa da cena: posição dos heróis, dos inimigos e dos outros personagens"></canvas>
+        <div id="mapa-legenda" class="mapa-legenda"></div>
+      </div>
+      <div class="abas" role="tablist">
+        <button type="button" role="tab" class="aba" data-aba="ficha" id="aba-ficha">Ficha</button>
+        <button type="button" role="tab" class="aba" data-aba="cena" id="aba-cena">Cena</button>
+        <button type="button" role="tab" class="aba" data-aba="diario" id="aba-diario">Diário</button>
+        <button type="button" role="tab" class="aba" data-aba="rolagens" id="aba-rolagens">Rolagens</button>
+        <button type="button" role="tab" class="aba" data-aba="ajuda" id="aba-ajuda">Mesa</button>
+        <button type="button" id="btn-fechar-painel" class="aba fechar so-estreito" aria-label="Fechar painel">Fechar</button>
+      </div>
+      <div id="painel-corpo" class="painel-corpo"></div>
+    </aside>
+  </div>
+</div>
+
+<div id="modal" class="modal" hidden><div class="modal-caixa" role="dialog" aria-modal="true" aria-labelledby="modal-titulo"><div class="modal-topo"><h2 id="modal-titulo">Ficha de personagem</h2><button type="button" id="btn-fechar-modal" class="botao pequeno">Fechar</button></div><div id="modal-corpo" class="ficha-colunas"></div></div></div>
+
+<script>
+/*ENGINE*/
+</script>
+<script>
+/*UI*/
+</script>
+</body>
+</html>

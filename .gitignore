@@ -1,24 +1,5 @@
-# Python
-.venv/
-__pycache__/
-*.pyc
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-*.egg-info/
-build/
+# gerados por montar.py e pelos testes
 dist/
-# Segredos e dados locais
-.env
-.env.*
-!.env.example
-*.sqlite
-*.sqlite-wal
-*.sqlite-shm
-# Aventuras importadas nunca entram no repositório (RN-09)
-aventuras/
-campanhas/
-# Ferramentas dos documentos
-docs/fonte/node_modules/
-*.log
-.DS_Store
+shots/
+__pycache__/
+node_modules/
